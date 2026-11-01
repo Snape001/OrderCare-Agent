@@ -8,7 +8,8 @@ $env:PATH = [Environment]::GetEnvironmentVariable("PATH", "User") + ";" +
 $env:PYTHONUTF8 = "1"
 
 Write-Host "Evaluating lexical, dense, and hybrid RAG retrieval..." -ForegroundColor Cyan
-uv run python scripts/evaluate_rag.py
+uv run --frozen python scripts/evaluate_rag.py
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host ""
-Write-Host "Done. Detailed report: data\evaluation\rag_report.json" -ForegroundColor Green
+Write-Host "Done. Detailed report: data\evaluation\rag\runs\<run-id>\summary.md" -ForegroundColor Green

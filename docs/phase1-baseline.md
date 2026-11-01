@@ -19,7 +19,8 @@ dev 组包括 pytest、Ruff、mypy 及 PyMySQL/pandas 类型声明。
 首次运行且 `.env` 不存在时：
 
 ```powershell
-if (-not (Test-Path .env)) { Copy-Item .env.mock.example .env }
+# 先安装 Ollama 并拉取配置中指定的模型
+if (-not (Test-Path .env)) { Copy-Item .env.ollama.example .env }
 .\.venv\Scripts\python.exe src/run_service.py
 ```
 
@@ -35,7 +36,7 @@ if (-not (Test-Path .env)) { Copy-Item .env.mock.example .env }
 
 Qwen 使用 `CUSTOMER_SUPPORT_MODE=qwen` 和完整的 `DASHSCOPE_API_KEY`、
 `DASHSCOPE_BASE_URL`、`DASHSCOPE_MODEL`。无需通过额外假模型绕过配置校验。
-部分 Qwen 配置在 auto/qwen 模式下直接报配置错误；可选 Agent 加载失败会被剔除，
+部分 Qwen 配置在 qwen 模式下直接报配置错误；可选 Agent 加载失败会被剔除，
 默认客服加载失败会阻止服务启动。不要提交真实密钥。
 
 ## 权限与兼容行为
@@ -60,7 +61,7 @@ Qwen 使用 `CUSTOMER_SUPPORT_MODE=qwen` 和完整的 `DASHSCOPE_API_KEY`、
 - history 请求支持 `agent_id`，默认为 customer-support。不同 Agent 的会话分离。
 - `agent_config` 禁止覆盖身份与 Checkpoint 字段，以及 `__` 前缀内部字段。
 - 写操作只接受完整的“确认/同意/批准/执行”（允许末尾句号/感叹号）。
-  “好的”“是”“我还没确认”等不会批准。Mock 无待确认操作时不会执行写入。
+  “好的”“是”“我还没确认”等不会批准。工单写入由 HumanInTheLoopMiddleware 审批。
 - SQLite 两个工单实现使用 BEGIN IMMEDIATE 串行化幂等检查与插入。
   锁等待仍受 SQLite 超时限制，不意味着支持无限吞吐量。
 

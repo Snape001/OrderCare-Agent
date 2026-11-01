@@ -1,0 +1,1326 @@
+{
+  "dataset_version": "ordercare-rag-v1.0",
+  "metadata": {
+    "created_at_utc": "2026-10-30T09:31:20.528508+00:00",
+    "git_head": "1666f20f247537f28e04d31c1616498a30d43131",
+    "python": "3.12.16",
+    "platform": "Windows-11-10.0.26100-SP0",
+    "configuration": {
+      "top_k": 2,
+      "repeats": 3,
+      "threshold": 0.65,
+      "lexical_threshold": 0.3,
+      "lexical_weight": 1.0,
+      "query_expansion": null,
+      "methods": [
+        "hybrid"
+      ],
+      "split": "dev",
+      "embedding": "BAAI/bge-small-zh-v1.5",
+      "embedding_threads": 2,
+      "chunk_size": 220,
+      "chunk_overlap": 40,
+      "fusion": "dense 1/(10+r); lexical min(1,2*s)/(10+r)",
+      "index": ".tmp/rag-evaluation-index",
+      "chunk_count": 16,
+      "index_init_ms": 212.714599998435,
+      "warmup_ms": 525.5408999983047,
+      "generation": null
+    },
+    "sha256": {
+      "data/evaluation/rag/dataset-v1.json": "b23b7f972aeeae0fd47f942bc5a510334217c3ffae549cc18a64fed14642dce5",
+      "data/policies/customer_service_policy.md": "f0aa9a1dd22120d0d1eccd59a464c4d25201132826d126bf611324e535053e80",
+      "uv.lock": "ba30eb38b2c1ef43f7cf4fed2b0e6e106e922a4a9858b9942600905c104c07a6",
+      "src/customer_support/rag.py": "13d56827e036e256a3ddddfc2152be1714607c5f4815645cff7b1ffd753d52d9",
+      "src/evaluation/rag.py": "6186bd0324cc5cdbe8533d4335d857bd4d18cc7149a6c288416eaab0afa342f7",
+      "src/evaluation/llm.py": "b9a8515bc6aa23c0cd6f5789d05818b121341e91ee80103b6eb407aed910f834",
+      "scripts/evaluate_rag.py": "3d8ed33df9ca291f6dc893f248a8213e53b64d4a28765fc361db8e8b27a4ed9b",
+      "src/evaluation/experiments.py": "d7b007d30cdd1f74e89cce314e8e64305264f14fb680660442e3df4ab99b326b",
+      "data/models/models--Qdrant--bge-small-zh-v1.5/snapshots/46fbe35fd4374a00fee7de77dfddaeb6dd6a2c59/model_optimized.onnx": "1294ea4b6331115a353d81f96b85e8c8d7fdcc284453d5b2fab5b016230aad38"
+    },
+    "packages": {
+      "fastembed": "0.8.0",
+      "chromadb": "1.5.9",
+      "langchain-chroma": "1.1.0",
+      "onnxruntime": "1.27.0",
+      "numpy": "2.5.0"
+    }
+  },
+  "index_manifest": {
+    "fingerprint": "d5608b9c2aa0c8ae9ab9e35d33eabe4a9abad2b720e4ff373df93e120d2544bd",
+    "chunk_count": 16,
+    "model": "BAAI/bge-small-zh-v1.5"
+  },
+  "runs": [
+    {
+      "method": "hybrid",
+      "summary": {
+        "total": 20,
+        "evaluated": 20,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.6666666666666666,
+          "mrr": 0.7333333333333333,
+          "ndcg": 0.7333333333333333,
+          "context_relevance": 0.55
+        },
+        "at_2": {
+          "recall": 0.6666666666666666,
+          "mrr": 0.7333333333333333,
+          "ndcg": 0.7049539470654629,
+          "context_relevance": 0.4
+        },
+        "retrieval_abstention_accuracy": 0.75,
+        "no_answer_rejection_rate": 0.6,
+        "answerable_false_rejection_rate": 0.2,
+        "latency_ms": {
+          "mean": 8.310866666640019,
+          "p50": 8.2843000000139,
+          "p95": 9.006899999803863
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 7,
+          "missing_supporting_sections": 3,
+          "answerable_question_rejected": 3,
+          "irrelevant_top1": 1,
+          "unsupported_question_returned_context": 2
+        }
+      },
+      "splits": {
+        "dev": {
+          "total": 20,
+          "evaluated": 20,
+          "errors": 0,
+          "at_1": {
+            "recall": 0.6666666666666666,
+            "mrr": 0.7333333333333333,
+            "ndcg": 0.7333333333333333,
+            "context_relevance": 0.55
+          },
+          "at_2": {
+            "recall": 0.6666666666666666,
+            "mrr": 0.7333333333333333,
+            "ndcg": 0.7049539470654629,
+            "context_relevance": 0.4
+          },
+          "retrieval_abstention_accuracy": 0.75,
+          "no_answer_rejection_rate": 0.6,
+          "answerable_false_rejection_rate": 0.2,
+          "latency_ms": {
+            "mean": 8.310866666640019,
+            "p50": 8.2843000000139,
+            "p95": 9.006899999803863
+          },
+          "generation": {
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "evaluated": 0,
+            "errors": 0,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "failure_reasons": {
+            "irrelevant_context": 7,
+            "missing_supporting_sections": 3,
+            "answerable_question_rejected": 3,
+            "irrelevant_top1": 1,
+            "unsupported_question_returned_context": 2
+          }
+        },
+        "test": {
+          "total": 0,
+          "evaluated": 0,
+          "errors": 0,
+          "at_1": {
+            "recall": null,
+            "mrr": null,
+            "ndcg": null,
+            "context_relevance": null
+          },
+          "at_2": {
+            "recall": null,
+            "mrr": null,
+            "ndcg": null,
+            "context_relevance": null
+          },
+          "retrieval_abstention_accuracy": null,
+          "no_answer_rejection_rate": null,
+          "answerable_false_rejection_rate": null,
+          "latency_ms": {
+            "mean": null,
+            "p50": null,
+            "p95": null
+          },
+          "generation": {
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "evaluated": 0,
+            "errors": 0,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "failure_reasons": {}
+        }
+      },
+      "cases": [
+        {
+          "id": "rag-001",
+          "query": "普通耳机签收第二天拆了包装，配件都在也没损坏，能走无理由退货吗？",
+          "category": "无理由退货",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "签收次日起7个自然日内可申请；商品完好、附件齐全且不影响二次销售；已拆封普通商品可提交审核",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "七天无理由退款",
+              "content": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "bd8b59686811edc9",
+              "score": 0.1299,
+              "dense_rank": 1,
+              "dense_relevance": 0.738,
+              "lexical_rank": 1,
+              "lexical_score": 0.2143,
+              "rank": 1
+            },
+            {
+              "title": "特殊商品退换限制",
+              "content": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "abcbbcd08688be6f",
+              "score": 0.1071,
+              "dense_rank": 2,
+              "dense_relevance": 0.6556,
+              "lexical_rank": 2,
+              "lexical_score": 0.1429,
+              "rank": 2
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.914699999877485,
+            9.315800001786556,
+            8.987799999886192
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 0.5,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "irrelevant_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "普通耳机签收第二天拆了包装，配件都在也没损坏，能走无理由退货吗？"
+        },
+        {
+          "id": "rag-003",
+          "query": "包裹还没到，我就想按七天无理由退款，现在该怎么办？",
+          "category": "复杂条件",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "运输中不能按已签收商品申请七天无理由；可尝试物流拦截，失败后签收再按退货政策处理",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "七天无理由退款",
+              "content": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "bd8b59686811edc9",
+              "score": 0.1429,
+              "dense_rank": 1,
+              "dense_relevance": 0.7214,
+              "lexical_rank": 1,
+              "lexical_score": 0.2857,
+              "rank": 1
+            },
+            {
+              "title": "特殊商品退换限制",
+              "content": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "abcbbcd08688be6f",
+              "score": 0.123,
+              "dense_rank": 2,
+              "dense_relevance": 0.6707,
+              "lexical_rank": 2,
+              "lexical_score": 0.2381,
+              "rank": 2
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.56279999788967,
+            7.9474999984086026,
+            7.917500002804445
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.7871546029909718,
+              "context_relevance": 0.5,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "missing_supporting_sections",
+            "irrelevant_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "包裹还没到，我就想按七天无理由退款，现在该怎么办？"
+        },
+        {
+          "id": "rag-005",
+          "query": "名字刻在杯子上了，现在不喜欢了，七天内也不能退吗？",
+          "category": "特殊商品",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "定制商品不适用七天无理由退货",
+          "status": "ok",
+          "hits": [],
+          "retrieval_latency_ms": [
+            8.064499997999519,
+            7.8651000003446825,
+            7.719199998973636
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            },
+            "2": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            }
+          },
+          "failures": [
+            "answerable_question_rejected"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "名字刻在杯子上了，现在不喜欢了，七天内也不能退吗？"
+        },
+        {
+          "id": "rag-007",
+          "query": "定做的东西本身就是坏的，是不是因为定制就完全不能售后？",
+          "category": "质量售后",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "质量问题不受无理由退货范围限制；应提交故障照片、检测结果或其他证明走质量售后",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "特殊商品退换限制",
+              "content": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "abcbbcd08688be6f",
+              "score": 0.1061,
+              "dense_rank": 1,
+              "dense_relevance": 0.6711,
+              "lexical_rank": 1,
+              "lexical_score": 0.0833,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.518599999661092,
+            8.277400000224588,
+            7.72040000083507
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "定做的东西本身就是坏的，是不是因为定制就完全不能售后？"
+        },
+        {
+          "id": "rag-009",
+          "query": "发错货后我已经拿到退款，还能让店家再补一件吗？",
+          "category": "质量售后",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "同一问题已完成退款不再重复补发",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "换货与缺件补发",
+              "content": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "7559b4de6f76fc82",
+              "score": 0.1091,
+              "dense_rank": 1,
+              "dense_relevance": 0.6984,
+              "lexical_rank": 1,
+              "lexical_score": 0.1,
+              "rank": 1
+            },
+            {
+              "title": "七天无理由退款",
+              "content": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "bd8b59686811edc9",
+              "score": 0.0917,
+              "dense_rank": 2,
+              "dense_relevance": 0.6858,
+              "lexical_rank": 2,
+              "lexical_score": 0.05,
+              "rank": 2
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.131300000968622,
+            8.065300000453135,
+            8.314299997437047
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 0.5,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "irrelevant_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "发错货后我已经拿到退款，还能让店家再补一件吗？"
+        },
+        {
+          "id": "rag-011",
+          "query": "东西退回去了，钱是收到退件立刻打回来还是要验货？",
+          "category": "退款流程",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "仓库验收通过后发起原路退款",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "换货与缺件补发",
+              "content": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "7559b4de6f76fc82",
+              "score": 0.0996,
+              "dense_rank": 1,
+              "dense_relevance": 0.6915,
+              "lexical_rank": 1,
+              "lexical_score": 0.0476,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.275399999547517,
+            8.521199997630902,
+            8.292300000903197
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "missing_supporting_sections",
+            "irrelevant_top1",
+            "irrelevant_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "东西退回去了，钱是收到退件立刻打回来还是要验货？"
+        },
+        {
+          "id": "rag-013",
+          "query": "银行卡退款已经超过七个工作日，我该准备哪些信息请人工核查？",
+          "category": "复杂条件",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "提供订单号和退款流水号创建退款异常工单；创建工单需用户明确确认",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "退款到账时效",
+              "content": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "ae4b609a0d095f0d",
+              "score": 0.1399,
+              "dense_rank": 1,
+              "dense_relevance": 0.6881,
+              "lexical_rank": 1,
+              "lexical_score": 0.2692,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.854700001393212,
+            8.590499997808365,
+            8.705699998245109
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 0.5,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 0.5,
+              "mrr": 1.0,
+              "ndcg": 0.7871546029909718,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "missing_supporting_sections"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "银行卡退款已经超过七个工作日，我该准备哪些信息请人工核查？"
+        },
+        {
+          "id": "rag-015",
+          "query": "物流五六天不动弹了，客服会找谁问，多久去核实？",
+          "category": "物流异常",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "超过5天没有新轨迹可创建物流异常工单；客服24小时内联系承运商核查",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "物流异常",
+              "content": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "3064c5de15dd2e68",
+              "score": 0.1196,
+              "dense_rank": 1,
+              "dense_relevance": 0.6835,
+              "lexical_rank": 1,
+              "lexical_score": 0.1579,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.291199999803212,
+            7.7685999967798125,
+            7.242299998324597
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "物流五六天不动弹了，客服会找谁问，多久去核实？"
+        },
+        {
+          "id": "rag-017",
+          "query": "预计周五送到就是保证周五能收到吧？偏远地区还要多等多久？",
+          "category": "物流时效",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "预计送达时间不等于承诺到达时间；偏远地区可能增加2至3天",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "物流时效与轨迹",
+              "content": "普通快递预计 3 至 5 个自然日送达，偏远地区可能增加 2 至 3 天。预计送达时间是基于仓库和承运商计算的参考时间，不等于承诺到达时间。订单发货后可以通过订单详情查看承运商、物流单号和最新轨迹。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "7f8f5424b754e7d7",
+              "score": 0.1212,
+              "dense_rank": 1,
+              "dense_relevance": 0.7387,
+              "lexical_rank": 1,
+              "lexical_score": 0.1667,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.193599998776335,
+            8.808599999611033,
+            8.891800000128569
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "预计周五送到就是保证周五能收到吧？偏远地区还要多等多久？"
+        },
+        {
+          "id": "rag-019",
+          "query": "电子产品没摔没泡水自己坏了，有限保修通常多久，可以修吗？",
+          "category": "保修",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "自签收起12个月有限保修，具体以商品页面和凭证为准；非人为性能故障可申请检测维修",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "商品保修",
+              "content": "电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。非人为性能故障可以申请检测和维修；摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "813072027ec73ea8",
+              "score": 0.1439,
+              "dense_rank": 1,
+              "dense_relevance": 0.8122,
+              "lexical_rank": 1,
+              "lexical_score": 0.2917,
+              "rank": 1
+            },
+            {
+              "title": "特殊商品退换限制",
+              "content": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "abcbbcd08688be6f",
+              "score": 0.0833,
+              "dense_rank": 2,
+              "dense_relevance": 0.6523,
+              "lexical_rank": null,
+              "lexical_score": null,
+              "rank": 2
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.268400000815745,
+            8.266900000307942,
+            8.887800002412405
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 0.5,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "irrelevant_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "电子产品没摔没泡水自己坏了，有限保修通常多久，可以修吗？"
+        },
+        {
+          "id": "rag-021",
+          "query": "东西要寄去修，申请需要什么资料，到售后后多久初检？",
+          "category": "维修",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "需订单号、故障描述、设备序列号和必要图片或视频；售后中心收货后通常3个工作日内初检",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "维修申请与进度",
+              "content": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。售后中心收货后通常在 3 个工作日内完成初检，并在维修状态变化时更新进度。涉及付费维修时，必须先向用户展示报价并获得确认。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "a589430e932e1c61",
+              "score": 0.1342,
+              "dense_rank": 1,
+              "dense_relevance": 0.7479,
+              "lexical_rank": 1,
+              "lexical_score": 0.2381,
+              "rank": 1
+            },
+            {
+              "title": "发票服务",
+              "content": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "b4a94638ea412e68",
+              "score": 0.0928,
+              "dense_rank": 3,
+              "dense_relevance": 0.6504,
+              "lexical_rank": 2,
+              "lexical_score": 0.0952,
+              "rank": 2
+            }
+          ],
+          "retrieval_latency_ms": [
+            7.504199998948025,
+            7.776900001772447,
+            8.266800003184471
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 0.5,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "irrelevant_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "东西要寄去修，申请需要什么资料，到售后后多久初检？"
+        },
+        {
+          "id": "rag-023",
+          "query": "单位要报销，订单完成一个月还能补开票吗，要校验什么？",
+          "category": "发票",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "订单完成45天内可申请电子普通发票或符合条件的专票；抬头和税号提交前须格式校验",
+          "status": "ok",
+          "hits": [],
+          "retrieval_latency_ms": [
+            8.882800000719726,
+            8.530400002200622,
+            8.34259999828646
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            },
+            "2": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            }
+          },
+          "failures": [
+            "answerable_question_rejected"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "单位要报销，订单完成一个月还能补开票吗，要校验什么？"
+        },
+        {
+          "id": "rag-025",
+          "query": "付款提示没成功，银行卡却扣了，我要不要再付一次？",
+          "category": "支付",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "不应重复支付，先等待支付渠道对账；通常1个工作日内恢复订单或原路退回",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "支付与重复扣款",
+              "content": "支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账；通常会在 1 个工作日内自动恢复订单或原路退回。发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单，客服不得要求用户提供完整银行卡号或支付密码。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "4ed40a5b5afc49b0",
+              "score": 0.1076,
+              "dense_rank": 1,
+              "dense_relevance": 0.7103,
+              "lexical_rank": 2,
+              "lexical_score": 0.1,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.628999999928055,
+            8.766099999775179,
+            8.324800000991672
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "付款提示没成功，银行卡却扣了，我要不要再付一次？"
+        },
+        {
+          "id": "rag-027",
+          "query": "取消了订单，用掉的券还能回来吗，需要等多久？",
+          "category": "优惠券",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "未过期且未被活动规则排除的券通常24小时内退回",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "优惠券与促销",
+              "content": "优惠券需要满足有效期、适用商品、最低金额和用户范围等条件，不同活动是否叠加以结算页为准。订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回；因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "735e1f921e6e8953",
+              "score": 0.1212,
+              "dense_rank": 1,
+              "dense_relevance": 0.6926,
+              "lexical_rank": 1,
+              "lexical_score": 0.1667,
+              "rank": 1
+            },
+            {
+              "title": "订单取消",
+              "content": "订单处于待付款状态时可以直接取消；已付款但尚未进入仓库拣货时可以申请取消并原路退款。订单进入拣货、出库或运输阶段后通常无法直接取消，用户可以联系物流尝试拦截，拦截失败时需在签收后按退货政策处理。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "fa5419c2b15cca89",
+              "score": 0.0992,
+              "dense_rank": 2,
+              "dense_relevance": 0.6526,
+              "lexical_rank": 4,
+              "lexical_score": 0.1111,
+              "rank": 2
+            }
+          ],
+          "retrieval_latency_ms": [
+            8.298000000650063,
+            8.02260000273236,
+            8.39339999947697
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 1.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": 1.0,
+              "mrr": 1.0,
+              "ndcg": 1.0,
+              "context_relevance": 0.5,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [
+            "irrelevant_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "取消了订单，用掉的券还能回来吗，需要等多久？"
+        },
+        {
+          "id": "rag-029",
+          "query": "我不想让你们保留账户资料，要走什么手续？能直接删吗？",
+          "category": "隐私",
+          "split": "dev",
+          "should_abstain": false,
+          "expected_answer": "导出或删除账户信息需专门身份验证和隐私工单",
+          "status": "ok",
+          "hits": [],
+          "retrieval_latency_ms": [
+            8.314099999552127,
+            8.075499998085434,
+            9.006899999803863
+          ],
+          "retrieval": {
+            "1": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            },
+            "2": {
+              "recall": 0.0,
+              "mrr": 0.0,
+              "ndcg": 0.0,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            }
+          },
+          "failures": [
+            "answerable_question_rejected"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "我不想让你们保留账户资料，要走什么手续？能直接删吗？"
+        },
+        {
+          "id": "rag-031",
+          "query": "无理由退货的快递费具体由买家还是卖家承担？",
+          "category": "库内缺失",
+          "split": "dev",
+          "should_abstain": true,
+          "expected_answer": "知识库没有退货运费承担规则，不能自行判断，应转人工确认",
+          "status": "ok",
+          "hits": [],
+          "retrieval_latency_ms": [
+            7.748699998046504,
+            7.404899999528425,
+            7.253899999341229
+          ],
+          "retrieval": {
+            "1": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "无理由退货的快递费具体由买家还是卖家承担？"
+        },
+        {
+          "id": "rag-033",
+          "query": "订单完成一年后还可以申请电子发票吗？如果可以流程是什么？",
+          "category": "库内缺失",
+          "split": "dev",
+          "should_abstain": true,
+          "expected_answer": "知识库仅规定45天内申请，没有一年后的申请流程，不能编造",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "发票服务",
+              "content": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "b4a94638ea412e68",
+              "score": 0.1591,
+              "dense_rank": 1,
+              "dense_relevance": 0.7291,
+              "lexical_rank": 1,
+              "lexical_score": 0.375,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            10.784400001284666,
+            11.426200002460973,
+            8.4703000029549
+          ],
+          "retrieval": {
+            "1": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            },
+            "2": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            }
+          },
+          "failures": [
+            "unsupported_question_returned_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "订单完成一年后还可以申请电子发票吗？如果可以流程是什么？"
+        },
+        {
+          "id": "rag-035",
+          "query": "我的订单 ORD1001 今天下午具体几点送到？",
+          "category": "动态事实",
+          "split": "dev",
+          "should_abstain": true,
+          "expected_answer": "政策知识库不包含具体订单实时配送时间，需查询业务工具且不能保证具体时刻",
+          "status": "ok",
+          "hits": [
+            {
+              "title": "物流时效与轨迹",
+              "content": "普通快递预计 3 至 5 个自然日送达，偏远地区可能增加 2 至 3 天。预计送达时间是基于仓库和承运商计算的参考时间，不等于承诺到达时间。订单发货后可以通过订单详情查看承运商、物流单号和最新轨迹。",
+              "source": "data/policies/customer_service_policy.md",
+              "chunk_id": "7f8f5424b754e7d7",
+              "score": 0.1011,
+              "dense_rank": 1,
+              "dense_relevance": 0.6784,
+              "lexical_rank": 4,
+              "lexical_score": 0.0714,
+              "rank": 1
+            }
+          ],
+          "retrieval_latency_ms": [
+            7.082399999490008,
+            6.978499997785548,
+            7.603599999129074
+          ],
+          "retrieval": {
+            "1": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            },
+            "2": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": false
+            }
+          },
+          "failures": [
+            "unsupported_question_returned_context"
+          ],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "我的订单 ORD1001 今天下午具体几点送到？"
+        },
+        {
+          "id": "rag-037",
+          "query": "退到银行卡可以指定另外一个人的卡吗？银行会收多少手续费？",
+          "category": "库内缺失",
+          "split": "dev",
+          "should_abstain": true,
+          "expected_answer": "知识库只有原路退款与到账时效，没有指定他人银行卡流程或手续费数额",
+          "status": "ok",
+          "hits": [],
+          "retrieval_latency_ms": [
+            7.902600002125837,
+            8.267799999885028,
+            8.578699998906814
+          ],
+          "retrieval": {
+            "1": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "退到银行卡可以指定另外一个人的卡吗？银行会收多少手续费？"
+        },
+        {
+          "id": "rag-039",
+          "query": "请推导快速排序平均时间复杂度并写一段代码。",
+          "category": "业务无关",
+          "split": "dev",
+          "should_abstain": true,
+          "expected_answer": "与商城客服知识库无关，应说明无法据此回答",
+          "status": "ok",
+          "hits": [],
+          "retrieval_latency_ms": [
+            8.438600001682062,
+            7.724700000835583,
+            7.671399998798734
+          ],
+          "retrieval": {
+            "1": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            },
+            "2": {
+              "recall": null,
+              "mrr": null,
+              "ndcg": null,
+              "context_relevance": 0.0,
+              "retrieval_abstention_correct": true
+            }
+          },
+          "failures": [],
+          "generation": {
+            "status": "not_run",
+            "answer_correctness": null,
+            "faithfulness": null,
+            "citation_support_rate": null,
+            "abstention_accuracy": null,
+            "generation_latency_ms": null,
+            "judge_latency_ms": null
+          },
+          "ranking_stable": true,
+          "effective_query": "请推导快速排序平均时间复杂度并写一段代码。"
+        }
+      ]
+    }
+  ]
+}

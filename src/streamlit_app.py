@@ -3,7 +3,6 @@ import logging
 import math
 import os
 import time
-import urllib.parse
 import uuid
 from collections.abc import AsyncGenerator, Awaitable, Callable
 from contextlib import suppress
@@ -18,6 +17,15 @@ from schema import ChatHistory, ChatMessage
 from schema.presentation import public_answer
 from schema.task_data import TaskData, TaskDataStatus
 from voice import VoiceManager
+from workbench_ui import (
+    STYLE,
+    heading,
+    model_badge,
+    render_knowledge,
+    render_privacy,
+    render_records,
+    render_welcome,
+)
 
 # A Streamlit app for interacting with the langgraph agent via a simple chat interface.
 # The app has three main functions which are all run async:
@@ -31,7 +39,7 @@ from voice import VoiceManager
 
 
 APP_TITLE = "OrderCare-Agent｜电商客服助手"
-APP_ICON = "🧰"
+APP_ICON = "🔷"
 USER_ID_COOKIE = "user_id"
 REQUEST_TIMEOUT_ENV = "STREAMLIT_REQUEST_TIMEOUT_SECONDS"
 DEFAULT_REQUEST_TIMEOUT_SECONDS = 300.0
@@ -54,16 +62,24 @@ def _mark_request_in_flight() -> None:
         st.session_state.request_submitted = True
 
 
+def _cancel_request() -> None:
+    st.session_state.request_processing = False
+    st.session_state.request_in_flight = False
+    st.session_state.request_submitted = False
+    st.session_state.request_error = "请求已取消。"
+
+
 async def _await_with_wait_status[T](
     request: Awaitable[T],
     placeholder: Any,
     *,
     timeout_seconds: float,
+    visible_event: asyncio.Event | None = None,
     clock: Callable[[], float] = time.monotonic,
 ) -> T:
     """Refresh the waiting label while the existing async request is pending."""
     started_at = clock()
-    placeholder.info("思考中……已用时 0 秒", icon="⏳")
+    placeholder.info("思考中... 00:00", icon="⏳")
     request_task = asyncio.create_task(request)
     shown_seconds = 0
     try:
@@ -74,9 +90,13 @@ async def _await_with_wait_status[T](
             await asyncio.wait({request_task}, timeout=min(1.0, remaining))
             if not request_task.done():
                 elapsed_seconds = int(clock() - started_at)
-                if elapsed_seconds > shown_seconds:
-                    placeholder.info(f"思考中……已用时 {elapsed_seconds} 秒", icon="⏳")
+                if elapsed_seconds > shown_seconds or (visible_event and visible_event.is_set()):
+                    phase = "生成中" if visible_event and visible_event.is_set() else "思考中"
+                    placeholder.info(f"{phase}... {elapsed_seconds // 60:02d}:{elapsed_seconds % 60:02d}", icon="⏳")
                     shown_seconds = elapsed_seconds
+        if visible_event and visible_event.is_set():
+            elapsed_seconds = int(clock() - started_at)
+            placeholder.info(f"生成中... {elapsed_seconds // 60:02d}:{elapsed_seconds % 60:02d}", icon="⏳")
         return await request_task
     finally:
         if not request_task.done():
@@ -105,6 +125,7 @@ async def main() -> None:
     st.set_page_config(
         page_title=APP_TITLE,
         page_icon=APP_ICON,
+        layout="wide",
         menu_items={},
     )
 
@@ -117,17 +138,7 @@ async def main() -> None:
         st.session_state.request_error = "请求已中断，请重新发送。"
 
     # Hide the streamlit upper-right chrome
-    st.html(
-        """
-        <style>
-        [data-testid="stStatusWidget"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-            }
-        </style>
-        """,
-    )
+    st.html(STYLE)
     if st.get_option("client.toolbarMode") != "minimal":
         st.set_option("client.toolbarMode", "minimal")
         await asyncio.sleep(0.1)
@@ -171,259 +182,242 @@ async def main() -> None:
         st.session_state.messages = messages
         st.session_state.thread_id = thread_id
 
-    # Config options
+    if "workbench_page" not in st.session_state:
+        st.session_state.workbench_page = "客服工作台"
+    busy = st.session_state.get("request_in_flight", False)
+
+    @st.dialog("隐私说明")
+    def privacy_dialog() -> None:
+        render_privacy()
+
     with st.sidebar:
-        st.header(f"{APP_ICON} {APP_TITLE}")
-
-        ""
-        "Full toolkit for running an AI agent service built with LangGraph, FastAPI and Streamlit"
-        ""
-
-        if st.button(
-            ":material/chat: New Chat",
-            use_container_width=True,
-            disabled=st.session_state.get("request_in_flight", False),
+        st.html("""<div class="brand-lockup"><span class="brand-mark">O</span><div>
+          <div class="brand-name">OrderCare-Agent</div>
+          <div class="brand-subtitle">智能电商客服Agent</div></div></div>""")
+        for label, icon in (
+            ("客服工作台", ":material/support_agent:"),
+            ("知识库管理", ":material/menu_book:"),
+            ("执行记录", ":material/history:"),
         ):
-            st.session_state.messages = []
-            st.session_state.thread_id = str(uuid.uuid4())
-            # Clear saved audio when starting new chat
-            if "last_audio" in st.session_state:
-                del st.session_state.last_audio
-            st.rerun()
+            if st.button(
+                label, key=f"nav_{label}", icon=icon, use_container_width=True,
+                type="primary" if st.session_state.workbench_page == label else "secondary",
+                disabled=busy,
+            ):
+                st.session_state.workbench_page = label
+                st.rerun()
+        if st.button("隐私说明", key="nav_privacy", icon=":material/lock:", use_container_width=True):
+            privacy_dialog()
 
-        with st.popover(":material/settings: Settings", use_container_width=True):
-            model_idx = agent_client.info.models.index(agent_client.info.default_model)
-            model = st.selectbox("LLM to use", options=agent_client.info.models, index=model_idx)
-            agent_list = [a.key for a in agent_client.info.agents]
-            agent_idx = agent_list.index(agent_client.info.default_agent)
-            agent_client.agent = st.selectbox(
-                "Agent to use",
-                options=agent_list,
-                index=agent_idx,
-            )
-            use_streaming = st.toggle("Stream results", value=True)
-            # Audio toggle with callback: clears cached audio when toggled off
-            enable_audio = st.toggle(
-                "Enable audio generation",
-                value=True,
-                disabled=not voice or not voice.tts,
-                help="Configure VOICE_TTS_PROVIDER in .env to enable"
-                if not voice or not voice.tts
-                else None,
-                on_change=lambda: (
-                    st.session_state.pop("last_audio", None)
-                    if not st.session_state.get("enable_audio", True)
-                    else None
-                ),
-                key="enable_audio",
-            )
+    if st.session_state.workbench_page == "知识库管理":
+        render_knowledge(agent_client)
+        return
+    if st.session_state.workbench_page == "执行记录":
+        render_records(agent_client)
+        return
+    _, chat_col, _ = st.columns([1, 4.5, 1], gap="small")
+    model = None  # The service owns Provider/model selection.
+    use_streaming = os.getenv("STREAMLIT_USE_SSE", "true").lower() != "false"
+    enable_audio = bool(voice and voice.tts)
 
-            # Display user ID (for debugging or user information)
-            st.text_input("User ID (read-only)", value=user_id, disabled=True)
-
-        @st.dialog("Architecture")
-        def architecture_dialog() -> None:
-            st.image(
-                "https://raw.githubusercontent.com/Snape001/OrderCare-Agent/main/media/agent_architecture.png"
-            )
-            "[在 GitHub 查看原图](https://github.com/Snape001/OrderCare-Agent/blob/main/media/agent_architecture.png)"
-            st.caption(
-                "App hosted on [Streamlit Cloud](https://share.streamlit.io/) with FastAPI service running in [Azure](https://learn.microsoft.com/en-us/azure/app-service/)"
-            )
-
-        if st.button(":material/schema: Architecture", use_container_width=True):
-            architecture_dialog()
-
-        with st.popover(":material/policy: Privacy", use_container_width=True):
-            st.write(
-                "Prompts, responses and feedback in this app are anonymously recorded and saved to LangSmith for product evaluation and improvement purposes only."
-            )
-
-        @st.dialog("Share/resume chat")
-        def share_chat_dialog() -> None:
-            # Use Streamlit's public request context. The former implementation
-            # reached into private session internals, which changed in Streamlit
-            # 1.58 and caused an AttributeError when opening this dialog.
+    with chat_col:
+        title_col, model_col = st.columns([3, 1], vertical_alignment="center")
+        with title_col:
+            heading("客服工作台", "智能售后助手，为用户提供订单查询、退款判断、政策咨询和售后服务。")
+        with model_col:
             try:
-                current_url = str(st.context.url)
-            except Exception:
-                current_url = os.getenv("STREAMLIT_PUBLIC_URL", "http://127.0.0.1:8501")
-            parsed_url = urllib.parse.urlsplit(current_url)
-            st_base_url = urllib.parse.urlunsplit(
-                (parsed_url.scheme, parsed_url.netloc, parsed_url.path, "", "")
+                status = agent_client.workbench_get("status")
+            except (AgentClientError, AttributeError):
+                status = None
+            if isinstance(status, dict):
+                model_badge(str(status.get("provider", "")), str(status.get("model", "")))
+
+        action_new, action_history, action_cancel = st.columns([1, 1, 1.5], gap="small")
+        with action_new:
+            if st.button("新建会话", icon=":material/add_comment:", use_container_width=True, disabled=busy):
+                st.session_state.messages = []
+                st.session_state.thread_id = str(uuid.uuid4())
+                st.session_state.pop("last_audio", None)
+                st.rerun()
+        with action_history, st.popover("历史会话", icon=":material/history:", use_container_width=True):
+            try:
+                history_data = agent_client.workbench_get("traces", params={"limit": 50})
+            except (AgentClientError, AttributeError):
+                history_data = None
+            rows = history_data.get("traces", []) if isinstance(history_data, dict) else []
+            seen: set[str] = set()
+            for row in rows:
+                thread = row.get("thread_id", "")
+                if not thread or thread in seen or thread == st.session_state.thread_id:
+                    continue
+                seen.add(thread)
+                label = row.get("question") or f"会话 {thread[:8]}"
+                if st.button(label[:36], key=f"history_{thread}", disabled=busy, use_container_width=True):
+                    try:
+                        st.session_state.messages = agent_client.get_history(thread_id=thread).messages
+                        st.session_state.thread_id = thread
+                        st.rerun()
+                    except AgentClientError:
+                        st.error("无法读取该会话。")
+            if not seen:
+                st.caption("暂无其他历史会话。")
+        with action_cancel:
+            st.button("取消请求", icon=":material/close:", disabled=not busy,
+                      on_click=_cancel_request, use_container_width=True)
+
+        # Draw existing messages
+        messages: list[ChatMessage] = st.session_state.messages
+        quick_prompt: str | None = None
+        if len(messages) == 0:
+            render_welcome()
+            examples = (
+                "查询订单物流", "七天无理由退货", "商品质量问题如何处理", "创建售后工单",
             )
-            # if it's not localhost, switch to https by default
-            is_local = parsed_url.hostname in {"localhost", "127.0.0.1", "0.0.0.0"}
-            if not st_base_url.startswith("https") and not is_local:
-                st_base_url = st_base_url.replace("http", "https")
-            # A public thread ID is not an access credential. Never share session secrets.
-            chat_url = f"{st_base_url}?thread_id={st.session_state.thread_id}"
-            st.markdown(f"**Chat URL:**\n```text\n{chat_url}\n```")
-            st.info(
-                "此链接仅标记会话，不能授权他人读取。恢复需要原客户端会话凭证；刷新后可能需要新建聊天。"
-            )
+            first_row, second_row = st.columns(2), st.columns(2)
+            for index, example in enumerate(examples):
+                with (first_row if index < 2 else second_row)[index % 2]:
+                    if st.button(example, key=f"example_{index}", use_container_width=True, disabled=busy):
+                        _mark_request_in_flight()
+                        quick_prompt = example
 
-        if st.button(":material/upload: Share/resume chat", use_container_width=True):
-            share_chat_dialog()
+        # draw_messages() expects an async iterator over messages
+        async def amessage_iter() -> AsyncGenerator[ChatMessage, None]:
+            for m in messages:
+                yield m
 
-        "[OrderCare-Agent 源码](https://github.com/Snape001/OrderCare-Agent)"
-        st.caption("OrderCare-Agent · 许可证与原始版权声明见仓库 LICENSE")
+        await draw_messages(amessage_iter())
 
-    # Draw existing messages
-    messages: list[ChatMessage] = st.session_state.messages
-
-    if len(messages) == 0:
-        match agent_client.agent:
-            case "customer-support":
-                WELCOME = """你好！我是电商智能客服演示助手。
-                我可以查询政策、订单和退款资格，并在你确认后创建客服工单。
-                你可以先试试：查询订单 ORD1001，手机号后四位 8821"""
-            case "chatbot":
-                WELCOME = "Hello! I'm a simple chatbot. Ask me anything!"
-            case "interrupt-agent":
-                WELCOME = "Hello! I'm an interrupt agent. Tell me your birthday and I will predict your personality!"
-            case "research-assistant":
-                WELCOME = "Hello! I'm an AI-powered research assistant with web search and a calculator. Ask me anything!"
-            case "rag-assistant":
-                WELCOME = """Hello! I'm an AI-powered Company Policy & HR assistant with access to AcmeTech's Employee Handbook.
-                I can help you find information about benefits, remote work, time-off policies, company values, and more. Ask me anything!"""
-            case _:
-                WELCOME = "Hello! I'm an AI agent. Ask me anything!"
-
-        with st.chat_message("ai"):
-            st.write(WELCOME)
-
-    # draw_messages() expects an async iterator over messages
-    async def amessage_iter() -> AsyncGenerator[ChatMessage, None]:
-        for m in messages:
-            yield m
-
-    await draw_messages(amessage_iter())
-
-    # Render saved audio for the last AI message (if it exists)
-    # This ensures audio persists across st.rerun() calls
-    if (
-        voice
-        and enable_audio
-        and "last_audio" in st.session_state
-        and st.session_state.last_message
-        and len(messages) > 0
-        and messages[-1].type == "ai"
-    ):
-        with st.session_state.last_message:
-            audio_data = st.session_state.last_audio
-            st.audio(audio_data["data"], format=audio_data["format"])
-
-    if request_error := st.session_state.pop("request_error", None):
-        st.error(request_error)
-
-    # Generate new message if the user provided new input
-    # Use voice manager if available, otherwise fall back to regular input
-    # REQUIRED: Set VOICE_STT_PROVIDER, VOICE_TTS_PROVIDER, OPENAI_API_KEY
-    # in app .env (NOT service .env) to enable voice features.
-    if voice:
-        user_input = voice.get_chat_input(
-            disabled=st.session_state.get("request_in_flight", False),
-            on_submit=_mark_request_in_flight,
-            key="chat_prompt",
-        )
-    else:
-        user_input = st.chat_input(
-            disabled=st.session_state.get("request_in_flight", False),
-            on_submit=_mark_request_in_flight,
-            key="chat_prompt",
-        )
-
-    if user_input:
-        if st.session_state.get("request_processing", False) or not st.session_state.get(
-            "request_submitted", False
+        # Render saved audio for the last AI message (if it exists)
+        # This ensures audio persists across st.rerun() calls
+        if (
+            voice
+            and enable_audio
+            and "last_audio" in st.session_state
+            and st.session_state.last_message
+            and len(messages) > 0
+            and messages[-1].type == "ai"
         ):
-            return
-        st.session_state.request_submitted = False
-        st.session_state.request_in_flight = True
-        st.session_state.request_processing = True
-        messages.append(ChatMessage(type="human", content=user_input))
-        st.chat_message("human").write(user_input)
-        status_placeholder = st.empty()
-        timeout_seconds = _request_timeout_seconds()
-        try:
-            if use_streaming:
-                stream = agent_client.astream(
-                    message=user_input,
-                    model=model,
-                    thread_id=st.session_state.thread_id,
-                    user_id=user_id,
-                )
-                await _await_with_wait_status(
-                    draw_messages(stream, is_new=True),
-                    status_placeholder,
-                    timeout_seconds=timeout_seconds,
-                )
-                # Generate TTS audio for streaming response
-                # Note: draw_messages() stores the final message in st.session_state.messages
-                # and the container reference in st.session_state.last_message
-                if voice and enable_audio and st.session_state.messages:
-                    last_msg = st.session_state.messages[-1]
-                    # Only generate audio for AI responses with content
-                    if last_msg.type == "ai" and last_msg.content:
-                        # Use audio_only=True since text was already streamed by draw_messages()
-                        voice.render_message(
-                            last_msg.content,
-                            container=st.session_state.last_message,
-                            audio_only=True,
-                        )
-            else:
-                response = await _await_with_wait_status(
-                    agent_client.ainvoke(
+            with st.session_state.last_message:
+                audio_data = st.session_state.last_audio
+                st.audio(audio_data["data"], format=audio_data["format"])
+
+        if request_error := st.session_state.pop("request_error", None):
+            st.error(request_error)
+
+        # Generate new message if the user provided new input
+        # Use voice manager if available, otherwise fall back to regular input
+        # REQUIRED: Set VOICE_STT_PROVIDER, VOICE_TTS_PROVIDER, OPENAI_API_KEY
+        # in app .env (NOT service .env) to enable voice features.
+        if voice:
+            user_input = voice.get_chat_input(
+                disabled=st.session_state.get("request_in_flight", False),
+                on_submit=_mark_request_in_flight,
+                key="chat_prompt",
+            )
+        else:
+            user_input = st.chat_input(
+                disabled=st.session_state.get("request_in_flight", False),
+                on_submit=_mark_request_in_flight,
+                key="chat_prompt",
+            )
+        if quick_prompt:
+            user_input = quick_prompt
+
+        if user_input:
+            if st.session_state.get("request_processing", False) or not st.session_state.get(
+                "request_submitted", False
+            ):
+                return
+            st.session_state.request_submitted = False
+            st.session_state.request_in_flight = True
+            st.session_state.request_processing = True
+            messages.append(ChatMessage(type="human", content=user_input))
+            st.chat_message("human").markdown(user_input)
+            status_placeholder = st.empty()
+            timeout_seconds = _request_timeout_seconds()
+            visible_event = asyncio.Event()
+            try:
+                if use_streaming:
+                    stream = agent_client.astream(
                         message=user_input,
                         model=model,
                         thread_id=st.session_state.thread_id,
                         user_id=user_id,
-                    ),
-                    status_placeholder,
-                    timeout_seconds=timeout_seconds,
-                )
-                if agent_client.agent == "customer-support":
-                    answer = public_answer(response.content)
-                    if answer is None:
-                        raise AgentClientError("No public answer received")
-                    response = response.model_copy(update={"content": answer})
-                messages.append(response)
-                # Render AI response with optional voice
-                with st.chat_message("ai"):
-                    if voice and enable_audio:
-                        voice.render_message(response.content)
-                    else:
-                        st.write(response.content)
-        except TimeoutError:
-            st.session_state.request_error = "请求超时，请稍后重试。"
-        except AgentClientError:
-            st.session_state.request_error = "请求失败，请检查服务连接后重试。"
-        except Exception as exc:
-            logger.error("Chat request failed: %s", type(exc).__name__)
-            st.session_state.request_error = "请求处理失败，请稍后重试。"
-        except BaseException:
-            st.session_state.request_error = "请求已中断，请重新发送。"
-            raise
-        finally:
-            st.session_state.request_processing = False
+                    )
+                    await _await_with_wait_status(
+                        draw_messages(stream, is_new=True, on_visible=visible_event.set),
+                        status_placeholder,
+                        timeout_seconds=timeout_seconds,
+                        visible_event=visible_event,
+                    )
+                    # Generate TTS audio for streaming response
+                    # Note: draw_messages() stores the final message in st.session_state.messages
+                    # and the container reference in st.session_state.last_message
+                    if voice and enable_audio and st.session_state.messages:
+                        last_msg = st.session_state.messages[-1]
+                        # Only generate audio for AI responses with content
+                        if last_msg.type == "ai" and last_msg.content:
+                            # Use audio_only=True since text was already streamed by draw_messages()
+                            voice.render_message(
+                                last_msg.content,
+                                container=st.session_state.last_message,
+                                audio_only=True,
+                            )
+                else:
+                    response = await _await_with_wait_status(
+                        agent_client.ainvoke(
+                            message=user_input,
+                            model=model,
+                            thread_id=st.session_state.thread_id,
+                            user_id=user_id,
+                        ),
+                        status_placeholder,
+                        timeout_seconds=timeout_seconds,
+                        visible_event=visible_event,
+                    )
+                    if agent_client.agent == "customer-support":
+                        answer = public_answer(response.content)
+                        if answer is None:
+                            raise AgentClientError("No public answer received")
+                        response = response.model_copy(update={"content": answer})
+                    messages.append(response)
+                    visible_event.set()
+                    # Render AI response with optional voice
+                    with st.chat_message("ai"):
+                        if voice and enable_audio:
+                            voice.render_message(response.content)
+                        else:
+                            st.markdown(response.content)
+            except TimeoutError:
+                st.session_state.request_error = "请求超时，请稍后重试。"
+            except AgentClientError:
+                st.session_state.request_error = "请求失败，请检查服务连接后重试。"
+            except Exception as exc:
+                logger.error("Chat request failed: %s", type(exc).__name__)
+                st.session_state.request_error = "请求处理失败，请稍后重试。"
+            except BaseException:
+                st.session_state.request_error = "请求已中断，请重新发送。"
+                raise
+            finally:
+                st.session_state.request_processing = False
+                st.session_state.request_in_flight = False
+            st.rerun()  # Re-enable input and clear stale containers
+        elif st.session_state.pop("request_submitted", False):
+            # For example, voice transcription failed after the submit callback.
             st.session_state.request_in_flight = False
-        st.rerun()  # Re-enable input and clear stale containers
-    elif st.session_state.pop("request_submitted", False):
-        # For example, voice transcription failed after the submit callback.
-        st.session_state.request_in_flight = False
-        st.session_state.request_error = "未收到有效消息，请重试。"
-        st.rerun()
+            st.session_state.request_error = "未收到有效消息，请重试。"
+            st.rerun()
 
-    # If messages have been generated, show feedback widget
-    if len(messages) > 0 and st.session_state.last_message:
-        with st.session_state.last_message:
-            await handle_feedback()
+        # If messages have been generated, show feedback widget
+        if len(messages) > 0 and st.session_state.last_message:
+            with st.session_state.last_message:
+                await handle_feedback()
 
 
 async def draw_messages(
     messages_agen: AsyncGenerator[ChatMessage | str, None],
     is_new: bool = False,
+    on_visible: Callable[[], None] | None = None,
 ) -> None:
     """
     Draws a set of chat messages - either replaying existing messages
@@ -444,7 +438,7 @@ async def draw_messages(
     """
 
     if st.session_state.agent_client.agent == "customer-support":
-        await _draw_customer_messages(messages_agen, is_new=is_new)
+        await _draw_customer_messages(messages_agen, is_new=is_new, on_visible=on_visible)
         return
 
     # Keep track of the last message container
@@ -473,6 +467,8 @@ async def draw_messages(
 
         # str message represents an intermediate token being streamed
         if isinstance(msg, str):
+            if on_visible and msg:
+                on_visible()
             # If placeholder is empty, this is the first token of a new message
             # being streamed. We need to do setup.
             if not streaming_placeholder:
@@ -625,6 +621,7 @@ async def _draw_customer_messages(
     messages_agen: AsyncGenerator[ChatMessage | str, None],
     *,
     is_new: bool,
+    on_visible: Callable[[], None] | None = None,
 ) -> None:
     """Show only completed customer replies; keep tool traffic out of the chat."""
     st.session_state.last_message = None
@@ -636,8 +633,10 @@ async def _draw_customer_messages(
             return
         if is_new:
             st.session_state.messages.append(pending_answer)
+        if on_visible:
+            on_visible()
         container = st.chat_message("ai")
-        container.write(pending_answer.content)
+        container.markdown(pending_answer.content)
         st.session_state.last_message = container
         pending_answer = None
 
@@ -646,7 +645,7 @@ async def _draw_customer_messages(
             continue
         if msg.type == "human":
             show_pending_answer()
-            st.chat_message("human").write(msg.content)
+            st.chat_message("human").markdown(msg.content)
         elif msg.type == "ai" and not msg.tool_calls:
             answer = public_answer(msg.content)
             if answer:

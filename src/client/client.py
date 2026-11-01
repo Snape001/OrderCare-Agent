@@ -3,6 +3,7 @@ import os
 import secrets
 from collections.abc import AsyncGenerator, Generator
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
@@ -85,6 +86,38 @@ class AgentClient:
                     f"Agent {agent} not found in available agents: {', '.join(agent_keys)}"
                 )
         self.agent = agent
+
+    def workbench_get(self, path: str, *, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Read session-scoped workbench data with the existing credentials."""
+        try:
+            response = httpx.get(
+                f"{self.base_url}/workbench/{path}",
+                params=params, headers=self._headers, timeout=self.timeout,
+            )
+            response.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise AgentClientError("Workbench request failed") from exc
+        value = response.json()
+        if not isinstance(value, dict):
+            raise AgentClientError("Workbench returned invalid data")
+        return value
+
+    def workbench_post(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
+        try:
+            response = httpx.post(
+                f"{self.base_url}/workbench/{path}", json=payload,
+                headers=self._headers, timeout=self.timeout,
+            )
+            response.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise AgentClientError("Workbench request failed") from exc
+        value = response.json()
+        if not isinstance(value, dict):
+            raise AgentClientError("Workbench returned invalid data")
+        return value
+
+    def workbench_trace(self, trace_id: str) -> dict[str, Any]:
+        return self.workbench_get("traces/" + quote(trace_id, safe=""))
 
     async def ainvoke(
         self,
@@ -199,7 +232,7 @@ class AgentClient:
                     return parsed["content"]
                 case "error":
                     error_msg = "Error: " + parsed["content"]
-                    return ChatMessage(type="ai", content=error_msg)
+                    raise AgentClientError(error_msg)
         return None
 
     def stream(

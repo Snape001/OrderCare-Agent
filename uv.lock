@@ -14,7 +14,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "agent-service-toolkit"
+name = "ordercare-agent"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
@@ -45,6 +45,7 @@ dependencies = [
     { name = "langgraph-checkpoint-sqlite" },
     { name = "langgraph-supervisor" },
     { name = "langsmith" },
+    { name = "mcp" },
     { name = "numexpr" },
     { name = "numpy" },
     { name = "onnxruntime" },
@@ -113,6 +114,7 @@ requires-dist = [
     { name = "langgraph-checkpoint-sqlite", specifier = "~=3.1.0" },
     { name = "langgraph-supervisor", specifier = "~=0.0.31" },
     { name = "langsmith", specifier = "~=0.9.4" },
+    { name = "mcp", specifier = ">=1.28,<2" },
     { name = "numexpr", specifier = "~=2.14.1" },
     { name = "numpy", specifier = "~=2.5.0" },
     { name = "onnxruntime", specifier = "~=1.27.0" },

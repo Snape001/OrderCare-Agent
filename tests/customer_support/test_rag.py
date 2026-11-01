@@ -93,3 +93,27 @@ def test_dense_search_can_reject_unrelated_question(tmp_path: Path):
     hits = knowledge_base.search("请解释快速排序的时间复杂度", top_k=2, method="dense")
 
     assert hits == []
+
+
+def test_invalid_search_inputs_fail_before_index_access():
+    import pytest
+
+    kb = PolicyKnowledgeBase(embedding=HashEmbeddings())
+    with pytest.raises(ValueError, match="positive"):
+        kb.search("query", top_k=0)
+    with pytest.raises(ValueError, match="method"):
+        kb.search("query", method="invalid")
+    assert kb.search("   ") == []
+
+
+def test_fusion_weight_default_preserves_ranking(tmp_path):
+    base = PolicyKnowledgeBase(persist_directory=tmp_path / "index", embedding=HashEmbeddings())
+    explicit = PolicyKnowledgeBase(
+        persist_directory=tmp_path / "index",
+        embedding=HashEmbeddings(),
+        lexical_weight=1.0,
+        lexical_threshold=0.30,
+    )
+    assert base.search("电子产品进水了还能保修吗", top_k=2) == explicit.search(
+        "电子产品进水了还能保修吗", top_k=2
+    )

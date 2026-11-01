@@ -1,3 +1,5 @@
+> 本文为历史依赖升级记录。当前客服必须配置真实 LLM Provider；历史 fake-model 服务启动步骤不适用于当前客服。请以 README 为准。
+
 # Dependency & Version Upgrade Management
 
 A maintainer guide for keeping `ordercare-agent`'s dependencies current without

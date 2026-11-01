@@ -73,7 +73,9 @@ def test_chat_input_forwards_disabled_state_without_stt():
     manager = VoiceManager(stt=None, tts=Mock())
     on_submit = Mock()
     with patch("voice.manager.st.chat_input", return_value="你好") as widget:
-        assert manager.get_chat_input(disabled=True, on_submit=on_submit, key="chat_prompt") == "你好"
+        assert (
+            manager.get_chat_input(disabled=True, on_submit=on_submit, key="chat_prompt") == "你好"
+        )
     widget.assert_called_once_with(
         "Your message", disabled=True, on_submit=on_submit, key="chat_prompt"
     )
@@ -83,7 +85,9 @@ def test_chat_input_forwards_disabled_state_with_stt():
     manager = VoiceManager(stt=Mock(), tts=None)
     on_submit = Mock()
     with patch("voice.manager.st.chat_input", return_value="你好") as widget:
-        assert manager.get_chat_input(disabled=True, on_submit=on_submit, key="chat_prompt") == "你好"
+        assert (
+            manager.get_chat_input(disabled=True, on_submit=on_submit, key="chat_prompt") == "你好"
+        )
     widget.assert_called_once_with(
         "Your message",
         accept_audio=True,

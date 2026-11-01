@@ -4,7 +4,6 @@
 
 真实模式：`src/agents/customer_support_agent.py:build_customer_support_graph` 调用 `create_agent`，沿用其消息状态，核心是 `messages` 列表；每轮新增 `HumanMessage`、可能的 `AIMessage.tool_calls` / `ToolMessage`、最终 `AIMessage`。它没有项目自定义的 `current_order_id`、`active_task` 字段。模型可以读到同一会话的历史文本，但是否从旧对话提取订单号取决于模型与提示词，不能保证自动复用。
 
-Mock 模式：`src/agents/customer_support_mock.py:CustomerSupportState` 扩展 `MessagesState`，定义 `pending_query: {intent, order_id?, phone_last4?} | None` 和 `pending_ticket | None`。`customer_support_node` 返回增量状态；`messages` 由 LangGraph reducer 追加，槽位由节点返回值覆盖。补参时保留有效参数，查询成功或取消后将 `pending_query` 设为 `None`。该槽位只表示**正在进行的任务**，并非跨任务用户资料；前轮查询成功后下一轮开始退款仍可能重新询问订单号。工单参数缺失时未建立完整待办状态，也不应夸称通用任务持久化。
 
 ## 保存、恢复与隔离
 
@@ -18,4 +17,4 @@ Streamlit 在 `st.session_state` 中保存 UI 消息、公开 `thread_id` 和 `A
 
 ## 人工确认与局限
 
-真实图在 `create_support_ticket` 前经 `HumanInTheLoopMiddleware` 暂停，Checkpoint 保存中断；下一轮 `_handle_input` 读取 `state.tasks[].interrupts` 并构造 `Command(resume=...)`。Mock 则把 `pending_ticket` 写入 State，明确确认后才调用写入函数。当前缺少“已验证的当前订单”跨任务槽位及生命周期规则；这正解释“前文给过订单号，下一轮想退款又被追问”的可能行为，不能把已有 Checkpoint 等同于完整业务记忆。
+真实图在 `create_support_ticket` 前经 `HumanInTheLoopMiddleware` 暂停，Checkpoint 保存中断；下一轮 `_handle_input` 读取 `state.tasks[].interrupts` 并构造 `Command(resume=...)`。当前缺少“已验证的当前订单”跨任务槽位及生命周期规则；这正解释“前文给过订单号，下一轮想退款又被追问”的可能行为，不能把已有 Checkpoint 等同于完整业务记忆。

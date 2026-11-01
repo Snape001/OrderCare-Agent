@@ -8,17 +8,16 @@ from streamlit.testing.v1 import AppTest
 
 from client import AgentClientError
 from schema import AgentInfo, ChatHistory, ChatMessage
-from schema.models import OpenAIModelName
 from streamlit_app import _await_with_wait_status, _request_timeout_seconds
 
 APP_PATH = (Path.cwd() / "src" / "streamlit_app.py").resolve()
 
 
-def test_app_simple_non_streaming(mock_agent_client):
+def test_app_simple_non_streaming(mock_agent_client, monkeypatch):
     """Test the full app - happy path"""
+    monkeypatch.setenv("STREAMLIT_USE_SSE", "false")
     at = AppTest.from_file(str(APP_PATH)).run(timeout=10)
 
-    WELCOME_START = "Hello! I'm an AI agent. Ask me anything!"
     PROMPT = "Know any jokes?"
     RESPONSE = "Sure! Here's a joke:"
 
@@ -26,10 +25,8 @@ def test_app_simple_non_streaming(mock_agent_client):
         return_value=ChatMessage(type="ai", content=RESPONSE),
     )
 
-    assert at.chat_message[0].avatar == "assistant"
-    assert at.chat_message[0].markdown[0].value.startswith(WELCOME_START)
+    assert len(at.chat_message) == 0
 
-    at.sidebar.toggle[0].set_value(False)  # Use Streaming = False
     at.chat_input[0].set_value(PROMPT).run()
     print(at)
     assert at.chat_message[0].avatar == "user"
@@ -39,8 +36,8 @@ def test_app_simple_non_streaming(mock_agent_client):
     assert not at.exception
 
 
-def test_app_settings(mock_agent_client):
-    """Test the full app - happy path"""
+def test_app_uses_server_model_without_frontend_switch(mock_agent_client, monkeypatch):
+    monkeypatch.setenv("STREAMLIT_USE_SSE", "false")
     at = AppTest.from_file(str(APP_PATH))
     at.query_params["user_id"] = "1234"
     at.run()
@@ -52,11 +49,7 @@ def test_app_settings(mock_agent_client):
         return_value=ChatMessage(type="ai", content=RESPONSE),
     )
 
-    at.sidebar.toggle[0].set_value(False)  # Use Streaming = False
-    assert at.sidebar.selectbox[0].value == "gpt-5-nano"
     assert mock_agent_client.agent == "test-agent"
-    at.sidebar.selectbox[0].set_value("gpt-5-mini")
-    at.sidebar.selectbox[1].set_value("chatbot")
     at.chat_input[0].set_value(PROMPT).run()
     print(at)
 
@@ -67,15 +60,89 @@ def test_app_settings(mock_agent_client):
     assert at.chat_message[1].markdown[0].value == RESPONSE
 
     # Check the args match the settings
-    assert mock_agent_client.agent == "chatbot"
+    assert mock_agent_client.agent == "test-agent"
+    assert not at.sidebar.selectbox
     mock_agent_client.ainvoke.assert_called_with(
         message=PROMPT,
-        model=OpenAIModelName.GPT_5_MINI,
+        model=None,
         thread_id=at.session_state.thread_id,
         user_id=at.session_state.user_id,
     )
     assert at.session_state.user_id != "1234"  # URL parameters cannot choose identity.
     assert not at.exception
+
+
+def test_three_workbench_pages_and_privacy_load_with_backend_data(mock_agent_client):
+    mock_agent_client.workbench_get.side_effect = lambda path, params=None: (
+        {"documents": [{"collection": "online", "source": "policy.md", "preview": "## 保修", "sections": 1}],
+         "chunks": [{"collection": "online", "source": "policy.md", "title": "保修",
+                     "chunk_id": "chunk-1", "chunk_index": 0, "content": "保修原文"}],
+         "debug_collection": "online", "online_index": None, "experiment_index": None}
+        if path == "policies" else
+        {"provider": "deepseek", "model": "deepseek-flash", "api": "ready",
+         "agent_graph": {"loaded": True}, "mcp": {"tool_count": 4},
+         "checkpoint": {"available": True}, "chroma": {"indexed": True}}
+        if path == "status" else
+        {"traces": []} if path == "traces" else
+        {"message_count": 0, "checkpoint_available": False, "interrupted": False}
+        if path.startswith("sessions/") else {}
+    )
+    app = AppTest.from_file(str(APP_PATH)).run()
+    assert [button.label for button in app.sidebar.button] == [
+        "客服工作台", "知识库管理", "执行记录", "隐私说明"
+    ]
+    for index, page in enumerate(("客服工作台", "知识库管理", "执行记录")):
+        app.sidebar.button[index].click().run()
+        assert app.session_state.workbench_page == page
+        assert not app.exception
+    app.sidebar.button[3].click().run()
+    assert any("会话与数据" in item.value for item in app.markdown)
+    assert not app.exception
+
+
+def test_customer_stream_keeps_tool_payload_private_and_shows_approval(mock_agent_client):
+    mock_agent_client.agent = "customer-support"
+
+    async def message_stream() -> AsyncGenerator[ChatMessage | str, None]:
+        yield "<think>internal reasoning</think>"
+        yield ChatMessage(
+            type="ai", content="", tool_calls=[{
+                "name": "create_support_ticket", "id": "call-1",
+                "args": {"phone_last4": "8821"},
+            }],
+        )
+        yield ChatMessage(type="ai", content="请回复“确认”执行，或回复“取消”。")
+
+    mock_agent_client.astream = Mock(return_value=message_stream())
+    app = AppTest.from_file(str(APP_PATH)).run()
+    app.chat_input[0].set_value("帮我建工单").run()
+    assert any("请回复“确认”" in block.value for block in app.chat_message[1].markdown)
+    visible = "\n".join(block.value for message in app.chat_message for block in message.markdown)
+    assert "8821" not in visible
+    assert "internal reasoning" not in visible
+    assert not app.exception
+
+
+@pytest.mark.asyncio
+async def test_wait_status_switches_to_generation_after_visible_output():
+    placeholder = Mock()
+    visible = asyncio.Event()
+    release = asyncio.Event()
+
+    async def request() -> str:
+        await release.wait()
+        return "ok"
+
+    waiting = asyncio.create_task(_await_with_wait_status(
+        request(), placeholder, timeout_seconds=4, visible_event=visible
+    ))
+    await asyncio.sleep(0.05)
+    visible.set()
+    await asyncio.sleep(1.1)
+    assert any(call.args[0].startswith("生成中... 00:01") for call in placeholder.info.call_args_list)
+    release.set()
+    assert await waiting == "ok"
+    placeholder.empty.assert_called_once()
 
 
 def test_app_thread_id_history(mock_agent_client):
@@ -131,7 +198,6 @@ async def test_app_streaming(mock_agent_client):
 
     mock_agent_client.astream = Mock(return_value=amessage_iter())
 
-    at.toggle[0].set_value(True)  # Use Streaming = True
     at.chat_input[0].set_value(PROMPT).run()
     print(at)
 
@@ -178,7 +244,6 @@ async def test_app_streaming_hitl_interrupt_without_tool_result(mock_agent_clien
 
     mock_agent_client.astream = Mock(return_value=amessage_iter())
 
-    at.toggle[0].set_value(True)
     at.chat_input[0].set_value(prompt).run()
 
     response = at.chat_message[1]
@@ -206,7 +271,6 @@ async def test_app_streaming_standalone_tool_result_after_hitl_resume(mock_agent
 
     mock_agent_client.astream = Mock(return_value=amessage_iter())
 
-    at.toggle[0].set_value(True)
     at.chat_input[0].set_value(prompt).run()
 
     response = at.chat_message[1]
@@ -224,7 +288,6 @@ async def test_app_init_error(mock_agent_client):
     PROMPT = "What is 6 * 7?"
     mock_agent_client.astream.side_effect = AgentClientError("api_key=do-not-display")
 
-    at.toggle[0].set_value(True)  # Use Streaming = True
     at.chat_input[0].set_value(PROMPT).run()
     print(at)
 
@@ -250,12 +313,12 @@ async def test_wait_status_updates_before_slow_request_finishes():
         _await_with_wait_status(slow_request(), placeholder, timeout_seconds=4)
     )
     await asyncio.sleep(0.05)
-    assert placeholder.info.call_args_list[0].args[0] == "思考中……已用时 0 秒"
+    assert placeholder.info.call_args_list[0].args[0] == "思考中... 00:00"
 
     await asyncio.sleep(2.15)
     assert not waiting.done()
-    assert any(call.args[0] == "思考中……已用时 1 秒" for call in placeholder.info.call_args_list)
-    assert any(call.args[0] == "思考中……已用时 2 秒" for call in placeholder.info.call_args_list)
+    assert any(call.args[0] == "思考中... 00:01" for call in placeholder.info.call_args_list)
+    assert any(call.args[0] == "思考中... 00:02" for call in placeholder.info.call_args_list)
 
     release.set()
     assert await waiting == "finished"
@@ -408,7 +471,8 @@ def test_customer_support_approval_prompt_survives_ui_filter(mock_agent_client):
     assert not app.exception
 
 
-def test_customer_support_non_streaming_filters_thinking(mock_agent_client):
+def test_customer_support_non_streaming_filters_thinking(mock_agent_client, monkeypatch):
+    monkeypatch.setenv("STREAMLIT_USE_SSE", "false")
     mock_agent_client.info.agents.append(
         AgentInfo(key="customer-support", description="Customer support")
     )
@@ -418,7 +482,6 @@ def test_customer_support_non_streaming_filters_thinking(mock_agent_client):
         return_value=ChatMessage(type="ai", content="<think>内部思考</think>你好。")
     )
     app = AppTest.from_file(str(APP_PATH)).run()
-    app.toggle[0].set_value(False)
     app.chat_input[0].set_value("你好").run()
 
     assert app.chat_message[1].markdown[0].value == "你好。"
@@ -429,19 +492,19 @@ def test_app_new_chat_btn(mock_agent_client):
     at = AppTest.from_file(str(APP_PATH)).run()
     thread_id_a = at.session_state.thread_id
 
-    at.sidebar.button[0].click().run()
+    next(button for button in at.button if button.label == "新建会话").click().run()
 
     assert at.session_state.thread_id != thread_id_a
     assert not at.exception
 
 
-def test_app_share_resume_dialog(mock_agent_client):
-    """The share dialog uses the public Streamlit context and includes the thread ID."""
+def test_app_privacy_dialog(mock_agent_client):
+    """Privacy is the fourth navigation row and does not reveal a session secret."""
     at = AppTest.from_file(str(APP_PATH)).run()
 
     at.sidebar.button[-1].click().run()
 
-    assert any(at.session_state.thread_id in markdown.value for markdown in at.markdown)
+    assert any("会话凭证" in markdown.value for markdown in at.markdown)
     assert not any("user_id=" in markdown.value for markdown in at.markdown)
     assert not at.exception
 
@@ -613,7 +676,6 @@ async def test_app_streaming_single_sub_agent(mock_agent_client, multi_agent_mes
 
     mock_agent_client.astream = Mock(return_value=amessage_iter())
 
-    at.toggle[0].set_value(True)
     at.chat_input[0].set_value(PROMPT).run()
 
     ai_message = at.chat_message[1]
@@ -686,7 +748,6 @@ async def test_app_streaming_sequential_sub_agents(mock_agent_client, multi_agen
 
     mock_agent_client.astream = Mock(return_value=amessage_iter())
 
-    at.toggle[0].set_value(True)
     at.chat_input[0].set_value(PROMPT).run()
 
     ai_message = at.chat_message[1]
@@ -776,7 +837,6 @@ async def test_app_streaming_nested_sub_agents(mock_agent_client, multi_agent_me
 
     mock_agent_client.astream = Mock(return_value=amessage_iter())
 
-    at.toggle[0].set_value(True)
     at.chat_input[0].set_value(PROMPT).run()
 
     ai_message = at.chat_message[1]

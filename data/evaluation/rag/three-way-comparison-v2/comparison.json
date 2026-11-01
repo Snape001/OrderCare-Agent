@@ -1,0 +1,6287 @@
+{
+  "retrieval_summary": {
+    "dense": {
+      "all": {
+        "total": 90,
+        "evaluated": 90,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.4680365296803653,
+          "mrr": 0.7123287671232876,
+          "ndcg": 0.6810176125244618,
+          "context_relevance": 0.562962962962963
+        },
+        "at_2": {
+          "recall": 0.7191780821917808,
+          "mrr": 0.8013698630136986,
+          "ndcg": 0.7246010837632096,
+          "context_relevance": 0.4351851851851852
+        },
+        "retrieval_abstention_accuracy": 0.8333333333333334,
+        "no_answer_rejection_rate": 0.11764705882352941,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 24.90023555550983,
+          "p50": 24.87239999936719,
+          "p95": 27.368200000637444
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 56,
+          "missing_supporting_sections": 33,
+          "irrelevant_top1": 21,
+          "unsupported_question_returned_context": 15
+        }
+      },
+      "dev": {
+        "total": 46,
+        "evaluated": 46,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.46846846846846846,
+          "mrr": 0.7297297297297297,
+          "ndcg": 0.6833976833976834,
+          "context_relevance": 0.5652173913043478
+        },
+        "at_2": {
+          "recall": 0.7207207207207207,
+          "mrr": 0.8108108108108109,
+          "ndcg": 0.7405806605009014,
+          "context_relevance": 0.44202898550724634
+        },
+        "retrieval_abstention_accuracy": 0.8260869565217391,
+        "no_answer_rejection_rate": 0.1111111111111111,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 25.10683478241212,
+          "p50": 24.842299999363604,
+          "p95": 27.419000001827953
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 27,
+          "missing_supporting_sections": 17,
+          "irrelevant_top1": 10,
+          "unsupported_question_returned_context": 8
+        }
+      },
+      "test": {
+        "total": 44,
+        "evaluated": 44,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.4675925925925926,
+          "mrr": 0.6944444444444444,
+          "ndcg": 0.6785714285714286,
+          "context_relevance": 0.5606060606060606
+        },
+        "at_2": {
+          "recall": 0.7175925925925926,
+          "mrr": 0.7916666666666666,
+          "ndcg": 0.7081776298939152,
+          "context_relevance": 0.42803030303030304
+        },
+        "retrieval_abstention_accuracy": 0.8409090909090909,
+        "no_answer_rejection_rate": 0.125,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 24.684245454657436,
+          "p50": 25.01979999942705,
+          "p95": 26.999800000339746
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 29,
+          "missing_supporting_sections": 16,
+          "irrelevant_top1": 11,
+          "unsupported_question_returned_context": 7
+        }
+      }
+    },
+    "hybrid": {
+      "all": {
+        "total": 90,
+        "evaluated": 90,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.4954337899543379,
+          "mrr": 0.7534246575342466,
+          "ndcg": 0.7299412915851272,
+          "context_relevance": 0.6
+        },
+        "at_2": {
+          "recall": 0.7534246575342466,
+          "mrr": 0.8287671232876712,
+          "ndcg": 0.7618308190816846,
+          "context_relevance": 0.45
+        },
+        "retrieval_abstention_accuracy": 0.8333333333333334,
+        "no_answer_rejection_rate": 0.11764705882352941,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 27.182399999906515,
+          "p50": 27.296900001601898,
+          "p95": 29.537700000219047
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 54,
+          "missing_supporting_sections": 29,
+          "irrelevant_top1": 18,
+          "unsupported_question_returned_context": 15
+        }
+      },
+      "dev": {
+        "total": 46,
+        "evaluated": 46,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.5225225225225225,
+          "mrr": 0.8108108108108109,
+          "ndcg": 0.7644787644787645,
+          "context_relevance": 0.6304347826086957
+        },
+        "at_2": {
+          "recall": 0.7117117117117117,
+          "mrr": 0.8648648648648649,
+          "ndcg": 0.7519447757685461,
+          "context_relevance": 0.42028985507246375
+        },
+        "retrieval_abstention_accuracy": 0.8260869565217391,
+        "no_answer_rejection_rate": 0.1111111111111111,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 27.39981956524982,
+          "p50": 27.36399999957939,
+          "p95": 30.535299996699905
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 30,
+          "missing_supporting_sections": 18,
+          "irrelevant_top1": 7,
+          "unsupported_question_returned_context": 8
+        }
+      },
+      "test": {
+        "total": 44,
+        "evaluated": 44,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.4675925925925926,
+          "mrr": 0.6944444444444444,
+          "ndcg": 0.6944444444444444,
+          "context_relevance": 0.5681818181818182
+        },
+        "at_2": {
+          "recall": 0.7962962962962963,
+          "mrr": 0.7916666666666666,
+          "ndcg": 0.7719914747090769,
+          "context_relevance": 0.4810606060606061
+        },
+        "retrieval_abstention_accuracy": 0.8409090909090909,
+        "no_answer_rejection_rate": 0.125,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 26.955097727047608,
+          "p50": 26.993600000423612,
+          "p95": 28.630200002226047
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_top1": 11,
+          "irrelevant_context": 24,
+          "missing_supporting_sections": 11,
+          "unsupported_question_returned_context": 7
+        }
+      }
+    },
+    "rewrite_hybrid": {
+      "all": {
+        "total": 90,
+        "evaluated": 90,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.4954337899543379,
+          "mrr": 0.7534246575342466,
+          "ndcg": 0.7221135029354208,
+          "context_relevance": 0.5962962962962963
+        },
+        "at_2": {
+          "recall": 0.7534246575342466,
+          "mrr": 0.8287671232876712,
+          "ndcg": 0.75955672637481,
+          "context_relevance": 0.45
+        },
+        "retrieval_abstention_accuracy": 0.8333333333333334,
+        "no_answer_rejection_rate": 0.11764705882352941,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 27.274116666699733,
+          "p50": 27.095399998870562,
+          "p95": 30.251299998781178
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 54,
+          "missing_supporting_sections": 29,
+          "irrelevant_top1": 18,
+          "unsupported_question_returned_context": 15
+        }
+      },
+      "dev": {
+        "total": 46,
+        "evaluated": 46,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.5225225225225225,
+          "mrr": 0.8108108108108109,
+          "ndcg": 0.749034749034749,
+          "context_relevance": 0.6231884057971014
+        },
+        "at_2": {
+          "recall": 0.7117117117117117,
+          "mrr": 0.8648648648648649,
+          "ndcg": 0.7474580523198475,
+          "context_relevance": 0.42028985507246375
+        },
+        "retrieval_abstention_accuracy": 0.8260869565217391,
+        "no_answer_rejection_rate": 0.1111111111111111,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 27.296093478229444,
+          "p50": 27.04939999966882,
+          "p95": 30.251299998781178
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_context": 30,
+          "missing_supporting_sections": 18,
+          "irrelevant_top1": 7,
+          "unsupported_question_returned_context": 8
+        }
+      },
+      "test": {
+        "total": 44,
+        "evaluated": 44,
+        "errors": 0,
+        "at_1": {
+          "recall": 0.4675925925925926,
+          "mrr": 0.6944444444444444,
+          "ndcg": 0.6944444444444444,
+          "context_relevance": 0.5681818181818182
+        },
+        "at_2": {
+          "recall": 0.7962962962962963,
+          "mrr": 0.7916666666666666,
+          "ndcg": 0.7719914747090769,
+          "context_relevance": 0.4810606060606061
+        },
+        "retrieval_abstention_accuracy": 0.8409090909090909,
+        "no_answer_rejection_rate": 0.125,
+        "answerable_false_rejection_rate": 0.0,
+        "latency_ms": {
+          "mean": 27.251140909191403,
+          "p50": 27.258250000159023,
+          "p95": 30.131399998936104
+        },
+        "generation": {
+          "answer_correctness": null,
+          "faithfulness": null,
+          "citation_support_rate": null,
+          "abstention_accuracy": null,
+          "evaluated": 0,
+          "errors": 0,
+          "generation_latency_ms": null,
+          "judge_latency_ms": null
+        },
+        "failure_reasons": {
+          "irrelevant_top1": 11,
+          "irrelevant_context": 24,
+          "missing_supporting_sections": 11,
+          "unsupported_question_returned_context": 7
+        }
+      }
+    }
+  },
+  "generation_summary": {
+    "dense": {
+      "all": {
+        "total": 90,
+        "generated": 90,
+        "judged": 79,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.941025641025641,
+            "valid": 65
+          },
+          "faithfulness": {
+            "mean": 0.987375415282392,
+            "valid": 43
+          },
+          "citation_support_rate": {
+            "mean": 0.9818181818181818,
+            "valid": 55
+          },
+          "abstention_accuracy": {
+            "mean": 0.9746835443037974,
+            "valid": 79
+          },
+          "evidence_sufficiency": {
+            "mean": 0.5795454545454546,
+            "valid": 88
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8427230046948356,
+            "valid": 71
+          }
+        },
+        "generation_latency_ms": 1267.02246777782,
+        "generation_tokens": {
+          "input_tokens": 86166,
+          "output_tokens": 12544,
+          "total_tokens": 98710
+        },
+        "judge_latency_ms": 2757.5745999999426,
+        "judge_tokens": {
+          "input_tokens": 156778,
+          "output_tokens": 59499,
+          "total_tokens": 216277
+        },
+        "failure_types": {
+          "Retrieval Miss": 33,
+          "Abstention Failure": 7,
+          "Citation Mismatch": 11,
+          "Missing Evidence": 17
+        }
+      },
+      "dev": {
+        "total": 46,
+        "generated": 46,
+        "judged": 41,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9279279279279279,
+            "valid": 37
+          },
+          "faithfulness": {
+            "mean": 0.9937888198757764,
+            "valid": 23
+          },
+          "citation_support_rate": {
+            "mean": 0.9642857142857143,
+            "valid": 28
+          },
+          "abstention_accuracy": {
+            "mean": 0.975609756097561,
+            "valid": 41
+          },
+          "evidence_sufficiency": {
+            "mean": 0.5869565217391305,
+            "valid": 46
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8603603603603603,
+            "valid": 37
+          }
+        },
+        "generation_latency_ms": 1262.9080413043202,
+        "generation_tokens": {
+          "input_tokens": 43881,
+          "output_tokens": 6443,
+          "total_tokens": 50324
+        },
+        "judge_latency_ms": 2697.3235478260744,
+        "judge_tokens": {
+          "input_tokens": 80037,
+          "output_tokens": 29484,
+          "total_tokens": 109521
+        },
+        "failure_types": {
+          "Retrieval Miss": 17,
+          "Abstention Failure": 4,
+          "Citation Mismatch": 5,
+          "Missing Evidence": 9
+        }
+      },
+      "test": {
+        "total": 44,
+        "generated": 44,
+        "judged": 38,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9583333333333334,
+            "valid": 28
+          },
+          "faithfulness": {
+            "mean": 0.98,
+            "valid": 20
+          },
+          "citation_support_rate": {
+            "mean": 1.0,
+            "valid": 27
+          },
+          "abstention_accuracy": {
+            "mean": 0.9736842105263158,
+            "valid": 38
+          },
+          "evidence_sufficiency": {
+            "mean": 0.5714285714285714,
+            "valid": 42
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8235294117647058,
+            "valid": 34
+          }
+        },
+        "generation_latency_ms": 1271.3239136364791,
+        "generation_tokens": {
+          "input_tokens": 42285,
+          "output_tokens": 6101,
+          "total_tokens": 48386
+        },
+        "judge_latency_ms": 2820.5643363635318,
+        "judge_tokens": {
+          "input_tokens": 76741,
+          "output_tokens": 30015,
+          "total_tokens": 106756
+        },
+        "failure_types": {
+          "Retrieval Miss": 16,
+          "Abstention Failure": 3,
+          "Citation Mismatch": 6,
+          "Missing Evidence": 8
+        }
+      }
+    },
+    "hybrid": {
+      "all": {
+        "total": 90,
+        "generated": 90,
+        "judged": 76,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9417989417989417,
+            "valid": 63
+          },
+          "faithfulness": {
+            "mean": 0.9888888888888889,
+            "valid": 48
+          },
+          "citation_support_rate": {
+            "mean": 1.0,
+            "valid": 53
+          },
+          "abstention_accuracy": {
+            "mean": 0.9868421052631579,
+            "valid": 76
+          },
+          "evidence_sufficiency": {
+            "mean": 0.627906976744186,
+            "valid": 86
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8671497584541062,
+            "valid": 69
+          }
+        },
+        "generation_latency_ms": 1273.072160000043,
+        "generation_tokens": {
+          "input_tokens": 86986,
+          "output_tokens": 12632,
+          "total_tokens": 99618
+        },
+        "judge_latency_ms": 2783.445472222148,
+        "judge_tokens": {
+          "input_tokens": 157690,
+          "output_tokens": 60126,
+          "total_tokens": 217816
+        },
+        "failure_types": {
+          "Retrieval Miss": 29,
+          "Abstention Failure": 8,
+          "Citation Mismatch": 7,
+          "Missing Evidence": 17,
+          "Generation Failure": 1
+        }
+      },
+      "dev": {
+        "total": 46,
+        "generated": 46,
+        "judged": 39,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9242424242424242,
+            "valid": 33
+          },
+          "faithfulness": {
+            "mean": 0.991304347826087,
+            "valid": 23
+          },
+          "citation_support_rate": {
+            "mean": 1.0,
+            "valid": 28
+          },
+          "abstention_accuracy": {
+            "mean": 0.9743589743589743,
+            "valid": 39
+          },
+          "evidence_sufficiency": {
+            "mean": 0.6222222222222222,
+            "valid": 45
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.875,
+            "valid": 36
+          }
+        },
+        "generation_latency_ms": 1274.8005782612618,
+        "generation_tokens": {
+          "input_tokens": 44353,
+          "output_tokens": 6397,
+          "total_tokens": 50750
+        },
+        "judge_latency_ms": 2808.5748695651528,
+        "judge_tokens": {
+          "input_tokens": 80476,
+          "output_tokens": 31746,
+          "total_tokens": 112222
+        },
+        "failure_types": {
+          "Retrieval Miss": 18,
+          "Abstention Failure": 5,
+          "Citation Mismatch": 4,
+          "Missing Evidence": 9,
+          "Generation Failure": 1
+        }
+      },
+      "test": {
+        "total": 44,
+        "generated": 44,
+        "judged": 37,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9611111111111111,
+            "valid": 30
+          },
+          "faithfulness": {
+            "mean": 0.9866666666666667,
+            "valid": 25
+          },
+          "citation_support_rate": {
+            "mean": 1.0,
+            "valid": 25
+          },
+          "abstention_accuracy": {
+            "mean": 1.0,
+            "valid": 37
+          },
+          "evidence_sufficiency": {
+            "mean": 0.6341463414634146,
+            "valid": 41
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8585858585858586,
+            "valid": 33
+          }
+        },
+        "generation_latency_ms": 1271.265177272405,
+        "generation_tokens": {
+          "input_tokens": 42633,
+          "output_tokens": 6235,
+          "total_tokens": 48868
+        },
+        "judge_latency_ms": 2757.1738295453706,
+        "judge_tokens": {
+          "input_tokens": 77214,
+          "output_tokens": 28380,
+          "total_tokens": 105594
+        },
+        "failure_types": {
+          "Retrieval Miss": 11,
+          "Abstention Failure": 3,
+          "Citation Mismatch": 3,
+          "Missing Evidence": 8
+        }
+      }
+    },
+    "rewrite_hybrid": {
+      "all": {
+        "total": 90,
+        "generated": 90,
+        "judged": 80,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9632352941176471,
+            "valid": 68
+          },
+          "faithfulness": {
+            "mean": 0.992517006802721,
+            "valid": 49
+          },
+          "citation_support_rate": {
+            "mean": 0.984375,
+            "valid": 64
+          },
+          "abstention_accuracy": {
+            "mean": 0.9875,
+            "valid": 80
+          },
+          "evidence_sufficiency": {
+            "mean": 0.6352941176470588,
+            "valid": 85
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8799019607843137,
+            "valid": 68
+          }
+        },
+        "generation_latency_ms": 1228.9113211112433,
+        "generation_tokens": {
+          "input_tokens": 86959,
+          "output_tokens": 12663,
+          "total_tokens": 99622
+        },
+        "judge_latency_ms": 2756.142466666683,
+        "judge_tokens": {
+          "input_tokens": 157703,
+          "output_tokens": 61143,
+          "total_tokens": 218846
+        },
+        "failure_types": {
+          "Retrieval Miss": 29,
+          "Abstention Failure": 7,
+          "Citation Mismatch": 7,
+          "Missing Evidence": 17
+        }
+      },
+      "dev": {
+        "total": 46,
+        "generated": 46,
+        "judged": 39,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9427083333333334,
+            "valid": 32
+          },
+          "faithfulness": {
+            "mean": 0.986904761904762,
+            "valid": 28
+          },
+          "citation_support_rate": {
+            "mean": 1.0,
+            "valid": 28
+          },
+          "abstention_accuracy": {
+            "mean": 0.9743589743589743,
+            "valid": 39
+          },
+          "evidence_sufficiency": {
+            "mean": 0.6136363636363636,
+            "valid": 44
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8714285714285714,
+            "valid": 35
+          }
+        },
+        "generation_latency_ms": 1218.3028521740198,
+        "generation_tokens": {
+          "input_tokens": 44311,
+          "output_tokens": 6389,
+          "total_tokens": 50700
+        },
+        "judge_latency_ms": 2683.5792760868335,
+        "judge_tokens": {
+          "input_tokens": 80419,
+          "output_tokens": 29855,
+          "total_tokens": 110274
+        },
+        "failure_types": {
+          "Retrieval Miss": 18,
+          "Abstention Failure": 5,
+          "Citation Mismatch": 4,
+          "Missing Evidence": 9
+        }
+      },
+      "test": {
+        "total": 44,
+        "generated": 44,
+        "judged": 41,
+        "metrics": {
+          "answer_correctness": {
+            "mean": 0.9814814814814815,
+            "valid": 36
+          },
+          "faithfulness": {
+            "mean": 1.0,
+            "valid": 21
+          },
+          "citation_support_rate": {
+            "mean": 0.9722222222222222,
+            "valid": 36
+          },
+          "abstention_accuracy": {
+            "mean": 1.0,
+            "valid": 41
+          },
+          "evidence_sufficiency": {
+            "mean": 0.6585365853658537,
+            "valid": 41
+          },
+          "fact_evidence_coverage": {
+            "mean": 0.8888888888888888,
+            "valid": 33
+          }
+        },
+        "generation_latency_ms": 1240.001993181977,
+        "generation_tokens": {
+          "input_tokens": 42648,
+          "output_tokens": 6274,
+          "total_tokens": 48922
+        },
+        "judge_latency_ms": 2832.0039840910713,
+        "judge_tokens": {
+          "input_tokens": 77284,
+          "output_tokens": 31288,
+          "total_tokens": 108572
+        },
+        "failure_types": {
+          "Citation Mismatch": 3,
+          "Retrieval Miss": 11,
+          "Missing Evidence": 8,
+          "Abstention Failure": 2
+        }
+      }
+    }
+  },
+  "evidence_summary": {
+    "dense": {
+      "all": {
+        "mean": 0.5795454545454546,
+        "valid": 88,
+        "total": 90
+      },
+      "dev": {
+        "mean": 0.5869565217391305,
+        "valid": 46,
+        "total": 46
+      },
+      "test": {
+        "mean": 0.5714285714285714,
+        "valid": 42,
+        "total": 44
+      }
+    },
+    "hybrid": {
+      "all": {
+        "mean": 0.627906976744186,
+        "valid": 86,
+        "total": 90
+      },
+      "dev": {
+        "mean": 0.6222222222222222,
+        "valid": 45,
+        "total": 46
+      },
+      "test": {
+        "mean": 0.6341463414634146,
+        "valid": 41,
+        "total": 44
+      }
+    },
+    "rewrite_hybrid": {
+      "all": {
+        "mean": 0.6352941176470588,
+        "valid": 85,
+        "total": 90
+      },
+      "dev": {
+        "mean": 0.6136363636363636,
+        "valid": 44,
+        "total": 46
+      },
+      "test": {
+        "mean": 0.6585365853658537,
+        "valid": 41,
+        "total": 44
+      }
+    }
+  },
+  "engineering": {
+    "dense": {
+      "retrieval_total_ms": 2241.0211999958847,
+      "generation_total_ms": 114032.02210000381,
+      "judge_total_ms": 248181.71399999483
+    },
+    "hybrid": {
+      "retrieval_total_ms": 2446.4159999915864,
+      "generation_total_ms": 114576.49440000387,
+      "judge_total_ms": 250510.09249999333
+    },
+    "rewrite_hybrid": {
+      "retrieval_total_ms": 2454.670500002976,
+      "generation_total_ms": 110602.0189000119,
+      "judge_total_ms": 248052.82200000147
+    }
+  },
+  "generation_no_answer_refusal": {
+    "dense": {
+      "mean": 1.0,
+      "valid": 6,
+      "total": 17
+    },
+    "hybrid": {
+      "mean": 1.0,
+      "valid": 3,
+      "total": 17
+    },
+    "rewrite_hybrid": {
+      "mean": 1.0,
+      "valid": 7,
+      "total": 17
+    }
+  },
+  "paired_comparison": {
+    "dense_vs_hybrid": {
+      "all": {
+        "answer_correctness": {
+          "paired_n": 50,
+          "left_mean": 0.94,
+          "right_mean": 0.9266666666666666,
+          "delta": -0.013333333333333334
+        },
+        "faithfulness": {
+          "paired_n": 30,
+          "left_mean": 0.9866666666666667,
+          "right_mean": 0.9822222222222222,
+          "delta": -0.004444444444444444
+        },
+        "citation_support_rate": {
+          "paired_n": 39,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "abstention_accuracy": {
+          "paired_n": 74,
+          "left_mean": 0.972972972972973,
+          "right_mean": 0.9864864864864865,
+          "delta": 0.013513513513513514
+        },
+        "evidence_sufficiency": {
+          "paired_n": 86,
+          "left_mean": 0.5930232558139535,
+          "right_mean": 0.627906976744186,
+          "delta": 0.03488372093023256
+        },
+        "fact_evidence_coverage": {
+          "paired_n": 69,
+          "left_mean": 0.8478260869565217,
+          "right_mean": 0.8671497584541062,
+          "delta": 0.019323671497584544
+        }
+      },
+      "dev": {
+        "answer_correctness": {
+          "paired_n": 30,
+          "left_mean": 0.9388888888888889,
+          "right_mean": 0.9166666666666666,
+          "delta": -0.022222222222222223
+        },
+        "faithfulness": {
+          "paired_n": 15,
+          "left_mean": 1.0,
+          "right_mean": 0.9866666666666667,
+          "delta": -0.01333333333333333
+        },
+        "citation_support_rate": {
+          "paired_n": 20,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "abstention_accuracy": {
+          "paired_n": 38,
+          "left_mean": 0.9736842105263158,
+          "right_mean": 0.9736842105263158,
+          "delta": 0.0
+        },
+        "evidence_sufficiency": {
+          "paired_n": 45,
+          "left_mean": 0.6,
+          "right_mean": 0.6222222222222222,
+          "delta": 0.022222222222222223
+        },
+        "fact_evidence_coverage": {
+          "paired_n": 36,
+          "left_mean": 0.8657407407407407,
+          "right_mean": 0.875,
+          "delta": 0.00925925925925926
+        }
+      },
+      "test": {
+        "answer_correctness": {
+          "paired_n": 20,
+          "left_mean": 0.9416666666666667,
+          "right_mean": 0.9416666666666667,
+          "delta": 0.0
+        },
+        "faithfulness": {
+          "paired_n": 15,
+          "left_mean": 0.9733333333333334,
+          "right_mean": 0.9777777777777777,
+          "delta": 0.004444444444444444
+        },
+        "citation_support_rate": {
+          "paired_n": 19,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "abstention_accuracy": {
+          "paired_n": 36,
+          "left_mean": 0.9722222222222222,
+          "right_mean": 1.0,
+          "delta": 0.027777777777777776
+        },
+        "evidence_sufficiency": {
+          "paired_n": 41,
+          "left_mean": 0.5853658536585366,
+          "right_mean": 0.6341463414634146,
+          "delta": 0.04878048780487805
+        },
+        "fact_evidence_coverage": {
+          "paired_n": 33,
+          "left_mean": 0.8282828282828283,
+          "right_mean": 0.8585858585858586,
+          "delta": 0.030303030303030307
+        }
+      }
+    },
+    "hybrid_vs_rewrite_hybrid": {
+      "all": {
+        "answer_correctness": {
+          "paired_n": 55,
+          "left_mean": 0.9393939393939393,
+          "right_mean": 0.9545454545454546,
+          "delta": 0.015151515151515152
+        },
+        "faithfulness": {
+          "paired_n": 33,
+          "left_mean": 1.0,
+          "right_mean": 0.9888888888888889,
+          "delta": -0.011111111111111108
+        },
+        "citation_support_rate": {
+          "paired_n": 46,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "abstention_accuracy": {
+          "paired_n": 75,
+          "left_mean": 0.9866666666666667,
+          "right_mean": 0.9866666666666667,
+          "delta": 0.0
+        },
+        "evidence_sufficiency": {
+          "paired_n": 85,
+          "left_mean": 0.6235294117647059,
+          "right_mean": 0.6352941176470588,
+          "delta": 0.011764705882352941
+        },
+        "fact_evidence_coverage": {
+          "paired_n": 68,
+          "left_mean": 0.8651960784313726,
+          "right_mean": 0.8799019607843137,
+          "delta": 0.014705882352941176
+        }
+      },
+      "dev": {
+        "answer_correctness": {
+          "paired_n": 28,
+          "left_mean": 0.9226190476190477,
+          "right_mean": 0.9345238095238095,
+          "delta": 0.011904761904761906
+        },
+        "faithfulness": {
+          "paired_n": 16,
+          "left_mean": 1.0,
+          "right_mean": 0.9770833333333333,
+          "delta": -0.02291666666666666
+        },
+        "citation_support_rate": {
+          "paired_n": 22,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "abstention_accuracy": {
+          "paired_n": 38,
+          "left_mean": 0.9736842105263158,
+          "right_mean": 0.9736842105263158,
+          "delta": 0.0
+        },
+        "evidence_sufficiency": {
+          "paired_n": 44,
+          "left_mean": 0.6136363636363636,
+          "right_mean": 0.6136363636363636,
+          "delta": 0.0
+        },
+        "fact_evidence_coverage": {
+          "paired_n": 35,
+          "left_mean": 0.8714285714285714,
+          "right_mean": 0.8714285714285714,
+          "delta": 0.0
+        }
+      },
+      "test": {
+        "answer_correctness": {
+          "paired_n": 27,
+          "left_mean": 0.9567901234567902,
+          "right_mean": 0.9753086419753086,
+          "delta": 0.018518518518518517
+        },
+        "faithfulness": {
+          "paired_n": 17,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "citation_support_rate": {
+          "paired_n": 24,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "abstention_accuracy": {
+          "paired_n": 37,
+          "left_mean": 1.0,
+          "right_mean": 1.0,
+          "delta": 0.0
+        },
+        "evidence_sufficiency": {
+          "paired_n": 41,
+          "left_mean": 0.6341463414634146,
+          "right_mean": 0.6585365853658537,
+          "delta": 0.024390243902439025
+        },
+        "fact_evidence_coverage": {
+          "paired_n": 33,
+          "left_mean": 0.8585858585858586,
+          "right_mean": 0.8888888888888888,
+          "delta": 0.030303030303030304
+        }
+      }
+    }
+  },
+  "generation_case_ids": [
+    "rag-001",
+    "rag-002",
+    "rag-003",
+    "rag-004",
+    "rag-005",
+    "rag-006",
+    "rag-007",
+    "rag-008",
+    "rag-009",
+    "rag-010",
+    "rag-011",
+    "rag-012",
+    "rag-013",
+    "rag-014",
+    "rag-015",
+    "rag-016",
+    "rag-017",
+    "rag-018",
+    "rag-019",
+    "rag-020",
+    "rag-021",
+    "rag-022",
+    "rag-023",
+    "rag-024",
+    "rag-025",
+    "rag-026",
+    "rag-027",
+    "rag-028",
+    "rag-029",
+    "rag-030",
+    "rag-031",
+    "rag-032",
+    "rag-033",
+    "rag-034",
+    "rag-035",
+    "rag-036",
+    "rag-037",
+    "rag-038",
+    "rag-039",
+    "rag-040",
+    "rag-041",
+    "rag-042",
+    "rag-043",
+    "rag-044",
+    "rag-045",
+    "rag-046",
+    "rag-047",
+    "rag-048",
+    "rag-049",
+    "rag-050",
+    "rag-051",
+    "rag-052",
+    "rag-053",
+    "rag-054",
+    "rag-055",
+    "rag-056",
+    "rag-057",
+    "rag-058",
+    "rag-059",
+    "rag-060",
+    "rag-061",
+    "rag-062",
+    "rag-063",
+    "rag-064",
+    "rag-065",
+    "rag-066",
+    "rag-067",
+    "rag-068",
+    "rag-069",
+    "rag-070",
+    "rag-071",
+    "rag-072",
+    "rag-073",
+    "rag-074",
+    "rag-075",
+    "rag-076",
+    "rag-077",
+    "rag-078",
+    "rag-079",
+    "rag-080",
+    "rag-081",
+    "rag-082",
+    "rag-083",
+    "rag-084",
+    "rag-085",
+    "rag-086",
+    "rag-087",
+    "rag-088",
+    "rag-089",
+    "rag-090"
+  ],
+  "case_results": {
+    "dense:rag-001": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-002": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-003": {
+      "metrics": {
+        "answer_correctness": 0.5,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "可尝试物流拦截，失败后签收再按退货政策处理"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-004": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-005": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-006": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-007": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-008": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-009": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-010": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-011": {
+      "metrics": {
+        "answer_correctness": 0.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 0.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": true,
+        "fact_support_values": [
+          false
+        ],
+        "missing_facts": [
+          "仓库验收通过后发起原路退款"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-012": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-013": {
+      "metrics": {
+        "answer_correctness": 0.5,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "创建工单需用户明确确认"
+        ]
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-014": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-015": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-016": {
+      "metrics": {
+        "answer_correctness": 0.5,
+        "faithfulness": 0.6,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": false,
+        "fact_support_values": [
+          false,
+          true
+        ],
+        "missing_facts": [
+          "显示签收但本人未收到可创建物流异常工单"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-017": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-018": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-019": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-020": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-021": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-022": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-023": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-024": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-025": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge omitted or misparsed a visible source/section; citation support unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-026": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge omitted or misparsed a visible source/section; citation support unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-027": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-028": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-029": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-030": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          false
+        ],
+        "missing_facts": [
+          "相同幂等键只创建一张工单"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-031": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有退货运费承担规则，不能自行判断，应转人工确认"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-032": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-033": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-034": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有会员领券数量或面额规则"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-035": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-036": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有具体维修价目表，需售后报价"
+        ]
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-037": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-038": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-039": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 0.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "与商城客服知识库无关，应说明无法据此回答"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-040": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-041": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-042": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-043": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-044": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-045": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-046": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-047": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          null,
+          true,
+          true
+        ],
+        "missing_facts": [
+          "激活数字商品不适用无理由退货"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "dense:rag-048": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.3333333333333333,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-049": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-050": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.3333333333333333,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-051": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-052": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-053": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge omitted or misparsed a visible source/section; citation support unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-054": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-055": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.3333333333333333,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-056": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-057": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-058": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-059": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-060": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-061": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "异常工单目标响应12小时"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-062": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-063": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-064": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-065": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-066": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 0.8571428571428571,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "可用订单核对购买记录"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-067": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-068": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-069": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-070": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有该商品电池更换价格；报价须经检测后展示，不能编造金额"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-071": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-072": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 0.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": true,
+        "fact_support_values": [
+          false,
+          false
+        ],
+        "missing_facts": [
+          "不同意报价时不实施付费维修",
+          "可以申请按原状态寄回"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-073": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-074": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-075": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库未规定维修期间备用机、费用或借用时长，应说明无法确认"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-076": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-077": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-078": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-079": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-080": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-081": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-082": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-083": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "第三方支付通常1至3个工作日"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-084": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-085": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "dense:rag-086": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-087": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-088": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-089": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "dense:rag-090": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-001": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-002": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-003": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "可尝试物流拦截，失败后签收再按退货政策处理"
+        ]
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-004": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-005": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-006": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-007": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-008": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-009": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-010": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-011": {
+      "metrics": {
+        "answer_correctness": 0.0,
+        "faithfulness": 0.8,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 0.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": true,
+        "fact_support_values": [
+          false
+        ],
+        "missing_facts": [
+          "仓库验收通过后发起原路退款"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-012": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-013": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "创建工单需用户明确确认"
+        ]
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-014": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-015": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-016": {
+      "metrics": {
+        "answer_correctness": 0.5,
+        "faithfulness": 0.6666666666666666,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": false,
+        "fact_support_values": [
+          false,
+          true
+        ],
+        "missing_facts": [
+          "显示签收但本人未收到可创建物流异常工单"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-017": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-018": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-019": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-020": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-021": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-022": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-023": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-024": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-025": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-026": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-027": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-028": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-029": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-030": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          false
+        ],
+        "missing_facts": [
+          "相同幂等键只创建一张工单"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-031": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有退货运费承担规则，不能自行判断，应转人工确认"
+        ]
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-032": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有线下退货门店地址或营业时间"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-033": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-034": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-035": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-036": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-037": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-038": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-039": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-040": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-041": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-042": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-043": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-044": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          false
+        ],
+        "missing_facts": [
+          "取消订单的券返还与部分退货不同"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-045": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-046": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-047": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          null,
+          true,
+          true
+        ],
+        "missing_facts": [
+          "激活数字商品不适用无理由退货"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "hybrid:rag-048": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-049": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-050": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-051": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-052": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-053": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-054": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-055": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.3333333333333333,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "提供新物流单号与故障证据"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-056": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-057": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-058": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-059": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-060": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-061": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.3333333333333333,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "异常工单目标响应12小时"
+        ]
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-062": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-063": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-064": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-065": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-066": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "hybrid:rag-067": {
+      "metrics": {
+        "answer_correctness": 0.5,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "是否可维修仍需检测及可能报价"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-068": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-069": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-070": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-071": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-072": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-073": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-074": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-075": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-076": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-077": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-078": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-079": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-080": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-081": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-082": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-083": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "hybrid:rag-084": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-085": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "hybrid:rag-086": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-087": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-088": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-089": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "hybrid:rag-090": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有投诉升级后的固定补偿金额或计算标准，应明确无法确认"
+        ]
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-001": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-002": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-003": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "可尝试物流拦截，失败后签收再按退货政策处理"
+        ]
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-004": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-005": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-006": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-007": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-008": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-009": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-010": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-011": {
+      "metrics": {
+        "answer_correctness": 0.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 0.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": true,
+        "fact_support_values": [
+          false
+        ],
+        "missing_facts": [
+          "仓库验收通过后发起原路退款"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-012": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-013": {
+      "metrics": {
+        "answer_correctness": 0.5,
+        "faithfulness": 0.8333333333333334,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "创建工单需用户明确确认"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-014": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-015": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-016": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-017": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-018": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-019": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-020": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-021": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-022": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-023": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-024": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-025": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge omitted or misparsed a visible source/section; citation support unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-026": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-027": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-028": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-029": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-030": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          false
+        ],
+        "missing_facts": [
+          "相同幂等键只创建一张工单"
+        ]
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-031": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有退货运费承担规则，不能自行判断，应转人工确认"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-032": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有线下退货门店地址或营业时间"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-033": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-034": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有会员领券数量或面额规则"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-035": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-036": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-037": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-038": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有备用机提供条件或借用时限"
+        ]
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-039": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-040": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 0.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库没有天气信息，不应编造天气"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-041": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-042": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-043": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-044": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          false
+        ],
+        "missing_facts": [
+          "取消订单的券返还与部分退货不同"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-045": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-046": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-047": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "rewrite_hybrid:rag-048": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-049": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-050": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-051": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-052": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-053": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-054": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-055": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.3333333333333333,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "提供新物流单号与故障证据"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-056": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "rewrite_hybrid:rag-057": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-058": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-059": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-060": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-061": {
+      "metrics": {
+        "answer_correctness": 0.6666666666666666,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.3333333333333333,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "异常工单目标响应12小时"
+        ]
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-062": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-063": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-064": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-065": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-066": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "rewrite_hybrid:rag-067": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-068": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-069": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-070": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-071": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-072": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-073": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-074": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-075": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库未规定维修期间备用机、费用或借用时长，应说明无法确认"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-076": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-077": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-078": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-079": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-080": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-081": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-082": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-083": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": null,
+        "fact_evidence_coverage": null,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "invalid_judge"
+    },
+    "rewrite_hybrid:rag-084": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-085": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null,
+        "abstained": true,
+        "fact_support_values": [],
+        "missing_facts": [
+          "知识库只说明通常1个工作日对账，不承诺明日全退或违约金金额"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    },
+    "rewrite_hybrid:rag-086": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge invented or paraphrased an answer claim; correctness/faithfulness unknown",
+        "Judge citation claim absent from answer; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-087": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": 0.8,
+        "citation_support_rate": 1.0,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          false,
+          true
+        ],
+        "missing_facts": [
+          "同幂等键重复返回原工单编号"
+        ]
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-088": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": 1.0,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [
+        "Judge omitted or misparsed a visible source/section; citation support unknown"
+      ],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-089": {
+      "metrics": {
+        "answer_correctness": 1.0,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": 1.0,
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "abstained": false,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "judge_warnings": [],
+      "evidence_sufficiency_origin": "answer_blind_deepseek_judge"
+    },
+    "rewrite_hybrid:rag-090": {
+      "metrics": {
+        "answer_correctness": null,
+        "faithfulness": null,
+        "citation_support_rate": null,
+        "abstention_accuracy": null,
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "judge_warnings": [
+        "Judge unavailable or invalid JSON/schema"
+      ],
+      "evidence_sufficiency_origin": "frozen_no_answer_label"
+    }
+  },
+  "api_usage": {
+    "requests": 745,
+    "input_tokens": 817134,
+    "output_tokens": 237424,
+    "cache_read_tokens": 466048,
+    "estimated_cny_offpeak": 1.310103,
+    "estimated_cny_peak": 2.620206
+  },
+  "api_usage_by_phase": {
+    "rewrite": {
+      "requests": 90,
+      "input_tokens": 9598,
+      "output_tokens": 1824,
+      "cache_read_tokens": 0,
+      "estimated_cny_offpeak": 0.016894,
+      "estimated_cny_peak": 0.033788
+    },
+    "generation": {
+      "requests": 270,
+      "input_tokens": 260111,
+      "output_tokens": 37839,
+      "cache_read_tokens": 122752,
+      "estimated_cny_offpeak": 0.29117,
+      "estimated_cny_peak": 0.58234
+    },
+    "judge": {
+      "requests": 270,
+      "input_tokens": 472171,
+      "output_tokens": 180768,
+      "cache_read_tokens": 310400,
+      "estimated_cny_offpeak": 0.891051,
+      "estimated_cny_peak": 1.782102
+    },
+    "evidence_audit": {
+      "requests": 115,
+      "input_tokens": 75254,
+      "output_tokens": 16993,
+      "cache_read_tokens": 32896,
+      "estimated_cny_offpeak": 0.110988,
+      "estimated_cny_peak": 0.221976
+    }
+  },
+  "mean_rewrite_latency_ms": 694.787625555384,
+  "pricing": {
+    "model": "deepseek-flash",
+    "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "price_checked_date": "2026-10-31",
+    "unit": "CNY per million tokens",
+    "offpeak_uncached_input": 1,
+    "offpeak_cached_input": 0.02,
+    "offpeak_output": 4,
+    "peak_multiplier": 2,
+    "note": "Estimate from reported usage; actual billing may differ."
+  }
+}

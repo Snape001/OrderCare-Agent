@@ -42,7 +42,7 @@ def test_ollama_mode_requires_model(mock_env):
         Settings(_env_file=None, CUSTOMER_SUPPORT_MODE="ollama")
 
 
-@pytest.mark.parametrize("mode", ["qwen", "auto"])
+@pytest.mark.parametrize("mode", ["qwen"])
 def test_incomplete_qwen_configuration_rejected(mock_env, mode):
     with pytest.raises(ValueError, match="requires all DASHSCOPE"):
         Settings(_env_file=None, CUSTOMER_SUPPORT_MODE=mode, DASHSCOPE_API_KEY="test-only")

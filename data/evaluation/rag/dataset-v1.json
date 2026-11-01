@@ -1,0 +1,859 @@
+{
+  "version": "ordercare-rag-v1.0",
+  "policy_sha256": "f0aa9a1dd22120d0d1eccd59a464c4d25201132826d126bf611324e535053e80",
+  "annotation_method": "基于政策原文的人工式逐条标注（由本次开发助手编写，尚未经独立人工复审）；问题为构造测试题，不冒充真实用户日志。检索系统和 LLM Judge 未参与 Ground Truth 生成。",
+  "relevance_scale": {
+    "3": "直接回答主要诉求",
+    "2": "支持问题中的补充事实",
+    "1": "弱相关背景",
+    "0": "不能支持答案"
+  },
+  "split_rule": "冻结前按编号奇偶分为 dev/test，各15可答+5无答案；只用dev选择参数。",
+  "cases": [
+    {
+      "id": "rag-001",
+      "query": "普通耳机签收第二天拆了包装，配件都在也没损坏，能走无理由退货吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#七天无理由退款": 3
+      },
+      "expected_answer": "签收次日起7个自然日内可申请；商品完好、附件齐全且不影响二次销售；已拆封普通商品可提交审核",
+      "expected_facts": [
+        "签收次日起7个自然日内可申请",
+        "商品完好、附件齐全且不影响二次销售",
+        "已拆封普通商品可提交审核"
+      ],
+      "should_abstain": false,
+      "category": "无理由退货",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-002",
+      "query": "七天的期限从下单、发货还是收货那天开始算？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#七天无理由退款": 3
+      },
+      "expected_answer": "自签收次日起计算7个自然日",
+      "expected_facts": [
+        "自签收次日起计算7个自然日"
+      ],
+      "should_abstain": false,
+      "category": "无理由退货",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-003",
+      "query": "包裹还没到，我就想按七天无理由退款，现在该怎么办？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        },
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "订单取消",
+          "evidence_quote": "订单处于待付款状态时可以直接取消；已付款但尚未进入仓库拣货时可以申请取消并原路退款。订单进入拣货、出库或运输阶段后通常无法直接取消，用户可以联系物流尝试拦截，拦截失败时需在签收后按退货政策处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#七天无理由退款": 3,
+        "data/policies/customer_service_policy.md#订单取消": 2
+      },
+      "expected_answer": "运输中不能按已签收商品申请七天无理由；可尝试物流拦截，失败后签收再按退货政策处理",
+      "expected_facts": [
+        "运输中不能按已签收商品申请七天无理由",
+        "可尝试物流拦截，失败后签收再按退货政策处理"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-004",
+      "query": "普通商品用了之后已经影响再次出售，还能无理由退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#七天无理由退款": 3
+      },
+      "expected_answer": "影响二次销售不支持无理由退款",
+      "expected_facts": [
+        "影响二次销售不支持无理由退款"
+      ],
+      "should_abstain": false,
+      "category": "无理由退货",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-005",
+      "query": "名字刻在杯子上了，现在不喜欢了，七天内也不能退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#特殊商品退换限制": 3
+      },
+      "expected_answer": "定制商品不适用七天无理由退货",
+      "expected_facts": [
+        "定制商品不适用七天无理由退货"
+      ],
+      "should_abstain": false,
+      "category": "特殊商品",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-006",
+      "query": "买的软件已经激活，贴身用品也拆封了，这两种都支持无理由退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#特殊商品退换限制": 3
+      },
+      "expected_answer": "激活后的数字商品不适用七天无理由；拆封后影响健康安全的贴身用品不适用七天无理由",
+      "expected_facts": [
+        "激活后的数字商品不适用七天无理由",
+        "拆封后影响健康安全的贴身用品不适用七天无理由"
+      ],
+      "should_abstain": false,
+      "category": "特殊商品",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-007",
+      "query": "定做的东西本身就是坏的，是不是因为定制就完全不能售后？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#特殊商品退换限制": 3
+      },
+      "expected_answer": "质量问题不受无理由退货范围限制；应提交故障照片、检测结果或其他证明走质量售后",
+      "expected_facts": [
+        "质量问题不受无理由退货范围限制",
+        "应提交故障照片、检测结果或其他证明走质量售后"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-008",
+      "query": "拆包发现外壳碎了还少一条线，需要什么时候提交什么材料？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#换货与缺件补发": 3
+      },
+      "expected_answer": "签收后48小时内上传外包装、商品、快递面单照片；核验通过可换货或缺件补发",
+      "expected_facts": [
+        "签收后48小时内上传外包装、商品、快递面单照片",
+        "核验通过可换货或缺件补发"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-009",
+      "query": "发错货后我已经拿到退款，还能让店家再补一件吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#换货与缺件补发": 3
+      },
+      "expected_answer": "同一问题已完成退款不再重复补发",
+      "expected_facts": [
+        "同一问题已完成退款不再重复补发"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-010",
+      "query": "换货的新包裹还能沿用原来那个运单号查吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#换货与缺件补发": 3
+      },
+      "expected_answer": "换货商品发出后生成新的物流单号",
+      "expected_facts": [
+        "换货商品发出后生成新的物流单号"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-011",
+      "query": "东西退回去了，钱是收到退件立刻打回来还是要验货？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#退款到账时效": 3
+      },
+      "expected_answer": "仓库验收通过后发起原路退款",
+      "expected_facts": [
+        "仓库验收通过后发起原路退款"
+      ],
+      "should_abstain": false,
+      "category": "退款流程",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-012",
+      "query": "信用卡退的钱和平台余额退的钱，到账速度一样吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#退款到账时效": 3
+      },
+      "expected_answer": "银行卡和信用卡通常3至7个工作日；平台余额一般实时到账",
+      "expected_facts": [
+        "银行卡和信用卡通常3至7个工作日",
+        "平台余额一般实时到账"
+      ],
+      "should_abstain": false,
+      "category": "退款流程",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-013",
+      "query": "银行卡退款已经超过七个工作日，我该准备哪些信息请人工核查？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        },
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "客服升级与工单",
+          "evidence_quote": "知识库无法回答、物流异常、支付异常、需要人工审核或用户明确要求真人处理时，可以创建客服工单。创建工单属于写入操作，系统必须先获得用户明确确认；同一个幂等键只能创建一张工单，重复请求应返回原工单编号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#退款到账时效": 3,
+        "data/policies/customer_service_policy.md#客服升级与工单": 2
+      },
+      "expected_answer": "提供订单号和退款流水号创建退款异常工单；创建工单需用户明确确认",
+      "expected_facts": [
+        "提供订单号和退款流水号创建退款异常工单",
+        "创建工单需用户明确确认"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-014",
+      "query": "钱刚付完还没有开始拣货，我不买了能取消并退钱吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "订单取消",
+          "evidence_quote": "订单处于待付款状态时可以直接取消；已付款但尚未进入仓库拣货时可以申请取消并原路退款。订单进入拣货、出库或运输阶段后通常无法直接取消，用户可以联系物流尝试拦截，拦截失败时需在签收后按退货政策处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#订单取消": 3
+      },
+      "expected_answer": "已付款但尚未拣货可申请取消并原路退款",
+      "expected_facts": [
+        "已付款但尚未拣货可申请取消并原路退款"
+      ],
+      "should_abstain": false,
+      "category": "退款资格",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-015",
+      "query": "物流五六天不动弹了，客服会找谁问，多久去核实？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "物流异常",
+          "evidence_quote": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#物流异常": 3
+      },
+      "expected_answer": "超过5天没有新轨迹可创建物流异常工单；客服24小时内联系承运商核查",
+      "expected_facts": [
+        "超过5天没有新轨迹可创建物流异常工单",
+        "客服24小时内联系承运商核查"
+      ],
+      "should_abstain": false,
+      "category": "物流异常",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-016",
+      "query": "页面写着已签收可我根本没拿到，你能保证直接退款吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "物流异常",
+          "evidence_quote": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#物流异常": 3
+      },
+      "expected_answer": "显示签收但本人未收到可创建物流异常工单；核查前不直接承诺退款结果",
+      "expected_facts": [
+        "显示签收但本人未收到可创建物流异常工单",
+        "核查前不直接承诺退款结果"
+      ],
+      "should_abstain": false,
+      "category": "物流异常",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-017",
+      "query": "预计周五送到就是保证周五能收到吧？偏远地区还要多等多久？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "物流时效与轨迹",
+          "evidence_quote": "普通快递预计 3 至 5 个自然日送达，偏远地区可能增加 2 至 3 天。预计送达时间是基于仓库和承运商计算的参考时间，不等于承诺到达时间。订单发货后可以通过订单详情查看承运商、物流单号和最新轨迹。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#物流时效与轨迹": 3
+      },
+      "expected_answer": "预计送达时间不等于承诺到达时间；偏远地区可能增加2至3天",
+      "expected_facts": [
+        "预计送达时间不等于承诺到达时间",
+        "偏远地区可能增加2至3天"
+      ],
+      "should_abstain": false,
+      "category": "物流时效",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-018",
+      "query": "已经发出来的货想转寄到别的省，平台能直接改吗，费用谁说了算？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "收货地址修改",
+          "evidence_quote": "订单未进入仓库拣货前，可以在订单详情申请修改收货地址。订单已出库后平台不能直接修改，用户可以联系承运商尝试转寄，产生的费用和时效变化以承运商结果为准。涉及跨省或跨配送区域的修改可能被拒绝。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#收货地址修改": 3
+      },
+      "expected_answer": "出库后平台不能直接修改；可联系承运商尝试转寄，费用和时效以承运商结果为准；跨省修改可能被拒绝",
+      "expected_facts": [
+        "出库后平台不能直接修改",
+        "可联系承运商尝试转寄，费用和时效以承运商结果为准",
+        "跨省修改可能被拒绝"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-019",
+      "query": "电子产品没摔没泡水自己坏了，有限保修通常多久，可以修吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "商品保修",
+          "evidence_quote": "电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。非人为性能故障可以申请检测和维修；摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#商品保修": 3
+      },
+      "expected_answer": "自签收起12个月有限保修，具体以商品页面和凭证为准；非人为性能故障可申请检测维修",
+      "expected_facts": [
+        "自签收起12个月有限保修，具体以商品页面和凭证为准",
+        "非人为性能故障可申请检测维修"
+      ],
+      "should_abstain": false,
+      "category": "保修",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-020",
+      "query": "我不小心把水洒进键盘，又自己拆开了，还能免费修吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "商品保修",
+          "evidence_quote": "电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。非人为性能故障可以申请检测和维修；摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#商品保修": 3
+      },
+      "expected_answer": "进水和私自拆机不属于免费保修范围",
+      "expected_facts": [
+        "进水和私自拆机不属于免费保修范围"
+      ],
+      "should_abstain": false,
+      "category": "保修",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-021",
+      "query": "东西要寄去修，申请需要什么资料，到售后后多久初检？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "维修申请与进度",
+          "evidence_quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。售后中心收货后通常在 3 个工作日内完成初检，并在维修状态变化时更新进度。涉及付费维修时，必须先向用户展示报价并获得确认。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#维修申请与进度": 3
+      },
+      "expected_answer": "需订单号、故障描述、设备序列号和必要图片或视频；售后中心收货后通常3个工作日内初检",
+      "expected_facts": [
+        "需订单号、故障描述、设备序列号和必要图片或视频",
+        "售后中心收货后通常3个工作日内初检"
+      ],
+      "should_abstain": false,
+      "category": "维修",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-022",
+      "query": "如果检查出要收费，可以不问我直接维修扣钱吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "维修申请与进度",
+          "evidence_quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。售后中心收货后通常在 3 个工作日内完成初检，并在维修状态变化时更新进度。涉及付费维修时，必须先向用户展示报价并获得确认。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#维修申请与进度": 3
+      },
+      "expected_answer": "付费维修必须先展示报价并获得确认",
+      "expected_facts": [
+        "付费维修必须先展示报价并获得确认"
+      ],
+      "should_abstain": false,
+      "category": "维修",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-023",
+      "query": "单位要报销，订单完成一个月还能补开票吗，要校验什么？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "发票服务",
+          "evidence_quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#发票服务": 3
+      },
+      "expected_answer": "订单完成45天内可申请电子普通发票或符合条件的专票；抬头和税号提交前须格式校验",
+      "expected_facts": [
+        "订单完成45天内可申请电子普通发票或符合条件的专票",
+        "抬头和税号提交前须格式校验"
+      ],
+      "should_abstain": false,
+      "category": "发票",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-024",
+      "query": "增值税专票已经开了，税号错了能直接改吗？退货后发票怎么办？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "发票服务",
+          "evidence_quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#发票服务": 3
+      },
+      "expected_answer": "已开专票不能直接修改，先红冲并经财务审核；退款后发票可能作废或红冲",
+      "expected_facts": [
+        "已开专票不能直接修改，先红冲并经财务审核",
+        "退款后发票可能作废或红冲"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-025",
+      "query": "付款提示没成功，银行卡却扣了，我要不要再付一次？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "支付与重复扣款",
+          "evidence_quote": "支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账；通常会在 1 个工作日内自动恢复订单或原路退回。发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单，客服不得要求用户提供完整银行卡号或支付密码。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#支付与重复扣款": 3
+      },
+      "expected_answer": "不应重复支付，先等待支付渠道对账；通常1个工作日内恢复订单或原路退回",
+      "expected_facts": [
+        "不应重复支付，先等待支付渠道对账",
+        "通常1个工作日内恢复订单或原路退回"
+      ],
+      "should_abstain": false,
+      "category": "支付",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-026",
+      "query": "同一单扣了两次，要保留什么？客服能要我的支付密码吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "支付与重复扣款",
+          "evidence_quote": "支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账；通常会在 1 个工作日内自动恢复订单或原路退回。发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单，客服不得要求用户提供完整银行卡号或支付密码。"
+        },
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "账户与隐私",
+          "evidence_quote": "客服查询订单前必须验证订单号和手机号后四位，不得向未验证用户披露收货地址、完整手机号、支付账号等信息。客服不得索要密码、短信验证码或完整银行卡号。用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#支付与重复扣款": 3,
+        "data/policies/customer_service_policy.md#账户与隐私": 2
+      },
+      "expected_answer": "保留两笔支付流水并创建支付异常工单；客服不得索要支付密码或完整银行卡号",
+      "expected_facts": [
+        "保留两笔支付流水并创建支付异常工单",
+        "客服不得索要支付密码或完整银行卡号"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-027",
+      "query": "取消了订单，用掉的券还能回来吗，需要等多久？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "优惠券与促销",
+          "evidence_quote": "优惠券需要满足有效期、适用商品、最低金额和用户范围等条件，不同活动是否叠加以结算页为准。订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回；因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#优惠券与促销": 3
+      },
+      "expected_answer": "未过期且未被活动规则排除的券通常24小时内退回",
+      "expected_facts": [
+        "未过期且未被活动规则排除的券通常24小时内退回"
+      ],
+      "should_abstain": false,
+      "category": "优惠券",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-028",
+      "query": "用了满减后又退掉部分商品，为什么退款金额不是原价？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "优惠券与促销",
+          "evidence_quote": "优惠券需要满足有效期、适用商品、最低金额和用户范围等条件，不同活动是否叠加以结算页为准。订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回；因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#优惠券与促销": 3
+      },
+      "expected_answer": "因退款不再满足满减条件时扣除相应优惠分摊",
+      "expected_facts": [
+        "因退款不再满足满减条件时扣除相应优惠分摊"
+      ],
+      "should_abstain": false,
+      "category": "优惠券",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-029",
+      "query": "我不想让你们保留账户资料，要走什么手续？能直接删吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "账户与隐私",
+          "evidence_quote": "客服查询订单前必须验证订单号和手机号后四位，不得向未验证用户披露收货地址、完整手机号、支付账号等信息。客服不得索要密码、短信验证码或完整银行卡号。用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#账户与隐私": 3
+      },
+      "expected_answer": "导出或删除账户信息需专门身份验证和隐私工单",
+      "expected_facts": [
+        "导出或删除账户信息需专门身份验证和隐私工单"
+      ],
+      "should_abstain": false,
+      "category": "隐私",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-030",
+      "query": "物流工单一直没解决，重复提交能更快吗？目标响应时间是多少？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "投诉与服务时效",
+          "evidence_quote": "普通咨询工单目标响应时间为 24 小时，物流、支付和退款异常工单目标响应时间为 12 小时。用户对处理结果有异议时可以在原工单中补充证据并申请升级，不应通过重复创建相同工单提高优先级。涉及威胁、人身安全或大规模资金风险时应立即升级人工处理。"
+        },
+        {
+          "source": "data/policies/customer_service_policy.md",
+          "section": "客服升级与工单",
+          "evidence_quote": "知识库无法回答、物流异常、支付异常、需要人工审核或用户明确要求真人处理时，可以创建客服工单。创建工单属于写入操作，系统必须先获得用户明确确认；同一个幂等键只能创建一张工单，重复请求应返回原工单编号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/customer_service_policy.md#投诉与服务时效": 3,
+        "data/policies/customer_service_policy.md#客服升级与工单": 2
+      },
+      "expected_answer": "物流异常工单目标响应时间12小时；应在原工单补充证据并申请升级，不应重复建单提高优先级；相同幂等键只创建一张工单",
+      "expected_facts": [
+        "物流异常工单目标响应时间12小时",
+        "应在原工单补充证据并申请升级，不应重复建单提高优先级",
+        "相同幂等键只创建一张工单"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-031",
+      "query": "无理由退货的快递费具体由买家还是卖家承担？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有退货运费承担规则，不能自行判断，应转人工确认",
+      "expected_facts": [
+        "知识库没有退货运费承担规则，不能自行判断，应转人工确认"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-032",
+      "query": "请告诉我上海线下退货门店的详细地址和营业时间。",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有线下退货门店地址或营业时间",
+      "expected_facts": [
+        "知识库没有线下退货门店地址或营业时间"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-033",
+      "query": "订单完成一年后还可以申请电子发票吗？如果可以流程是什么？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库仅规定45天内申请，没有一年后的申请流程，不能编造",
+      "expected_facts": [
+        "知识库仅规定45天内申请，没有一年后的申请流程，不能编造"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-034",
+      "query": "会员每个月能领几张券？每张优惠券面额是多少？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有会员领券数量或面额规则",
+      "expected_facts": [
+        "知识库没有会员领券数量或面额规则"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-035",
+      "query": "我的订单 ORD1001 今天下午具体几点送到？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "政策知识库不包含具体订单实时配送时间，需查询业务工具且不能保证具体时刻",
+      "expected_facts": [
+        "政策知识库不包含具体订单实时配送时间，需查询业务工具且不能保证具体时刻"
+      ],
+      "should_abstain": true,
+      "category": "动态事实",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-036",
+      "query": "苹果手机换电池的维修报价是多少元？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有具体维修价目表，需售后报价",
+      "expected_facts": [
+        "知识库没有具体维修价目表，需售后报价"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-037",
+      "query": "退到银行卡可以指定另外一个人的卡吗？银行会收多少手续费？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库只有原路退款与到账时效，没有指定他人银行卡流程或手续费数额",
+      "expected_facts": [
+        "知识库只有原路退款与到账时效，没有指定他人银行卡流程或手续费数额"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-038",
+      "query": "保修期内给我免费提供备用机吗？借用最长多少天？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有备用机提供条件或借用时限",
+      "expected_facts": [
+        "知识库没有备用机提供条件或借用时限"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-039",
+      "query": "请推导快速排序平均时间复杂度并写一段代码。",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "与商城客服知识库无关，应说明无法据此回答",
+      "expected_facts": [
+        "与商城客服知识库无关，应说明无法据此回答"
+      ],
+      "should_abstain": true,
+      "category": "业务无关",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    },
+    {
+      "id": "rag-040",
+      "query": "明天北京会下雨吗？帮我预测气温。",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有天气信息，不应编造天气",
+      "expected_facts": [
+        "知识库没有天气信息，不应编造天气"
+      ],
+      "should_abstain": true,
+      "category": "业务无关",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。"
+    }
+  ]
+}

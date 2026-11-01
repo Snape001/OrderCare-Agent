@@ -23,10 +23,15 @@ flowchart LR
 
 `PolicyKnowledgeBase.search` 支持 `dense`、`lexical`、`hybrid`。向量路用 Chroma 相似度；词法路用中文二元字组/英文数字 token 的重叠率，**不是 BM25**。融合将两路排名按 `1/(10+rank)` 累加，词法路有权重调节，属于自定义倒数排名融合，不能直接称标准 BM25+RRF。混合路默认还用 dense 相关度或词法分数阈值过滤，最后返回 top-k 切片及分数、来源、排名。
 
-`policy.py:search_policy` 取最多两条，返回最佳命中的 `title/content/source/score` 和 `references`；无结果返回“未检索到相关政策”及空引用。真实 Agent 的 Prompt 要求按工具原文标来源，Mock 直接拼接文件及章节。检索层只提供证据，最终表述由模型决定；现有代码未实现 Query Rewrite、独立重排器或多文档一致性检查。
+`policy.py:search_policy` 取最多两条，返回最佳命中的 `title/content/source/score` 和 `references`；无结果返回“未检索到相关政策”及空引用。真实 Agent 的 Prompt 要求按工具原文标来源。检索层只提供证据，最终表述由模型决定；现有代码未实现 Query Rewrite、独立重排器或多文档一致性检查。
 
 ## 验证入口
 
 - `tests/customer_support/test_rag.py` 测切片/检索行为。
-- `scripts/evaluate_rag.py` 用 `data/evaluation/rag_cases.json` 对比 lexical/dense/hybrid，计算 Hit@1、Hit@3、MRR@3、越界拒答率和延迟，写入必要报告 `data/evaluation/rag_report.json`。
+- `scripts/evaluate_rag.py` 使用冻结的 `data/evaluation/rag/dataset-v1.json`（40题），默认按业务 Top-2 比较 lexical/dense/hybrid 的 Recall、MRR、nDCG、标注 Context Relevance、检索拒答与延迟；结果输出到独立运行目录。生成与引用支持指标仅在显式启用 LLM Judge 后测量。详见 [评测框架](../evaluation/rag-evaluation.md) 与 [优化报告](../evaluation/rag-optimization-report.md)。
+- 旧72题与 `rag_report.json` 作为历史结果保留。新评测参数化了词法融合系数及阈值，默认仍为1.0和0.30；术语扩展仅用于实验，线上不启用。
 - `scripts/create_chroma_db.py` 和 `docs/RAG_Assistant.md` 服务另一演示 Agent，不是默认客服政策索引的唯一入口；不要因名字相似直接删除。
+
+## 生成评测（离线）
+
+冻结检索结果可通过 `scripts/evaluate_rag_generation.py` 回放线上 Prompt 和工具结果，再用 `scripts/audit_rag_evidence.py` 独立诊断证据充分性。`--mode structured` 只用于实验，不修改线上策略。详见 [生成质量评测](../evaluation/rag-generation-evaluation.md)。

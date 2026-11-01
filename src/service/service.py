@@ -5,6 +5,7 @@ import secrets
 import warnings
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from time import perf_counter
 from typing import Annotated, Any
 from uuid import UUID, uuid4
 
@@ -26,6 +27,8 @@ from langsmith import uuid7
 from agents import DEFAULT_AGENT, AgentGraph, get_agent, get_all_agent_info, load_agent
 from core import settings
 from customer_support.confirmation import is_explicit_approval
+from customer_support.errors import CustomerSupportModelError
+from customer_support.trace import TraceCollector, safe_args, safe_text, trace_scope
 from memory import initialize_database, initialize_store
 from schema import (
     ChatHistory,
@@ -37,13 +40,16 @@ from schema import (
     StreamInput,
     UserInput,
 )
+from schema.presentation import public_answer
 from service.access import checkpoint_thread, session_identity
 from service.presentation import approval_message, public_customer_message
+from service.trace_store import save_trace
 from service.utils import (
     convert_message_content_to_string,
     langchain_to_chat_message,
     remove_tool_calls,
 )
+from service.workbench import router as workbench_router
 
 warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 logger = logging.getLogger(__name__)
@@ -51,6 +57,34 @@ logger = logging.getLogger(__name__)
 
 def _private_customer_mode(agent_id: str) -> bool:
     return agent_id == DEFAULT_AGENT and settings.CUSTOMER_SUPPORT_MODE == "ollama"
+
+
+def _trace_model() -> str:
+    mode = settings.CUSTOMER_SUPPORT_MODE
+    if mode == "deepseek":
+        return settings.DEEPSEEK_MODEL
+    if mode == "ollama":
+        return settings.OLLAMA_MODEL or ""
+    if mode == "qwen":
+        return settings.DASHSCOPE_MODEL or ""
+    return str(settings.DEFAULT_MODEL or "")
+
+
+def _save_customer_trace(
+    collector: TraceCollector, *, identity: str, thread_id: str,
+    trace_id: UUID, status: str, started: float,
+) -> None:
+    try:
+        save_trace(
+            trace_id=str(trace_id), owner=identity, thread_id=thread_id,
+            agent_id=DEFAULT_AGENT, status=status,
+            duration_ms=(perf_counter() - started) * 1000,
+            provider=settings.CUSTOMER_SUPPORT_MODE, model=_trace_model(),
+            events=collector.events,
+            question=collector.question, answer=collector.answer,
+        )
+    except Exception as exc:
+        logger.error("Customer trace storage failed error_type=%s", type(exc).__name__)
 
 
 def _is_hitl_request(value: Any) -> bool:
@@ -68,7 +102,7 @@ def _format_interrupt(value: Any) -> str:
 
     actions = value["action_requests"]
     descriptions = [
-        f"- `{action['name']}`：{json.dumps(action['args'], ensure_ascii=False)}"
+        f"- `{action['name']}`：{json.dumps(safe_args(action['args']), ensure_ascii=False)}"
         for action in actions
     ]
     return (
@@ -304,14 +338,20 @@ async def invoke(
     # you'd want to include it. You could update the API to return a list of ChatMessages
     # in that case.
     agent: AgentGraph = available_agent(agent_id)
-    user_input = scope_input(user_input, identity, agent_id)
+    public_thread = user_input.thread_id or str(uuid4())
+    user_input = scope_input(user_input.model_copy(update={"thread_id": public_thread}), identity, agent_id)
     kwargs, run_id = await _handle_input(user_input, agent)
+    collector = TraceCollector(question=safe_text(user_input.message, 140))
+    started = perf_counter()
+    trace_status = "failed"
 
     try:
-        response_events: list[tuple[str, Any]] = await agent.ainvoke(**kwargs, stream_mode=["updates", "values"])  # type: ignore # fmt: skip
+        with trace_scope(collector):
+            response_events: list[tuple[str, Any]] = await agent.ainvoke(**kwargs, stream_mode=["updates", "values"])  # type: ignore # fmt: skip
         output = None
         for response_type, response in response_events:
             if response_type == "updates" and "__interrupt__" in response:
+                trace_status = "approval_required"
                 output = (
                     approval_message()
                     if _private_customer_mode(agent_id)
@@ -334,14 +374,27 @@ async def invoke(
             raise ValueError(f"No final values or interrupt event found: {event_types}")
 
         output.run_id = str(run_id)
+        if output.type == "ai" and (answer := public_answer(output.content)):
+            collector.answer = safe_text(answer, 500)
+        if trace_status != "approval_required":
+            trace_status = "completed"
         return output
+    except CustomerSupportModelError as e:
+        raise HTTPException(status_code=502, detail=str(e)) from e
     except Exception as e:
         logger.error("Agent invocation failed (%s)", type(e).__name__)
         raise HTTPException(status_code=500, detail="Unexpected error")
+    finally:
+        if agent_id == DEFAULT_AGENT:
+            _save_customer_trace(
+                collector, identity=identity, thread_id=public_thread,
+                trace_id=run_id, status=trace_status, started=started,
+            )
 
 
 async def message_generator(
-    user_input: StreamInput, agent_id: str = DEFAULT_AGENT
+    user_input: StreamInput, agent_id: str = DEFAULT_AGENT,
+    *, public_thread: str | None = None,
 ) -> AsyncGenerator[str, None]:
     """
     Generate a stream of messages from the agent.
@@ -354,41 +407,63 @@ async def message_generator(
     if _private_customer_mode(agent_id):
         # Keep model chunks and tool messages inside the graph. A completed AI
         # message is the first safe point to publish a customer-support answer.
+        collector = TraceCollector(question=safe_text(user_input.message, 140))
+        started = perf_counter()
+        trace_status = "failed"
         try:
             final: ChatMessage | None = None
             interrupted = False
-            async for item in agent.astream(**kwargs, stream_mode=["updates"], subgraphs=True):
-                if not isinstance(item, tuple):
-                    continue
-                mode, update = (item[1], item[2]) if len(item) == 3 else item
-                if mode != "updates" or not isinstance(update, dict):
-                    continue
-                if "__interrupt__" in update:
-                    interrupted = True
-                    continue
-                for node_update in update.values():
-                    if not isinstance(node_update, dict):
+            with trace_scope(collector):
+                async for item in agent.astream(**kwargs, stream_mode=["updates"], subgraphs=True):
+                    if not isinstance(item, tuple):
                         continue
-                    for message in node_update.get("messages", []):
-                        public = public_customer_message(message)
-                        if public is not None and public.type == "ai":
-                            final = public
+                    mode, update = (item[1], item[2]) if len(item) == 3 else item
+                    if mode != "updates" or not isinstance(update, dict):
+                        continue
+                    if "__interrupt__" in update:
+                        interrupted = True
+                        continue
+                    for node_update in update.values():
+                        if not isinstance(node_update, dict):
+                            continue
+                        for message in node_update.get("messages", []):
+                            public = public_customer_message(message)
+                            if public is not None and public.type == "ai":
+                                final = public
             output = approval_message() if interrupted else final
+            trace_status = "approval_required" if interrupted else "completed"
             if output is not None:
                 output.run_id = str(run_id)
+                collector.answer = safe_text(public_answer(output.content) or "", 500)
                 yield f"data: {json.dumps({'type': 'message', 'content': output.model_dump()})}\n\n"
+        except CustomerSupportModelError as error:
+            yield f"data: {json.dumps({'type': 'error', 'content': str(error)})}\n\n"
         except Exception as error:
             logger.error("Customer support stream failed (%s)", type(error).__name__)
             yield f"data: {json.dumps({'type': 'error', 'content': 'Internal server error'})}\n\n"
         finally:
+            if user_input.user_id and public_thread:
+                _save_customer_trace(
+                    collector, identity=user_input.user_id, thread_id=public_thread,
+                    trace_id=run_id, status=trace_status, started=started,
+                )
             yield "data: [DONE]\n\n"
         return
 
+    collector = TraceCollector(question=safe_text(user_input.message, 140))
+    started = perf_counter()
+    trace_status = "failed"
+
+    async def observed_stream():
+        with trace_scope(collector):
+            async for event in agent.astream(
+                **kwargs, stream_mode=["updates", "messages", "custom"], subgraphs=True
+            ):
+                yield event
+
     try:
         # Process streamed events from the graph and yield messages over the SSE stream.
-        async for stream_event in agent.astream(
-            **kwargs, stream_mode=["updates", "messages", "custom"], subgraphs=True
-        ):
+        async for stream_event in observed_stream():
             if not isinstance(stream_event, tuple):
                 continue
             # Handle different stream event structures based on subgraphs
@@ -405,6 +480,7 @@ async def message_generator(
                     # In a more sophisticated implementation, we could add
                     # some structured ChatMessage type to return the interrupt value.
                     if node == "__interrupt__":
+                        trace_status = "approval_required"
                         interrupt: Interrupt
                         for interrupt in updates:
                             new_messages.append(
@@ -463,6 +539,8 @@ async def message_generator(
                 # LangGraph re-sends the input message, which feels weird, so drop it
                 if chat_message.type == "human" and chat_message.content == user_input.message:
                     continue
+                if chat_message.type == "ai" and not chat_message.tool_calls:
+                    collector.answer = safe_text(public_answer(chat_message.content) or "", 500)
                 yield f"data: {json.dumps({'type': 'message', 'content': chat_message.model_dump()})}\n\n"
 
             if stream_mode == "messages":
@@ -481,10 +559,19 @@ async def message_generator(
                     # that the model is asking for a tool to be invoked.
                     # So we only print non-empty content.
                     yield f"data: {json.dumps({'type': 'token', 'content': convert_message_content_to_string(content)})}\n\n"
+        if trace_status != "approval_required":
+            trace_status = "completed"
+    except CustomerSupportModelError as e:
+        yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
     except Exception as e:
-        logger.error("Message generation failed (%s)", type(e).__name__)
+        logger.exception("Message generation failed (%s)", type(e).__name__)
         yield f"data: {json.dumps({'type': 'error', 'content': 'Internal server error'})}\n\n"
     finally:
+        if agent_id == DEFAULT_AGENT and user_input.user_id and public_thread:
+            _save_customer_trace(
+                collector, identity=user_input.user_id, thread_id=public_thread,
+                trace_id=run_id, status=trace_status, started=started,
+            )
         yield "data: [DONE]\n\n"
 
 
@@ -532,7 +619,8 @@ async def stream(
     Set `stream_tokens=false` to return intermediate messages but not token-by-token.
     """
     available_agent(agent_id)
-    scoped = scope_input(user_input, identity, agent_id)
+    public_thread = user_input.thread_id or str(uuid4())
+    scoped = scope_input(user_input.model_copy(update={"thread_id": public_thread}), identity, agent_id)
     # Validate reserved configuration before sending HTTP 200 for the SSE stream.
     if any(
         key in {"thread_id", "user_id", "model", "checkpoint_id", "checkpoint_ns", "checkpoint_map"}
@@ -541,7 +629,7 @@ async def stream(
     ):
         raise HTTPException(status_code=422, detail="Reserved agent configuration")
     return StreamingResponse(
-        message_generator(scoped, agent_id),
+        message_generator(scoped, agent_id, public_thread=public_thread),
         media_type="text/event-stream",
     )
 
@@ -654,4 +742,5 @@ def database_table_rows(
         raise HTTPException(status_code=404, detail=str(error)) from error
 
 
+router.include_router(workbench_router)
 app.include_router(router)

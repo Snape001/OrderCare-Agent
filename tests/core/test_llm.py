@@ -69,3 +69,57 @@ def test_get_model_invalid():
     with pytest.raises(ValueError, match="Unsupported model:"):
         # Using type: ignore since we're intentionally testing invalid input
         get_model("invalid_model")  # type: ignore
+
+
+def test_deepseek_uses_configured_openai_compatible_client(monkeypatch):
+    from pydantic import SecretStr
+
+    from core.llm import get_model
+    from core.settings import settings
+    from schema.models import DeepseekModelName
+
+    get_model.cache_clear()
+    monkeypatch.setattr(settings, "DEEPSEEK_API_KEY", SecretStr("test-only"))
+    monkeypatch.setattr(settings, "DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+    monkeypatch.setattr(settings, "DEEPSEEK_MODEL", "deepseek-flash")
+    monkeypatch.setattr(settings, "DEEPSEEK_TEMPERATURE", 0)
+    monkeypatch.setattr(settings, "DEEPSEEK_MAX_TOKENS", 1234)
+    monkeypatch.setattr(settings, "DEEPSEEK_TIMEOUT", 17)
+    model = get_model(DeepseekModelName.DEEPSEEK_CHAT)
+    assert isinstance(model, ChatOpenAI)
+    assert model.model_name == "deepseek-flash"
+    assert model.temperature == 0
+    assert model.max_tokens == 1234
+    assert model.request_timeout == 17
+    assert model.streaming is True
+    assert str(model.root_client.base_url).startswith("https://api.deepseek.com")
+    assert (
+        model.bind_tools(
+            [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "search_policy",
+                        "description": "search",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {"query": {"type": "string"}},
+                        },
+                    },
+                }
+            ]
+        )
+        is not None
+    )
+    get_model.cache_clear()
+
+
+def test_deepseek_factory_never_falls_back_when_key_missing(monkeypatch):
+    from core.llm import get_model
+    from core.settings import settings
+    from schema.models import DeepseekModelName
+
+    get_model.cache_clear()
+    monkeypatch.setattr(settings, "DEEPSEEK_API_KEY", None)
+    with pytest.raises(ValueError, match="DEEPSEEK_API_KEY"):
+        get_model(DeepseekModelName.DEEPSEEK_CHAT)

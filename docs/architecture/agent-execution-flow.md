@@ -28,7 +28,7 @@ flowchart TD
 
 ## 入口和初始化
 
-1. `src/run_service.py` 用 Uvicorn 启动 `service:app`。`src/service/service.py:lifespan` 建立 Checkpoint/Store，遍历 `src/agents/agents.py:load_agent`，将 saver/store 绑定到每张图；默认客服加载失败会阻止启动。`CustomerSupportAgent.load()` 根据 `CUSTOMER_SUPPORT_MODE` 选择 Ollama、Qwen 或 Mock。
+1. `src/run_service.py` 用 Uvicorn 启动 `service:app`。`src/service/service.py:lifespan` 建立 Checkpoint/Store，遍历 `src/agents/agents.py:load_agent`，将 saver/store 绑定到每张图；默认客服加载失败会阻止启动。`CustomerSupportAgent.load()` 根据 `CUSTOMER_SUPPORT_MODE` 显式选择 Ollama、Qwen、DeepSeek 或通用 LLM Provider；配置错误和连接失败均不降级。
 2. `src/streamlit_app.py:main` 维护 UI `thread_id` 和客户端会话令牌；`AgentClient.astream` 将消息、模型、`thread_id` 发往 FastAPI。客户端只传本轮文本，历史由服务端 Checkpoint 恢复。
 3. `src/service/service.py:stream` 经 bearer 和 `session_identity` 检查后，`scope_input` 将公开 `thread_id` 与会话凭证、Agent ID 哈希组合成内部 Checkpoint key；请求参数本身不能授予访问他人会话的权限。
 
@@ -48,8 +48,4 @@ flowchart TD
 
 模型/工具异常记录类型而不写凭据；FastAPI 对外给通用错误。`src/streamlit_app.py:_await_with_wait_status` 对整次请求设默认 300 秒截止，超时取消客户端等待并恢复输入；模型端还有各 Provider 自己的超时。客户端取消不等于能撤销已经由服务端完成的写操作，写入依赖审批和幂等保障。
 
-审计发现：`src/client/client.py:_parse_stream_line` 当前把 SSE `error` 包装成 `type="ai"` 的消息，而不是抛出 `AgentClientError`；因此流式失败可能被前端当作普通答复。这是后续应修的错误语义，不在本次只整理架构的范围内改动。
-
-## Offline Mock 的不同执行路线
-
-`src/agents/customer_support_mock.py` 定义 `CustomerSupportState(MessagesState)`，另加 `pending_query`、`pending_ticket`。图只有 `customer_support_node → END`，无模型工具循环：节点内用规则识别意图、直接调用政策/订单/退款/工单 Python 函数，返回消息和待办槽位。它依然接入同一个 FastAPI、Checkpoint、SSE 和会话隔离机制。
+模型调用失败会包装为安全错误：同步接口返回 HTTP 502，流式接口返回 SSE error，客户端抛出 AgentClientError，不包装成普通 AI 答复。

@@ -2,10 +2,12 @@ from unittest.mock import AsyncMock
 
 import pytest
 from fastapi.testclient import TestClient
+from langchain_core.language_models import FakeMessagesListChatModel
+from langchain_core.messages import AIMessage, ToolCall
 from langgraph.checkpoint.memory import MemorySaver
 from pydantic import SecretStr
 
-from agents.customer_support_mock import builder
+from agents.customer_support_agent import build_customer_support_graph
 from core import settings
 from customer_support import store
 from service import app, service
@@ -18,7 +20,35 @@ def secured_client(monkeypatch, tmp_path):
     monkeypatch.setattr(settings, "DATABASE_ADMIN_SECRET", SecretStr("admin-test-only"))
     monkeypatch.setattr(store, "DEFAULT_DB_PATH", tmp_path / "business.db")
     monkeypatch.setenv("BUSINESS_DATABASE_TYPE", "sqlite")
-    graph = builder.compile(checkpointer=MemorySaver())
+    store.initialize_database()
+
+    class SessionTestModel(FakeMessagesListChatModel):
+        def bind_tools(self, tools, **kwargs):
+            return self
+
+    model = SessionTestModel(
+        responses=[
+            AIMessage(
+                content="",
+                tool_calls=[
+                    ToolCall(
+                        name="create_support_ticket",
+                        id="ticket",
+                        args={
+                            "order_id": "ORD1001",
+                            "phone_last4": "8821",
+                            "category": "物流",
+                            "summary": "物流未更新",
+                        },
+                    )
+                ],
+            ),
+            AIMessage(content="没有待确认操作"),
+            AIMessage(content="工单已创建"),
+        ]
+    )
+    graph = build_customer_support_graph(model, force_routing=False)
+    graph.checkpointer = MemorySaver()
     monkeypatch.setattr(service, "get_agent", lambda agent_id: graph)
     return TestClient(app)
 

@@ -1,0 +1,265 @@
+{
+  "method": "hybrid",
+  "top_k": 2,
+  "splits": {
+    "all": {
+      "retrieval": {
+        "recall": {
+          "baseline": 0.8833333333333333,
+          "candidate": 0.9166666666666666,
+          "delta": 0.033333333333333326
+        },
+        "mrr": {
+          "baseline": 0.8833333333333333,
+          "candidate": 0.9333333333333333,
+          "delta": 0.050000000000000044
+        },
+        "ndcg": {
+          "baseline": 0.8751417689895763,
+          "candidate": 0.9207774438705277,
+          "delta": 0.04563567488095144
+        },
+        "context_relevance": {
+          "baseline": 0.37083333333333335,
+          "candidate": 0.3833333333333333,
+          "delta": 0.012499999999999956
+        }
+      },
+      "generation": {
+        "answer_correctness": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "faithfulness": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "citation_support_rate": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "abstention_accuracy": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        }
+      },
+      "no_answer_rejection_rate": {
+        "baseline": 0.2,
+        "candidate": 0.2,
+        "delta": 0.0
+      },
+      "p95_retrieval_ms": {
+        "baseline": 8.937200000218581,
+        "candidate": 8.872599999449449,
+        "delta": -0.06460000076913275
+      }
+    },
+    "dev": {
+      "retrieval": {
+        "recall": {
+          "baseline": 0.8666666666666667,
+          "candidate": 0.9333333333333333,
+          "delta": 0.06666666666666665
+        },
+        "mrr": {
+          "baseline": 0.9,
+          "candidate": 1.0,
+          "delta": 0.09999999999999998
+        },
+        "ndcg": {
+          "baseline": 0.8803492639702267,
+          "candidate": 0.9716206137321296,
+          "delta": 0.09127134976190288
+        },
+        "context_relevance": {
+          "baseline": 0.35,
+          "candidate": 0.375,
+          "delta": 0.025000000000000022
+        }
+      },
+      "generation": {
+        "answer_correctness": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "faithfulness": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "citation_support_rate": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "abstention_accuracy": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        }
+      },
+      "no_answer_rejection_rate": {
+        "baseline": 0.2,
+        "candidate": 0.2,
+        "delta": 0.0
+      },
+      "p95_retrieval_ms": {
+        "baseline": 8.918300001823809,
+        "candidate": 9.040099997946527,
+        "delta": 0.12179999612271786
+      }
+    },
+    "test": {
+      "retrieval": {
+        "recall": {
+          "baseline": 0.9,
+          "candidate": 0.9,
+          "delta": 0.0
+        },
+        "mrr": {
+          "baseline": 0.8666666666666667,
+          "candidate": 0.8666666666666667,
+          "delta": 0.0
+        },
+        "ndcg": {
+          "baseline": 0.8699342740089258,
+          "candidate": 0.8699342740089258,
+          "delta": 0.0
+        },
+        "context_relevance": {
+          "baseline": 0.39166666666666666,
+          "candidate": 0.39166666666666666,
+          "delta": 0.0
+        }
+      },
+      "generation": {
+        "answer_correctness": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "faithfulness": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "citation_support_rate": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        },
+        "abstention_accuracy": {
+          "baseline": null,
+          "candidate": null,
+          "delta": null
+        }
+      },
+      "no_answer_rejection_rate": {
+        "baseline": 0.2,
+        "candidate": 0.2,
+        "delta": 0.0
+      },
+      "p95_retrieval_ms": {
+        "baseline": 8.937200000218581,
+        "candidate": 8.714600000530481,
+        "delta": -0.22259999968810007
+      }
+    }
+  },
+  "case_changes": [
+    {
+      "id": "rag-005",
+      "split": "dev",
+      "query": "名字刻在杯子上了，现在不喜欢了，七天内也不能退吗？",
+      "baseline": {
+        "1": {
+          "recall": 0.0,
+          "mrr": 0.0,
+          "ndcg": 0.0,
+          "context_relevance": 0.0,
+          "retrieval_abstention_correct": true
+        },
+        "2": {
+          "recall": 1.0,
+          "mrr": 0.5,
+          "ndcg": 0.6309297535714575,
+          "context_relevance": 0.5,
+          "retrieval_abstention_correct": true
+        }
+      },
+      "candidate": {
+        "1": {
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "context_relevance": 1.0,
+          "retrieval_abstention_correct": true
+        },
+        "2": {
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "context_relevance": 0.5,
+          "retrieval_abstention_correct": true
+        }
+      },
+      "before_failures": [
+        "irrelevant_top1",
+        "irrelevant_context"
+      ],
+      "after_failures": [
+        "irrelevant_context"
+      ]
+    },
+    {
+      "id": "rag-011",
+      "split": "dev",
+      "query": "东西退回去了，钱是收到退件立刻打回来还是要验货？",
+      "baseline": {
+        "1": {
+          "recall": 0.0,
+          "mrr": 0.0,
+          "ndcg": 0.0,
+          "context_relevance": 0.0,
+          "retrieval_abstention_correct": true
+        },
+        "2": {
+          "recall": 0.0,
+          "mrr": 0.0,
+          "ndcg": 0.0,
+          "context_relevance": 0.0,
+          "retrieval_abstention_correct": true
+        }
+      },
+      "candidate": {
+        "1": {
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "context_relevance": 1.0,
+          "retrieval_abstention_correct": true
+        },
+        "2": {
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "context_relevance": 0.5,
+          "retrieval_abstention_correct": true
+        }
+      },
+      "before_failures": [
+        "missing_supporting_sections",
+        "irrelevant_top1",
+        "irrelevant_context"
+      ],
+      "after_failures": [
+        "irrelevant_context"
+      ]
+    }
+  ]
+}

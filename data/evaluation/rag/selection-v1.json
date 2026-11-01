@@ -1,0 +1,15 @@
+{
+  "decision_version": "dev-selection-v1",
+  "dataset": "dataset-v1.json",
+  "selection_split": "dev",
+  "selected": {
+    "expand_query": true,
+    "lexical_weight": 1.0,
+    "threshold": 0.5,
+    "lexical_threshold": 0.3,
+    "top_k": 2
+  },
+  "criterion": "保留可答召回且不降低无答案拒答率；比较开发集nDCG@2，不合并生成指标。",
+  "reason": "扩展单独使用的开发集nDCG@2=0.9716206，高于基线0.8803493、低词法权重0.9049539及组合0.9470159；未查看候选留出结果来选择参数。",
+  "rollout": "实验开关；在更大独立数据集和生成质量验证前不修改线上默认策略。"
+}

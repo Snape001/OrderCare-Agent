@@ -83,6 +83,11 @@ class Settings(BaseSettings):
 
     OPENAI_API_KEY: SecretStr | None = None
     DEEPSEEK_API_KEY: SecretStr | None = None
+    DEEPSEEK_BASE_URL: str = "https://api.deepseek.com"
+    DEEPSEEK_MODEL: str = "deepseek-flash"
+    DEEPSEEK_TEMPERATURE: float = Field(default=0, ge=0, le=2)
+    DEEPSEEK_MAX_TOKENS: int = Field(default=4096, gt=0)
+    DEEPSEEK_TIMEOUT: float = Field(default=60, gt=0)
     ANTHROPIC_API_KEY: SecretStr | None = None
     GOOGLE_API_KEY: SecretStr | None = None
     GOOGLE_APPLICATION_CREDENTIALS: SecretStr | None = None
@@ -99,7 +104,8 @@ class Settings(BaseSettings):
     DASHSCOPE_API_KEY: SecretStr | None = None
     DASHSCOPE_BASE_URL: str | None = None
     DASHSCOPE_MODEL: str | None = None
-    CUSTOMER_SUPPORT_MODE: str = "auto"
+    CUSTOMER_SUPPORT_MODE: str = "llm"
+    LLM_PROVIDER: str | None = None
 
     # If DEFAULT_MODEL is None, it will be set in model_post_init
     DEFAULT_MODEL: AllModelEnum | None = None  # type: ignore[assignment]
@@ -162,15 +168,20 @@ class Settings(BaseSettings):
     )
 
     def model_post_init(self, __context: Any) -> None:
+        if self.LLM_PROVIDER is not None:
+            self.CUSTOMER_SUPPORT_MODE = self.LLM_PROVIDER
         self.CUSTOMER_SUPPORT_MODE = self.CUSTOMER_SUPPORT_MODE.lower()
-        if self.CUSTOMER_SUPPORT_MODE not in {"auto", "mock", "qwen", "ollama"}:
-            raise ValueError("CUSTOMER_SUPPORT_MODE must be auto, mock, qwen, or ollama")
+        if self.CUSTOMER_SUPPORT_MODE == "deepseek":
+            if not self.DEEPSEEK_BASE_URL.startswith("https://") or not self.DEEPSEEK_MODEL.strip():
+                raise ValueError("DeepSeek requires HTTPS DEEPSEEK_BASE_URL and DEEPSEEK_MODEL")
+        if self.CUSTOMER_SUPPORT_MODE not in {"llm", "deepseek", "qwen", "ollama"}:
+            raise ValueError("CUSTOMER_SUPPORT_MODE must be llm, deepseek, qwen, or ollama")
+        if self.CUSTOMER_SUPPORT_MODE == "deepseek" and not self.DEEPSEEK_API_KEY:
+            raise ValueError("DeepSeek mode requires DEEPSEEK_API_KEY")
         if self.CUSTOMER_SUPPORT_MODE == "ollama" and not self.OLLAMA_MODEL:
             raise ValueError("Ollama mode requires OLLAMA_MODEL")
         qwen_values = (self.DASHSCOPE_API_KEY, self.DASHSCOPE_BASE_URL, self.DASHSCOPE_MODEL)
-        if self.CUSTOMER_SUPPORT_MODE == "qwen" or (
-            self.CUSTOMER_SUPPORT_MODE == "auto" and any(qwen_values)
-        ):
+        if self.CUSTOMER_SUPPORT_MODE == "qwen":
             if not all(qwen_values):
                 raise ValueError("Qwen mode requires all DASHSCOPE settings")
             # Register Qwen through the existing OpenAI-compatible provider.

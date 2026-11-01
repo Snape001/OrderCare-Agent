@@ -1,0 +1,12 @@
+{
+  "selection_basis": "dev only; rag-011 uses exchange evidence for refund; rag-015 turns contact within24h into completed verification; rag-019 overstates eligibility",
+  "candidate": "structured context plus explicit evidence boundary/partial abstention instructions",
+  "retrieval": "unchanged frozen hybrid Top2",
+  "production_default": "baseline unchanged",
+  "baseline_sha256": "bb71fd79cbfc08f5c7695ba37f0f74911c0637befd55e11e221898d1f407f3c6",
+  "unselected": [
+    "chunk merging:16 complete sections",
+    "reranking: no new ranking evidence",
+    "adaptive retrieval: needs reliable sufficiency detector first"
+  ]
+}

@@ -9,9 +9,9 @@
     "mrr_at_3": 0.9167,
     "rejection_accuracy": 0.75,
     "overall_accuracy": 0.8611,
-    "average_latency_ms": 1.88,
-    "p50_latency_ms": 1.85,
-    "p95_latency_ms": 2.18,
+    "average_latency_ms": 1.82,
+    "p50_latency_ms": 1.77,
+    "p95_latency_ms": 2.26,
     "errors": [
       {
         "question": "无质量问题的商品退货需要保持什么状态？",
@@ -242,9 +242,9 @@
     "mrr_at_3": 0.9349,
     "rejection_accuracy": 1.0,
     "overall_accuracy": 0.8889,
-    "average_latency_ms": 6.51,
-    "p50_latency_ms": 6.55,
-    "p95_latency_ms": 7.24,
+    "average_latency_ms": 6.36,
+    "p50_latency_ms": 6.3,
+    "p95_latency_ms": 7.29,
     "errors": [
       {
         "question": "无质量问题的商品退货需要保持什么状态？",
@@ -434,9 +434,9 @@
     "mrr_at_3": 0.9661,
     "rejection_accuracy": 1.0,
     "overall_accuracy": 0.9444,
-    "average_latency_ms": 7.5,
-    "p50_latency_ms": 7.38,
-    "p95_latency_ms": 8.94,
+    "average_latency_ms": 6.61,
+    "p50_latency_ms": 6.66,
+    "p95_latency_ms": 7.43,
     "errors": [
       {
         "question": "无质量问题的商品退货需要保持什么状态？",

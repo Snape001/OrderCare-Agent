@@ -194,6 +194,9 @@ data/*.db
 # Chroma db
 *.db
 data/chroma/
+data/evaluation/rag/three-way-comparison-v1/chroma-index/
+data/evaluation/rag/three-way-comparison-v2/chroma-index/
+.pytest-tmp/
 data/models/
 data/logs/
 *.sqlite3

@@ -34,7 +34,7 @@ class Agent:
 
 agents: dict[str, Agent] = {
     "customer-support": Agent(
-        description="Qwen ecommerce support Agent with RAG, tools, and offline fallback.",
+        description="LLM ecommerce support Agent with RAG, tools, and human approval.",
         graph_like=customer_support_agent,
     ),
     "chatbot": Agent(description="A simple chatbot.", graph_like=chatbot),

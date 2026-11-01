@@ -1,0 +1,2879 @@
+{
+  "manifest": {
+    "retrieval_sha256": "77225645c425d7d22e89d310d30f210fe5f4aa54c8683305afa57a337f06fd7f",
+    "dataset_sha256": "b23b7f972aeeae0fd47f942bc5a510334217c3ffae549cc18a64fed14642dce5",
+    "audit_version": "answer-blind-evidence-v1",
+    "implementation_sha256": "e7d00099f5049dbb66344235df06340dfc1c56070d9559916b56dc32fc23ff6f",
+    "model": "deepseek-flash",
+    "temperature": 0,
+    "max_tokens": 1000
+  },
+  "cases": {
+    "rag-001:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a": {
+      "id": "rag-001",
+      "context_sha256": "6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"签收次日起7个自然日内可申请\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"标准商品自签收次日起 7 个自然日内\",\"verdict\":\"sufficient\"},{\"reason\":\"商品完好、附件齐全且不影响二次销售\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"在商品完好、附件齐全且不影响二次销售的情况下\",\"verdict\":\"sufficient\"},{\"reason\":\"已拆封普通商品可提交审核\",\"fact_index\":2,\"evidence_id\":\"E1\",\"quote\":\"已拆封但不影响商品完好性的普通商品可提交审核\",\"verdict\":\"sufficient\"}],\"reason\":\"三项事实均有政策原文直接支持\"}",
+        "latency_ms": 1286.9469999968715,
+        "usage": {
+          "input_tokens": 672,
+          "output_tokens": 150,
+          "total_tokens": 822,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 150,
+            "prompt_tokens": 672,
+            "total_tokens": 822,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 672
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "9a003a23-31ea-4511-b81d-2a8406919a2c",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "签收次日起7个自然日内可申请",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "标准商品自签收次日起 7 个自然日内",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "商品完好、附件齐全且不影响二次销售",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "在商品完好、附件齐全且不影响二次销售的情况下",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "已拆封普通商品可提交审核",
+            "fact_index": 2,
+            "evidence_id": "E1",
+            "quote": "已拆封但不影响商品完好性的普通商品可提交审核",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "三项事实均有政策原文直接支持"
+      }
+    },
+    "rag-002:f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283": {
+      "id": "rag-002",
+      "context_sha256": "f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"E2明确自签收次日起算7个自然日\", \"fact_index\": 0, \"evidence_id\": \"E2\", \"quote\": \"标准商品自签收次日起 7 个自然日内\", \"verdict\": \"sufficient\"}], \"reason\": \"证据完整支持签收次日起算七天\"}",
+        "latency_ms": 956.7978000013682,
+        "usage": {
+          "input_tokens": 646,
+          "output_tokens": 78,
+          "total_tokens": 724,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 78,
+            "prompt_tokens": 646,
+            "total_tokens": 724,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 390
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "fc3f427a-4dab-4025-9fa0-d7b560dd045a",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E2明确自签收次日起算7个自然日",
+            "fact_index": 0,
+            "evidence_id": "E2",
+            "quote": "标准商品自签收次日起 7 个自然日内",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持签收次日起算七天"
+      }
+    },
+    "rag-003:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a": {
+      "id": "rag-003",
+      "context_sha256": "6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "可尝试物流拦截，失败后签收再按退货政策处理"
+        ]
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"政策明确运输中不能按已签收申请七天无理由\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。\", \"verdict\": \"sufficient\"}, {\"reason\": \"仅提处理物流或取消，未提拦截失败后签收退货\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。\", \"verdict\": \"partial\"}], \"reason\": \"事实0完整支持；事实1仅覆盖前半，缺失败后签收退货\"}",
+        "latency_ms": 1219.7902000007161,
+        "usage": {
+          "input_tokens": 663,
+          "output_tokens": 164,
+          "total_tokens": 827,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 164,
+            "prompt_tokens": 663,
+            "total_tokens": 827,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 407
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "194d5dc2-362a-42d9-9f24-8be8685abc76",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "政策明确运输中不能按已签收申请七天无理由",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "仅提处理物流或取消，未提拦截失败后签收退货",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。",
+            "verdict": "partial"
+          }
+        ],
+        "reason": "事实0完整支持；事实1仅覆盖前半，缺失败后签收退货"
+      }
+    },
+    "rag-004:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a": {
+      "id": "rag-004",
+      "context_sha256": "6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"政策明确影响二次销售不支持无理由退款\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"影响二次销售时不支持无理由退款。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据直接支持该事实\"}",
+        "latency_ms": 911.594299999706,
+        "usage": {
+          "input_tokens": 642,
+          "output_tokens": 66,
+          "total_tokens": 708,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 66,
+            "prompt_tokens": 642,
+            "total_tokens": 708,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 386
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "5d97d401-c0fc-458f-afd9-c6c586d53cc4",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "政策明确影响二次销售不支持无理由退款",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "影响二次销售时不支持无理由退款。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据直接支持该事实"
+      }
+    },
+    "rag-005:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044": {
+      "id": "rag-005",
+      "context_sha256": "1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"定制商品不适用七天无理由退货，证据完整支持\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据明确列出定制商品不适用七天无理由退货\"}",
+        "latency_ms": 1057.867300001817,
+        "usage": {
+          "input_tokens": 644,
+          "output_tokens": 96,
+          "total_tokens": 740,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 96,
+            "prompt_tokens": 644,
+            "total_tokens": 740,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 388
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "27104bb7-2d57-4c37-bc99-c10bb1ba65e0",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "定制商品不适用七天无理由退货，证据完整支持",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据明确列出定制商品不适用七天无理由退货"
+      }
+    },
+    "rag-006:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044": {
+      "id": "rag-006",
+      "context_sha256": "1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"E1明确激活后数字商品不适用七天无理由\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货\", \"verdict\": \"sufficient\"}, {\"reason\": \"E1明确拆封影响健康安全的贴身用品不适用\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货\", \"verdict\": \"sufficient\"}], \"reason\": \"两项特殊商品限制均被E1完整覆盖\"}",
+        "latency_ms": 1022.0786999998381,
+        "usage": {
+          "input_tokens": 664,
+          "output_tokens": 152,
+          "total_tokens": 816,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 152,
+            "prompt_tokens": 664,
+            "total_tokens": 816,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 408
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "4f14802c-cf52-4360-bab6-15893cba7763",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确激活后数字商品不适用七天无理由",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "E1明确拆封影响健康安全的贴身用品不适用",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项特殊商品限制均被E1完整覆盖"
+      }
+    },
+    "rag-007:dfb803331fa5030c6d8a2f1183259a2b76a4d4ff327d14e6af8c5041b9c7d097": {
+      "id": "rag-007",
+      "context_sha256": "dfb803331fa5030c6d8a2f1183259a2b76a4d4ff327d14e6af8c5041b9c7d097",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"证据明确质量问题不受无理由退货限制\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"商品存在质量问题时不受无理由退货范围限制\", \"verdict\": \"sufficient\"}, {\"reason\": \"证据明确需提交故障照片等证明走质量售后\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"应提交故障照片、检测结果或其他证明，按质量售后流程处理\", \"verdict\": \"sufficient\"}], \"reason\": \"两项事实均被E1完整支持\"}",
+        "latency_ms": 1107.2827999996662,
+        "usage": {
+          "input_tokens": 631,
+          "output_tokens": 128,
+          "total_tokens": 759,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 128,
+            "prompt_tokens": 631,
+            "total_tokens": 759,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 375
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "eeba2f07-7334-4271-a641-14566e139742",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "证据明确质量问题不受无理由退货限制",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "商品存在质量问题时不受无理由退货范围限制",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "证据明确需提交故障照片等证明走质量售后",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "应提交故障照片、检测结果或其他证明，按质量售后流程处理",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-008:106637303aebf1580c959a587c6bc147f4bbed41b009533b26f6a91dd809d87f": {
+      "id": "rag-008",
+      "context_sha256": "106637303aebf1580c959a587c6bc147f4bbed41b009533b26f6a91dd809d87f",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"完整覆盖时限、材料及照片类型\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"用户应在签收后 48 小时内上传外包装、商品和快递面单照片。\",\"verdict\":\"sufficient\"},{\"reason\":\"完整覆盖核验通过后换货或缺件补发\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"核验通过后可以选择换货或缺件补发\",\"verdict\":\"sufficient\"}],\"reason\":\"两条事实均被E1完整支持\"}",
+        "latency_ms": 1195.29970000076,
+        "usage": {
+          "input_tokens": 654,
+          "output_tokens": 114,
+          "total_tokens": 768,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 114,
+            "prompt_tokens": 654,
+            "total_tokens": 768,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 398
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "64576f16-a52d-45d9-9b79-e246a1239895",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "完整覆盖时限、材料及照片类型",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "用户应在签收后 48 小时内上传外包装、商品和快递面单照片。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "完整覆盖核验通过后换货或缺件补发",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "核验通过后可以选择换货或缺件补发",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两条事实均被E1完整支持"
+      }
+    },
+    "rag-009:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4": {
+      "id": "rag-009",
+      "context_sha256": "e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"政策明确同一问题退款后不再重复补发\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"同一问题已经完成退款时，不再重复补发。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据完整支持退款后不重复补发\"}",
+        "latency_ms": 1181.9398000006913,
+        "usage": {
+          "input_tokens": 659,
+          "output_tokens": 74,
+          "total_tokens": 733,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 74,
+            "prompt_tokens": 659,
+            "total_tokens": 733,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 403
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "2d4fcd44-cf6f-43c9-bd71-4a54d0ff7a89",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "政策明确同一问题退款后不再重复补发",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "同一问题已经完成退款时，不再重复补发。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持退款后不重复补发"
+      }
+    },
+    "rag-010:55f4604bcd2a75ad2f1ff8d44230b7dcdaf994946629aff9a31bd5f25df7ccd8": {
+      "id": "rag-010",
+      "context_sha256": "55f4604bcd2a75ad2f1ff8d44230b7dcdaf994946629aff9a31bd5f25df7ccd8",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"政策明确换货发出后生成新物流单号\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"换货商品发出后会生成新的物流单号。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据直接支持换货生成新单号\"}",
+        "latency_ms": 963.5500000003958,
+        "usage": {
+          "input_tokens": 645,
+          "output_tokens": 74,
+          "total_tokens": 719,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 74,
+            "prompt_tokens": 645,
+            "total_tokens": 719,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 389
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "37e21cb3-541e-46ec-8f90-03941aca0ddb",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "政策明确换货发出后生成新物流单号",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "换货商品发出后会生成新的物流单号。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据直接支持换货生成新单号"
+      }
+    },
+    "rag-011:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4": {
+      "id": "rag-011",
+      "context_sha256": "e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "fact_support_values": [
+          false
+        ],
+        "missing_facts": [
+          "仓库验收通过后发起原路退款"
+        ]
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"证据未提及仓库验收或退款发起条件\", \"fact_index\": 0, \"evidence_id\": \"E2\", \"quote\": \"标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。\", \"verdict\": \"missing\"}], \"reason\": \"上下文仅说明退货申请条件，未涉及验收后退款流程\"}",
+        "latency_ms": 937.329199998203,
+        "usage": {
+          "input_tokens": 659,
+          "output_tokens": 96,
+          "total_tokens": 755,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 96,
+            "prompt_tokens": 659,
+            "total_tokens": 755,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 403
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "0f99aaeb-f825-47b6-919e-b70ba8c845b6",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "证据未提及仓库验收或退款发起条件",
+            "fact_index": 0,
+            "evidence_id": "E2",
+            "quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。",
+            "verdict": "missing"
+          }
+        ],
+        "reason": "上下文仅说明退货申请条件，未涉及验收后退款流程"
+      }
+    },
+    "rag-012:752897327c394ed11eb08009a1dc2e909794f6d93dd25c6212c0204e38c74753": {
+      "id": "rag-012",
+      "context_sha256": "752897327c394ed11eb08009a1dc2e909794f6d93dd25c6212c0204e38c74753",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"原文完整支持银行卡和信用卡3至7个工作日\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"银行卡和信用卡通常需要 3 至 7 个工作日\",\"verdict\":\"sufficient\"},{\"reason\":\"原文完整支持平台余额一般实时到账\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"平台余额一般实时到账\",\"verdict\":\"sufficient\"}],\"reason\":\"两条事实均有原文直接支持\"}",
+        "latency_ms": 1050.2119999982824,
+        "usage": {
+          "input_tokens": 652,
+          "output_tokens": 101,
+          "total_tokens": 753,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 101,
+            "prompt_tokens": 652,
+            "total_tokens": 753,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 396
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "98c94020-f0db-443e-9fc8-d95072272921",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "原文完整支持银行卡和信用卡3至7个工作日",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "银行卡和信用卡通常需要 3 至 7 个工作日",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "原文完整支持平台余额一般实时到账",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "平台余额一般实时到账",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两条事实均有原文直接支持"
+      }
+    },
+    "rag-013:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c": {
+      "id": "rag-013",
+      "context_sha256": "82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.5,
+        "fact_support_values": [
+          true,
+          false
+        ],
+        "missing_facts": [
+          "创建工单需用户明确确认"
+        ]
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"证据完整支持提供订单号和退款流水号创建工单\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。\", \"verdict\": \"sufficient\"}, {\"reason\": \"上下文未提及创建工单需用户明确确认\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"\", \"verdict\": \"missing\"}], \"reason\": \"第一项有直接证据，第二项无确认要求证据\"}",
+        "latency_ms": 992.8184999989753,
+        "usage": {
+          "input_tokens": 659,
+          "output_tokens": 128,
+          "total_tokens": 787,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 128,
+            "prompt_tokens": 659,
+            "total_tokens": 787,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 403
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "4fce2164-83ae-49e0-96a7-5fd7d399ec71",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "证据完整支持提供订单号和退款流水号创建工单",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "上下文未提及创建工单需用户明确确认",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "",
+            "verdict": "missing"
+          }
+        ],
+        "reason": "第一项有直接证据，第二项无确认要求证据"
+      }
+    },
+    "rag-014:e4ca94d215a42b29a54c73f4a14ba2e5597e00b1e30ef0825017c3b0fa19b94c": {
+      "id": "rag-014",
+      "context_sha256": "e4ca94d215a42b29a54c73f4a14ba2e5597e00b1e30ef0825017c3b0fa19b94c",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"E1明确覆盖已付款未拣货可取消并原路退款\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"已付款但尚未进入仓库拣货时可以申请取消并原路退款。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据完整支持该事实\"}",
+        "latency_ms": 1087.8529000001436,
+        "usage": {
+          "input_tokens": 651,
+          "output_tokens": 79,
+          "total_tokens": 730,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 79,
+            "prompt_tokens": 651,
+            "total_tokens": 730,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 395
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "159ef488-a504-4c70-9a12-5f6091969ca6",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确覆盖已付款未拣货可取消并原路退款",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "已付款但尚未进入仓库拣货时可以申请取消并原路退款。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持该事实"
+      }
+    },
+    "rag-015:bbef83d96162794179f2ef1b1259f79478be50f30b718e3f1454799362d571aa": {
+      "id": "rag-015",
+      "context_sha256": "bbef83d96162794179f2ef1b1259f79478be50f30b718e3f1454799362d571aa",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"E1明确超过5天无新轨迹可创建异常工单\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。\",\"verdict\":\"sufficient\"},{\"reason\":\"E1明确客服24小时内联系承运商核查\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均有E1直接支持\"}",
+        "latency_ms": 1112.5674999966577,
+        "usage": {
+          "input_tokens": 659,
+          "output_tokens": 151,
+          "total_tokens": 810,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 151,
+            "prompt_tokens": 659,
+            "total_tokens": 810,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 403
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "bd4cff65-17b6-464e-ba8e-758953bb323e",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确超过5天无新轨迹可创建异常工单",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "E1明确客服24小时内联系承运商核查",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均有E1直接支持"
+      }
+    },
+    "rag-016:5609cdc79a9edb869209cc57d1a72d9e0f6856c843c810ad8cf9ee986b31d59b": {
+      "id": "rag-016",
+      "context_sha256": "5609cdc79a9edb869209cc57d1a72d9e0f6856c843c810ad8cf9ee986b31d59b",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.0,
+        "fact_support_values": [
+          false,
+          false
+        ],
+        "missing_facts": [
+          "显示签收但本人未收到可创建物流异常工单",
+          "核查前不直接承诺退款结果"
+        ]
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"上下文无物流异常工单相关内容\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"\", \"verdict\": \"missing\"}, {\"reason\": \"上下文无退款承诺限制说明\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"\", \"verdict\": \"missing\"}], \"reason\": \"两条事实均无证据支持\"}",
+        "latency_ms": 909.292500000447,
+        "usage": {
+          "input_tokens": 657,
+          "output_tokens": 91,
+          "total_tokens": 748,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 91,
+            "prompt_tokens": 657,
+            "total_tokens": 748,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 401
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "060f2635-f3b5-4ca4-8798-a03cb57b6e9a",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "上下文无物流异常工单相关内容",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "",
+            "verdict": "missing"
+          },
+          {
+            "reason": "上下文无退款承诺限制说明",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "",
+            "verdict": "missing"
+          }
+        ],
+        "reason": "两条事实均无证据支持"
+      }
+    },
+    "rag-017:5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a": {
+      "id": "rag-017",
+      "context_sha256": "5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"原文明确预计送达不等于承诺到达\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"预计送达时间是基于仓库和承运商计算的参考时间，不等于承诺到达时间。\", \"verdict\": \"sufficient\"}, {\"reason\": \"原文明确偏远地区可能增加2至3天\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"偏远地区可能增加 2 至 3 天。\", \"verdict\": \"sufficient\"}], \"reason\": \"两项事实均被E1完整支持\"}",
+        "latency_ms": 1254.6707999972568,
+        "usage": {
+          "input_tokens": 643,
+          "output_tokens": 131,
+          "total_tokens": 774,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 131,
+            "prompt_tokens": 643,
+            "total_tokens": 774,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 387
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "c7673dd5-3a50-4b2a-aacf-02edd4e72200",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "原文明确预计送达不等于承诺到达",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "预计送达时间是基于仓库和承运商计算的参考时间，不等于承诺到达时间。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "原文明确偏远地区可能增加2至3天",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "偏远地区可能增加 2 至 3 天。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-018:613bba8e4574b89d9df5e5fc0b859d8d1873dacddc84aa5942ed1e550b3c463d": {
+      "id": "rag-018",
+      "context_sha256": "613bba8e4574b89d9df5e5fc0b859d8d1873dacddc84aa5942ed1e550b3c463d",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"出库后平台不能直接修改有原文支持\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"订单已出库后平台不能直接修改\",\"verdict\":\"sufficient\"},{\"reason\":\"联系承运商转寄及费用时效以承运商为准均覆盖\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"用户可以联系承运商尝试转寄，产生的费用和时效变化以承运商结果为准\",\"verdict\":\"sufficient\"},{\"reason\":\"跨省修改可能被拒绝有原文支持\",\"fact_index\":2,\"evidence_id\":\"E1\",\"quote\":\"涉及跨省或跨配送区域的修改可能被拒绝\",\"verdict\":\"sufficient\"}],\"reason\":\"三项事实均有政策原文完整支持\"}",
+        "latency_ms": 1225.832599997375,
+        "usage": {
+          "input_tokens": 669,
+          "output_tokens": 157,
+          "total_tokens": 826,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 157,
+            "prompt_tokens": 669,
+            "total_tokens": 826,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 413
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "a6223f71-a848-401c-a8da-ad477bc3ea22",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "出库后平台不能直接修改有原文支持",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "订单已出库后平台不能直接修改",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "联系承运商转寄及费用时效以承运商为准均覆盖",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "用户可以联系承运商尝试转寄，产生的费用和时效变化以承运商结果为准",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "跨省修改可能被拒绝有原文支持",
+            "fact_index": 2,
+            "evidence_id": "E1",
+            "quote": "涉及跨省或跨配送区域的修改可能被拒绝",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "三项事实均有政策原文完整支持"
+      }
+    },
+    "rag-019:61391f7bc1addc24e439bd4b1b1ee9e0e0c197d9087af3d51cf3ff580823c103": {
+      "id": "rag-019",
+      "context_sha256": "61391f7bc1addc24e439bd4b1b1ee9e0e0c197d9087af3d51cf3ff580823c103",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"完整覆盖12个月及以页面凭证为准\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。\",\"verdict\":\"sufficient\"},{\"reason\":\"完整覆盖非人为故障可检测维修\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"非人为性能故障可以申请检测和维修\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均被E1完整支持\"}",
+        "latency_ms": 1347.2237999994832,
+        "usage": {
+          "input_tokens": 639,
+          "output_tokens": 112,
+          "total_tokens": 751,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 112,
+            "prompt_tokens": 639,
+            "total_tokens": 751,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 383
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "35b12d91-ddfa-4fcc-a0b8-67b0e88ed1fd",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "完整覆盖12个月及以页面凭证为准",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "完整覆盖非人为故障可检测维修",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "非人为性能故障可以申请检测和维修",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-020:0992c9c977ed7032dbbc8af9644bfce8f7befc4d3120973706323dbf47dbd1ea": {
+      "id": "rag-020",
+      "context_sha256": "0992c9c977ed7032dbbc8af9644bfce8f7befc4d3120973706323dbf47dbd1ea",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"进水与私自拆机均明确排除免费保修\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。\",\"verdict\":\"sufficient\"}],\"reason\":\"证据完整支持该事实\"}",
+        "latency_ms": 822.7968999999575,
+        "usage": {
+          "input_tokens": 529,
+          "output_tokens": 68,
+          "total_tokens": 597,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 68,
+            "prompt_tokens": 529,
+            "total_tokens": 597,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 273
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "ea183120-16a0-4b2f-87ea-60740df38906",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "进水与私自拆机均明确排除免费保修",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持该事实"
+      }
+    },
+    "rag-021:0e257eb0205f1aa62b80ff5edfa2aebe51e72ea1a8bfdb072e69ddee27813b8a": {
+      "id": "rag-021",
+      "context_sha256": "0e257eb0205f1aa62b80ff5edfa2aebe51e72ea1a8bfdb072e69ddee27813b8a",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"订单号、故障描述、序列号、图片视频均覆盖\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。\",\"verdict\":\"sufficient\"},{\"reason\":\"收货后3个工作日内初检完整支持\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"售后中心收货后通常在 3 个工作日内完成初检\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均被E1完整支持\"}",
+        "latency_ms": 1056.1180000004242,
+        "usage": {
+          "input_tokens": 636,
+          "output_tokens": 117,
+          "total_tokens": 753,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 117,
+            "prompt_tokens": 636,
+            "total_tokens": 753,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 380
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "ae40c6ff-4a1b-4473-8cd8-70153fc2e1ef",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "订单号、故障描述、序列号、图片视频均覆盖",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "收货后3个工作日内初检完整支持",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "售后中心收货后通常在 3 个工作日内完成初检",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-022:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703": {
+      "id": "rag-022",
+      "context_sha256": "c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"E2明确要求付费维修先报价并获确认\", \"fact_index\": 0, \"evidence_id\": \"E2\", \"quote\": \"涉及付费维修时，必须先向用户展示报价并获得确认。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据完整支持付费维修需先报价确认\"}",
+        "latency_ms": 850.9016999996675,
+        "usage": {
+          "input_tokens": 613,
+          "output_tokens": 76,
+          "total_tokens": 689,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 76,
+            "prompt_tokens": 613,
+            "total_tokens": 689,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 357
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "ccc1700e-7732-4bb9-8ac0-9bfd28db22cd",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E2明确要求付费维修先报价并获确认",
+            "fact_index": 0,
+            "evidence_id": "E2",
+            "quote": "涉及付费维修时，必须先向用户展示报价并获得确认。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持付费维修需先报价确认"
+      }
+    },
+    "rag-023:83f12ba93c46e36f7bc7a18a61a0ebfb3715bbe36af966651d4b043030a9e4eb": {
+      "id": "rag-023",
+      "context_sha256": "83f12ba93c46e36f7bc7a18a61a0ebfb3715bbe36af966651d4b043030a9e4eb",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"45天内可申请电子普票或符合条件专票\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。\",\"verdict\":\"sufficient\"},{\"reason\":\"明确要求抬头和税号提交前格式校验\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"发票抬头和税号提交前需要完成格式校验\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均被E1完整支持\"}",
+        "latency_ms": 945.6259999969916,
+        "usage": {
+          "input_tokens": 656,
+          "output_tokens": 113,
+          "total_tokens": 769,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 113,
+            "prompt_tokens": 656,
+            "total_tokens": 769,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 400
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "b4408ab2-f5cd-4fef-8360-c72709c00f96",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "45天内可申请电子普票或符合条件专票",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "明确要求抬头和税号提交前格式校验",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "发票抬头和税号提交前需要完成格式校验",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-024:83f12ba93c46e36f7bc7a18a61a0ebfb3715bbe36af966651d4b043030a9e4eb": {
+      "id": "rag-024",
+      "context_sha256": "83f12ba93c46e36f7bc7a18a61a0ebfb3715bbe36af966651d4b043030a9e4eb",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"E1明确已开专票不能直接改，需红冲并财务审核\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。\",\"verdict\":\"sufficient\"},{\"reason\":\"E1明确退款后发票可能作废或红冲\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"退款后发票可能需要作废或红冲。\",\"verdict\":\"sufficient\"}],\"reason\":\"两条事实均被E1完整支持\"}",
+        "latency_ms": 793.3526000015263,
+        "usage": {
+          "input_tokens": 659,
+          "output_tokens": 122,
+          "total_tokens": 781,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 122,
+            "prompt_tokens": 659,
+            "total_tokens": 781,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 403
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "c5380cb6-9b10-4a74-b302-343011bf3a80",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确已开专票不能直接改，需红冲并财务审核",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "E1明确退款后发票可能作废或红冲",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "退款后发票可能需要作废或红冲。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两条事实均被E1完整支持"
+      }
+    },
+    "rag-025:791d9f97f33caab0fc6dcec191de48561d405b500955ad47f22178a1dad69f24": {
+      "id": "rag-025",
+      "context_sha256": "791d9f97f33caab0fc6dcec191de48561d405b500955ad47f22178a1dad69f24",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"完整覆盖不重复支付及等待对账\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账\",\"verdict\":\"sufficient\"},{\"reason\":\"完整覆盖1个工作日恢复或退回\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"通常会在 1 个工作日内自动恢复订单或原路退回\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均被E1完整支持\"}",
+        "latency_ms": 1031.9105000016862,
+        "usage": {
+          "input_tokens": 660,
+          "output_tokens": 114,
+          "total_tokens": 774,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 114,
+            "prompt_tokens": 660,
+            "total_tokens": 774,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 404
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "17deed03-1818-4707-b2a6-d110d01d51f8",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "完整覆盖不重复支付及等待对账",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "完整覆盖1个工作日恢复或退回",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "通常会在 1 个工作日内自动恢复订单或原路退回",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-026:416c9210c6906d0ea41bb796654df1ce4a1d1905be2a3424fabdf384d5feb772": {
+      "id": "rag-026",
+      "context_sha256": "416c9210c6906d0ea41bb796654df1ce4a1d1905be2a3424fabdf384d5feb772",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"完整覆盖保留流水和创建工单\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单\",\"verdict\":\"sufficient\"},{\"reason\":\"明确禁止索要支付密码\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"客服不得要求用户提供完整银行卡号或支付密码\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均有直接政策原文支持\"}",
+        "latency_ms": 1198.03409999804,
+        "usage": {
+          "input_tokens": 658,
+          "output_tokens": 107,
+          "total_tokens": 765,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 107,
+            "prompt_tokens": 658,
+            "total_tokens": 765,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 402
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "03a03324-b291-4e35-a025-4f5568ebd917",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "完整覆盖保留流水和创建工单",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "明确禁止索要支付密码",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "客服不得要求用户提供完整银行卡号或支付密码",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均有直接政策原文支持"
+      }
+    },
+    "rag-027:3e385ee34e36b57cb76faca22249e51d13120160c51b4e172c66bc9f58d3058c": {
+      "id": "rag-027",
+      "context_sha256": "3e385ee34e36b57cb76faca22249e51d13120160c51b4e172c66bc9f58d3058c",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"完整覆盖未过期、未被排除、24小时内退回三条件\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回\", \"verdict\": \"sufficient\"}], \"reason\": \"证据E1完整支持该事实全部条件\"}",
+        "latency_ms": 827.6822999978322,
+        "usage": {
+          "input_tokens": 637,
+          "output_tokens": 86,
+          "total_tokens": 723,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 86,
+            "prompt_tokens": 637,
+            "total_tokens": 723,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 381
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "5b21099c-d6f4-40e5-8190-538984a8368a",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "完整覆盖未过期、未被排除、24小时内退回三条件",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据E1完整支持该事实全部条件"
+      }
+    },
+    "rag-028:5f06ee20bfcdda5aa0479d8965627b91e055946b022d6797c60aa1394e117f3a": {
+      "id": "rag-028",
+      "context_sha256": "5f06ee20bfcdda5aa0479d8965627b91e055946b022d6797c60aa1394e117f3a",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"E1明确满减失效时扣优惠分摊\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。\",\"verdict\":\"sufficient\"}],\"reason\":\"证据完整支持退款扣减优惠分摊\"}",
+        "latency_ms": 760.5465000015101,
+        "usage": {
+          "input_tokens": 648,
+          "output_tokens": 68,
+          "total_tokens": 716,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 68,
+            "prompt_tokens": 648,
+            "total_tokens": 716,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 392
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "0083fa86-c747-44c6-94cd-9381d5d254ce",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确满减失效时扣优惠分摊",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持退款扣减优惠分摊"
+      }
+    },
+    "rag-029:431da0aea1d87652f3d9949d213c4f7fb3f68d547c66420c0f989b993147ea9b": {
+      "id": "rag-029",
+      "context_sha256": "431da0aea1d87652f3d9949d213c4f7fb3f68d547c66420c0f989b993147ea9b",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"E1明确导出或删除账户信息需专门身份验证和隐私工单\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据完整支持所需事实\"}",
+        "latency_ms": 864.664199998515,
+        "usage": {
+          "input_tokens": 652,
+          "output_tokens": 83,
+          "total_tokens": 735,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 83,
+            "prompt_tokens": 652,
+            "total_tokens": 735,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 396
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "3275c2bb-5cc3-4ab8-8b4f-c30b1afe7d8b",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确导出或删除账户信息需专门身份验证和隐私工单",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持所需事实"
+      }
+    },
+    "rag-030:457e85690d14f924477999cd6aa1926a659e8eb885722cbd724f11763d2a1441": {
+      "id": "rag-030",
+      "context_sha256": "457e85690d14f924477999cd6aa1926a659e8eb885722cbd724f11763d2a1441",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": 0.6666666666666666,
+        "fact_support_values": [
+          true,
+          true,
+          false
+        ],
+        "missing_facts": [
+          "相同幂等键只创建一张工单"
+        ]
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"明确给出物流异常工单目标响应时间12小时\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"物流、支付和退款异常工单目标响应时间为 12 小时\",\"verdict\":\"sufficient\"},{\"reason\":\"覆盖补充证据申请升级及不应重复建单\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"用户对处理结果有异议时可以在原工单中补充证据并申请升级，不应通过重复创建相同工单提高优先级\",\"verdict\":\"sufficient\"},{\"reason\":\"上下文未提及幂等键或相同幂等键建单规则\",\"fact_index\":2,\"evidence_id\":\"E1\",\"quote\":\"\",\"verdict\":\"missing\"}],\"reason\":\"前两项有直接证据，第三项无幂等键相关内容\"}",
+        "latency_ms": 1251.0062000001199,
+        "usage": {
+          "input_tokens": 674,
+          "output_tokens": 168,
+          "total_tokens": 842,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 168,
+            "prompt_tokens": 674,
+            "total_tokens": 842,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 418
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "c1b6e98d-f8c4-4d4d-a18f-ed5e60109cac",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "明确给出物流异常工单目标响应时间12小时",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "物流、支付和退款异常工单目标响应时间为 12 小时",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "覆盖补充证据申请升级及不应重复建单",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "用户对处理结果有异议时可以在原工单中补充证据并申请升级，不应通过重复创建相同工单提高优先级",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "上下文未提及幂等键或相同幂等键建单规则",
+            "fact_index": 2,
+            "evidence_id": "E1",
+            "quote": "",
+            "verdict": "missing"
+          }
+        ],
+        "reason": "前两项有直接证据，第三项无幂等键相关内容"
+      }
+    },
+    "rag-031:baca81e1b926eadc4e10b5cd6333162c8681357bdb8ea9b99f1989d380ee80c0": {
+      "id": "rag-031",
+      "context_sha256": "baca81e1b926eadc4e10b5cd6333162c8681357bdb8ea9b99f1989d380ee80c0",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-032:e2d32788d6bf5856ea63b802f2d28cc7b2a84d03aa3e636df838c63f6453a60d": {
+      "id": "rag-032",
+      "context_sha256": "e2d32788d6bf5856ea63b802f2d28cc7b2a84d03aa3e636df838c63f6453a60d",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-033:50d6e92d60ac264c182e7368fd16782ba30444ee3a40f3590ccfd13990b123ee": {
+      "id": "rag-033",
+      "context_sha256": "50d6e92d60ac264c182e7368fd16782ba30444ee3a40f3590ccfd13990b123ee",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-034:dc54c54d692d7f668f69feb347f4895c1860b404e33bea17c9fc73fffa66dc20": {
+      "id": "rag-034",
+      "context_sha256": "dc54c54d692d7f668f69feb347f4895c1860b404e33bea17c9fc73fffa66dc20",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-035:5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a": {
+      "id": "rag-035",
+      "context_sha256": "5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-036:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703": {
+      "id": "rag-036",
+      "context_sha256": "c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-037:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c": {
+      "id": "rag-037",
+      "context_sha256": "82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-038:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703": {
+      "id": "rag-038",
+      "context_sha256": "c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-039:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945": {
+      "id": "rag-039",
+      "context_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-040:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945": {
+      "id": "rag-040",
+      "context_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-005:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a": {
+      "id": "rag-005",
+      "context_sha256": "6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"E2明确定制商品不适用七天无理由退货\", \"fact_index\": 0, \"evidence_id\": \"E2\", \"quote\": \"定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。\", \"verdict\": \"sufficient\"}], \"reason\": \"定制商品排除七天无理由退货有直接政策依据\"}",
+        "latency_ms": 739.2519999993965,
+        "usage": {
+          "input_tokens": 644,
+          "output_tokens": 96,
+          "total_tokens": 740,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 96,
+            "prompt_tokens": 644,
+            "total_tokens": 740,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 388
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "69669aa4-4ef9-4b7e-9813-8cd48b33fc36",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E2明确定制商品不适用七天无理由退货",
+            "fact_index": 0,
+            "evidence_id": "E2",
+            "quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "定制商品排除七天无理由退货有直接政策依据"
+      }
+    },
+    "rag-007:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044": {
+      "id": "rag-007",
+      "context_sha256": "1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"原文明确质量问题不受无理由退货限制\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"商品存在质量问题时不受无理由退货范围限制\", \"verdict\": \"sufficient\"}, {\"reason\": \"原文列出故障照片、检测结果等证明及质量售后流程\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"应提交故障照片、检测结果或其他证明，按质量售后流程处理\", \"verdict\": \"sufficient\"}], \"reason\": \"两项事实均被E1完整支持\"}",
+        "latency_ms": 1107.7221000014106,
+        "usage": {
+          "input_tokens": 655,
+          "output_tokens": 130,
+          "total_tokens": 785,
+          "input_token_details": {
+            "cache_read": 512
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 130,
+            "prompt_tokens": 655,
+            "total_tokens": 785,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 512
+            },
+            "prompt_cache_hit_tokens": 512,
+            "prompt_cache_miss_tokens": 143
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "f5547d5f-130d-4ce2-b335-f271214e36fd",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "原文明确质量问题不受无理由退货限制",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "商品存在质量问题时不受无理由退货范围限制",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "原文列出故障照片、检测结果等证明及质量售后流程",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "应提交故障照片、检测结果或其他证明，按质量售后流程处理",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-008:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4": {
+      "id": "rag-008",
+      "context_sha256": "e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"完整覆盖时限、材料及照片类型\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"用户应在签收后 48 小时内上传外包装、商品和快递面单照片。\",\"verdict\":\"sufficient\"},{\"reason\":\"完整覆盖核验通过后的两种处理方式\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"核验通过后可以选择换货或缺件补发\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均有直接原文完整支持\"}",
+        "latency_ms": 1236.3657999994757,
+        "usage": {
+          "input_tokens": 678,
+          "output_tokens": 110,
+          "total_tokens": 788,
+          "input_token_details": {
+            "cache_read": 384
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 110,
+            "prompt_tokens": 678,
+            "total_tokens": 788,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 384
+            },
+            "prompt_cache_hit_tokens": 384,
+            "prompt_cache_miss_tokens": 294
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "331df94d-d8b1-4f7b-ac85-1d63cbb3afbc",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "完整覆盖时限、材料及照片类型",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "用户应在签收后 48 小时内上传外包装、商品和快递面单照片。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "完整覆盖核验通过后的两种处理方式",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "核验通过后可以选择换货或缺件补发",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均有直接原文完整支持"
+      }
+    },
+    "rag-015:7e98118a1b2f02d5a1d7a894332b5975b098dd5154dd9c3dd5e5fc2fb460d187": {
+      "id": "rag-015",
+      "context_sha256": "7e98118a1b2f02d5a1d7a894332b5975b098dd5154dd9c3dd5e5fc2fb460d187",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"证据明确支持超过5天无新轨迹可创建物流异常工单\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。\", \"verdict\": \"sufficient\"}, {\"reason\": \"证据明确支持客服24小时内联系承运商核查\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。\", \"verdict\": \"sufficient\"}], \"reason\": \"两项事实均有直接原文支持\"}",
+        "latency_ms": 1292.5102000008337,
+        "usage": {
+          "input_tokens": 648,
+          "output_tokens": 172,
+          "total_tokens": 820,
+          "input_token_details": {
+            "cache_read": 384
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 172,
+            "prompt_tokens": 648,
+            "total_tokens": 820,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 384
+            },
+            "prompt_cache_hit_tokens": 384,
+            "prompt_cache_miss_tokens": 264
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "7f90d409-b9de-4af6-b61f-67818b623087",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "证据明确支持超过5天无新轨迹可创建物流异常工单",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "证据明确支持客服24小时内联系承运商核查",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均有直接原文支持"
+      }
+    },
+    "rag-021:d2682dce6a5959fa0f6cb874967e5dd46a4a72e9688c5ca267bb787178e77cf6": {
+      "id": "rag-021",
+      "context_sha256": "d2682dce6a5959fa0f6cb874967e5dd46a4a72e9688c5ca267bb787178e77cf6",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"订单号、故障描述、序列号、图片视频均覆盖\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。\",\"verdict\":\"sufficient\"},{\"reason\":\"收货后3个工作日内初检完整支持\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"售后中心收货后通常在 3 个工作日内完成初检\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均被E1完整支持\"}",
+        "latency_ms": 982.4762999996892,
+        "usage": {
+          "input_tokens": 640,
+          "output_tokens": 117,
+          "total_tokens": 757,
+          "input_token_details": {
+            "cache_read": 384
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 117,
+            "prompt_tokens": 640,
+            "total_tokens": 757,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 384
+            },
+            "prompt_cache_hit_tokens": 384,
+            "prompt_cache_miss_tokens": 256
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "2b8ff717-1ed2-4c7b-b5bf-3fe0ac1ef15a",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "订单号、故障描述、序列号、图片视频均覆盖",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "收货后3个工作日内初检完整支持",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "售后中心收货后通常在 3 个工作日内完成初检",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    },
+    "rag-023:9c478bffe89e9c9d548a29d416ec73727e27b6275eb2d06ca1bd9122e266d5c8": {
+      "id": "rag-023",
+      "context_sha256": "9c478bffe89e9c9d548a29d416ec73727e27b6275eb2d06ca1bd9122e266d5c8",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"45天内可申请电子普票或符合条件专票\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。\", \"verdict\": \"sufficient\"}, {\"reason\": \"明确要求抬头和税号提交前格式校验\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"发票抬头和税号提交前需要完成格式校验\", \"verdict\": \"sufficient\"}], \"reason\": \"两项事实均有直接原文支持\"}",
+        "latency_ms": 944.8378999986744,
+        "usage": {
+          "input_tokens": 646,
+          "output_tokens": 132,
+          "total_tokens": 778,
+          "input_token_details": {
+            "cache_read": 384
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 132,
+            "prompt_tokens": 646,
+            "total_tokens": 778,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 384
+            },
+            "prompt_cache_hit_tokens": 384,
+            "prompt_cache_miss_tokens": 262
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "7b6a8668-b282-4a78-9805-60685b278350",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "45天内可申请电子普票或符合条件专票",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "明确要求抬头和税号提交前格式校验",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "发票抬头和税号提交前需要完成格式校验",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均有直接原文支持"
+      }
+    },
+    "rag-024:358bd888086891a46d671b31a4d8b701b356606f259ba27a98dce7b6875e20b1": {
+      "id": "rag-024",
+      "context_sha256": "358bd888086891a46d671b31a4d8b701b356606f259ba27a98dce7b6875e20b1",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"已开专票不能直接改，需红冲并财务审核\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。\", \"verdict\": \"sufficient\"}, {\"reason\": \"退款后发票可能作废或红冲\", \"fact_index\": 1, \"evidence_id\": \"E1\", \"quote\": \"退款后发票可能需要作废或红冲。\", \"verdict\": \"sufficient\"}], \"reason\": \"两条事实均有原文直接支持\"}",
+        "latency_ms": 982.1105999981228,
+        "usage": {
+          "input_tokens": 642,
+          "output_tokens": 135,
+          "total_tokens": 777,
+          "input_token_details": {
+            "cache_read": 384
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 135,
+            "prompt_tokens": 642,
+            "total_tokens": 777,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 384
+            },
+            "prompt_cache_hit_tokens": 384,
+            "prompt_cache_miss_tokens": 258
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "65a0aa8c-9bf1-493a-96da-8323c0b7d522",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "已开专票不能直接改，需红冲并财务审核",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "退款后发票可能作废或红冲",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "退款后发票可能需要作废或红冲。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两条事实均有原文直接支持"
+      }
+    },
+    "rag-029:8772d958bb7cd0ec5241aec9bc57187b138dcef4d74e81e6474b1946fee4f299": {
+      "id": "rag-029",
+      "context_sha256": "8772d958bb7cd0ec5241aec9bc57187b138dcef4d74e81e6474b1946fee4f299",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\": [{\"reason\": \"E1明确导出或删除需专门身份验证和隐私工单\", \"fact_index\": 0, \"evidence_id\": \"E1\", \"quote\": \"用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。\", \"verdict\": \"sufficient\"}], \"reason\": \"证据完整支持该事实\"}",
+        "latency_ms": 863.2203000015579,
+        "usage": {
+          "input_tokens": 645,
+          "output_tokens": 81,
+          "total_tokens": 726,
+          "input_token_details": {
+            "cache_read": 384
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 81,
+            "prompt_tokens": 645,
+            "total_tokens": 726,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 384
+            },
+            "prompt_cache_hit_tokens": 384,
+            "prompt_cache_miss_tokens": 261
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "81ebc9e6-6e11-418e-a006-4a4174068d07",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确导出或删除需专门身份验证和隐私工单",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "证据完整支持该事实"
+      }
+    },
+    "rag-032:074319f2f47ef38909d07d3122195408d4bf5a7af6afbf86fd58d38cc6227ba1": {
+      "id": "rag-032",
+      "context_sha256": "074319f2f47ef38909d07d3122195408d4bf5a7af6afbf86fd58d38cc6227ba1",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-035:f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283": {
+      "id": "rag-035",
+      "context_sha256": "f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-036:0e257eb0205f1aa62b80ff5edfa2aebe51e72ea1a8bfdb072e69ddee27813b8a": {
+      "id": "rag-036",
+      "context_sha256": "0e257eb0205f1aa62b80ff5edfa2aebe51e72ea1a8bfdb072e69ddee27813b8a",
+      "metrics": {
+        "evidence_sufficiency": 0.0,
+        "fact_evidence_coverage": null
+      },
+      "status": "ok",
+      "origin": "frozen_no_answer_label"
+    },
+    "rag-016:3b9839628bad671745e76dc0d9ada327b138c3b8c809cf3682a399bd69640580": {
+      "id": "rag-016",
+      "context_sha256": "3b9839628bad671745e76dc0d9ada327b138c3b8c809cf3682a399bd69640580",
+      "metrics": {
+        "evidence_sufficiency": 1.0,
+        "fact_evidence_coverage": 1.0,
+        "fact_support_values": [
+          true,
+          true
+        ],
+        "missing_facts": []
+      },
+      "raw": {
+        "raw_response": "{\"facts\":[{\"reason\":\"E1明确显示签收但本人未收到可创建物流异常工单\",\"fact_index\":0,\"evidence_id\":\"E1\",\"quote\":\"显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。\",\"verdict\":\"sufficient\"},{\"reason\":\"E1明确核查完成前不直接承诺退款结果\",\"fact_index\":1,\"evidence_id\":\"E1\",\"quote\":\"核查完成前不能虚构包裹位置，也不直接承诺退款结果。\",\"verdict\":\"sufficient\"}],\"reason\":\"两项事实均被E1完整支持\"}",
+        "latency_ms": 1006.3310000005004,
+        "usage": {
+          "input_tokens": 662,
+          "output_tokens": 124,
+          "total_tokens": 786,
+          "input_token_details": {
+            "cache_read": 256
+          },
+          "output_token_details": {}
+        },
+        "response_metadata": {
+          "token_usage": {
+            "completion_tokens": 124,
+            "prompt_tokens": 662,
+            "total_tokens": 786,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 406
+          },
+          "model_provider": "openai",
+          "model_name": "deepseek-flash",
+          "system_fingerprint": "bc19ba97cbe016479903222bb1578db6",
+          "id": "d57ab679-b473-46f0-b661-1db35d3f06bf",
+          "finish_reason": "stop",
+          "logprobs": null
+        },
+        "tool_calls": [],
+        "status": "ok"
+      },
+      "status": "ok",
+      "origin": "answer_blind_deepseek_judge",
+      "parsed": {
+        "facts": [
+          {
+            "reason": "E1明确显示签收但本人未收到可创建物流异常工单",
+            "fact_index": 0,
+            "evidence_id": "E1",
+            "quote": "显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。",
+            "verdict": "sufficient"
+          },
+          {
+            "reason": "E1明确核查完成前不直接承诺退款结果",
+            "fact_index": 1,
+            "evidence_id": "E1",
+            "quote": "核查完成前不能虚构包裹位置，也不直接承诺退款结果。",
+            "verdict": "sufficient"
+          }
+        ],
+        "reason": "两项事实均被E1完整支持"
+      }
+    }
+  },
+  "mapping": {
+    "dense:rag-001": "rag-001:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "dense:rag-002": "rag-002:f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283",
+    "dense:rag-003": "rag-003:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "dense:rag-004": "rag-004:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "dense:rag-005": "rag-005:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+    "dense:rag-006": "rag-006:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+    "dense:rag-007": "rag-007:dfb803331fa5030c6d8a2f1183259a2b76a4d4ff327d14e6af8c5041b9c7d097",
+    "dense:rag-008": "rag-008:106637303aebf1580c959a587c6bc147f4bbed41b009533b26f6a91dd809d87f",
+    "dense:rag-009": "rag-009:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "dense:rag-010": "rag-010:55f4604bcd2a75ad2f1ff8d44230b7dcdaf994946629aff9a31bd5f25df7ccd8",
+    "dense:rag-011": "rag-011:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "dense:rag-012": "rag-012:752897327c394ed11eb08009a1dc2e909794f6d93dd25c6212c0204e38c74753",
+    "dense:rag-013": "rag-013:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+    "dense:rag-014": "rag-014:e4ca94d215a42b29a54c73f4a14ba2e5597e00b1e30ef0825017c3b0fa19b94c",
+    "dense:rag-015": "rag-015:bbef83d96162794179f2ef1b1259f79478be50f30b718e3f1454799362d571aa",
+    "dense:rag-016": "rag-016:5609cdc79a9edb869209cc57d1a72d9e0f6856c843c810ad8cf9ee986b31d59b",
+    "dense:rag-017": "rag-017:5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a",
+    "dense:rag-018": "rag-018:613bba8e4574b89d9df5e5fc0b859d8d1873dacddc84aa5942ed1e550b3c463d",
+    "dense:rag-019": "rag-019:61391f7bc1addc24e439bd4b1b1ee9e0e0c197d9087af3d51cf3ff580823c103",
+    "dense:rag-020": "rag-020:0992c9c977ed7032dbbc8af9644bfce8f7befc4d3120973706323dbf47dbd1ea",
+    "dense:rag-021": "rag-021:0e257eb0205f1aa62b80ff5edfa2aebe51e72ea1a8bfdb072e69ddee27813b8a",
+    "dense:rag-022": "rag-022:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+    "dense:rag-023": "rag-023:83f12ba93c46e36f7bc7a18a61a0ebfb3715bbe36af966651d4b043030a9e4eb",
+    "dense:rag-024": "rag-024:83f12ba93c46e36f7bc7a18a61a0ebfb3715bbe36af966651d4b043030a9e4eb",
+    "dense:rag-025": "rag-025:791d9f97f33caab0fc6dcec191de48561d405b500955ad47f22178a1dad69f24",
+    "dense:rag-026": "rag-026:416c9210c6906d0ea41bb796654df1ce4a1d1905be2a3424fabdf384d5feb772",
+    "dense:rag-027": "rag-027:3e385ee34e36b57cb76faca22249e51d13120160c51b4e172c66bc9f58d3058c",
+    "dense:rag-028": "rag-028:5f06ee20bfcdda5aa0479d8965627b91e055946b022d6797c60aa1394e117f3a",
+    "dense:rag-029": "rag-029:431da0aea1d87652f3d9949d213c4f7fb3f68d547c66420c0f989b993147ea9b",
+    "dense:rag-030": "rag-030:457e85690d14f924477999cd6aa1926a659e8eb885722cbd724f11763d2a1441",
+    "dense:rag-031": "rag-031:baca81e1b926eadc4e10b5cd6333162c8681357bdb8ea9b99f1989d380ee80c0",
+    "dense:rag-032": "rag-032:e2d32788d6bf5856ea63b802f2d28cc7b2a84d03aa3e636df838c63f6453a60d",
+    "dense:rag-033": "rag-033:50d6e92d60ac264c182e7368fd16782ba30444ee3a40f3590ccfd13990b123ee",
+    "dense:rag-034": "rag-034:dc54c54d692d7f668f69feb347f4895c1860b404e33bea17c9fc73fffa66dc20",
+    "dense:rag-035": "rag-035:5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a",
+    "dense:rag-036": "rag-036:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+    "dense:rag-037": "rag-037:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+    "dense:rag-038": "rag-038:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+    "dense:rag-039": "rag-039:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "dense:rag-040": "rag-040:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "hybrid:rag-001": "rag-001:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "hybrid:rag-002": "rag-002:f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283",
+    "hybrid:rag-003": "rag-003:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "hybrid:rag-004": "rag-004:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "hybrid:rag-005": "rag-005:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "hybrid:rag-006": "rag-006:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+    "hybrid:rag-007": "rag-007:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+    "hybrid:rag-008": "rag-008:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "hybrid:rag-009": "rag-009:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "hybrid:rag-010": "rag-010:55f4604bcd2a75ad2f1ff8d44230b7dcdaf994946629aff9a31bd5f25df7ccd8",
+    "hybrid:rag-011": "rag-011:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "hybrid:rag-012": "rag-012:752897327c394ed11eb08009a1dc2e909794f6d93dd25c6212c0204e38c74753",
+    "hybrid:rag-013": "rag-013:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+    "hybrid:rag-014": "rag-014:e4ca94d215a42b29a54c73f4a14ba2e5597e00b1e30ef0825017c3b0fa19b94c",
+    "hybrid:rag-015": "rag-015:7e98118a1b2f02d5a1d7a894332b5975b098dd5154dd9c3dd5e5fc2fb460d187",
+    "hybrid:rag-016": "rag-016:5609cdc79a9edb869209cc57d1a72d9e0f6856c843c810ad8cf9ee986b31d59b",
+    "hybrid:rag-017": "rag-017:5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a",
+    "hybrid:rag-018": "rag-018:613bba8e4574b89d9df5e5fc0b859d8d1873dacddc84aa5942ed1e550b3c463d",
+    "hybrid:rag-019": "rag-019:61391f7bc1addc24e439bd4b1b1ee9e0e0c197d9087af3d51cf3ff580823c103",
+    "hybrid:rag-020": "rag-020:0992c9c977ed7032dbbc8af9644bfce8f7befc4d3120973706323dbf47dbd1ea",
+    "hybrid:rag-021": "rag-021:d2682dce6a5959fa0f6cb874967e5dd46a4a72e9688c5ca267bb787178e77cf6",
+    "hybrid:rag-022": "rag-022:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+    "hybrid:rag-023": "rag-023:9c478bffe89e9c9d548a29d416ec73727e27b6275eb2d06ca1bd9122e266d5c8",
+    "hybrid:rag-024": "rag-024:358bd888086891a46d671b31a4d8b701b356606f259ba27a98dce7b6875e20b1",
+    "hybrid:rag-025": "rag-025:791d9f97f33caab0fc6dcec191de48561d405b500955ad47f22178a1dad69f24",
+    "hybrid:rag-026": "rag-026:416c9210c6906d0ea41bb796654df1ce4a1d1905be2a3424fabdf384d5feb772",
+    "hybrid:rag-027": "rag-027:3e385ee34e36b57cb76faca22249e51d13120160c51b4e172c66bc9f58d3058c",
+    "hybrid:rag-028": "rag-028:5f06ee20bfcdda5aa0479d8965627b91e055946b022d6797c60aa1394e117f3a",
+    "hybrid:rag-029": "rag-029:8772d958bb7cd0ec5241aec9bc57187b138dcef4d74e81e6474b1946fee4f299",
+    "hybrid:rag-030": "rag-030:457e85690d14f924477999cd6aa1926a659e8eb885722cbd724f11763d2a1441",
+    "hybrid:rag-031": "rag-031:baca81e1b926eadc4e10b5cd6333162c8681357bdb8ea9b99f1989d380ee80c0",
+    "hybrid:rag-032": "rag-032:074319f2f47ef38909d07d3122195408d4bf5a7af6afbf86fd58d38cc6227ba1",
+    "hybrid:rag-033": "rag-033:50d6e92d60ac264c182e7368fd16782ba30444ee3a40f3590ccfd13990b123ee",
+    "hybrid:rag-034": "rag-034:dc54c54d692d7f668f69feb347f4895c1860b404e33bea17c9fc73fffa66dc20",
+    "hybrid:rag-035": "rag-035:f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283",
+    "hybrid:rag-036": "rag-036:0e257eb0205f1aa62b80ff5edfa2aebe51e72ea1a8bfdb072e69ddee27813b8a",
+    "hybrid:rag-037": "rag-037:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+    "hybrid:rag-038": "rag-038:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+    "hybrid:rag-039": "rag-039:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "hybrid:rag-040": "rag-040:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "rewrite_hybrid:rag-001": "rag-001:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "rewrite_hybrid:rag-002": "rag-002:f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283",
+    "rewrite_hybrid:rag-003": "rag-003:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "rewrite_hybrid:rag-004": "rag-004:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "rewrite_hybrid:rag-005": "rag-005:6ceee52d67514684cea627ca29ef066a58a61f58fa644eb2a511ce0dea74671a",
+    "rewrite_hybrid:rag-006": "rag-006:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+    "rewrite_hybrid:rag-007": "rag-007:1f139a8daf3dc57d78e4b45df6eb77406d93242ec65827e24f9d70e0d48bc044",
+    "rewrite_hybrid:rag-008": "rag-008:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "rewrite_hybrid:rag-009": "rag-009:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "rewrite_hybrid:rag-010": "rag-010:55f4604bcd2a75ad2f1ff8d44230b7dcdaf994946629aff9a31bd5f25df7ccd8",
+    "rewrite_hybrid:rag-011": "rag-011:e9d45baf418368bb7db95c95d2e6571b8b8491560dde62a15c74cb174a4238c4",
+    "rewrite_hybrid:rag-012": "rag-012:752897327c394ed11eb08009a1dc2e909794f6d93dd25c6212c0204e38c74753",
+    "rewrite_hybrid:rag-013": "rag-013:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+    "rewrite_hybrid:rag-014": "rag-014:e4ca94d215a42b29a54c73f4a14ba2e5597e00b1e30ef0825017c3b0fa19b94c",
+    "rewrite_hybrid:rag-015": "rag-015:7e98118a1b2f02d5a1d7a894332b5975b098dd5154dd9c3dd5e5fc2fb460d187",
+    "rewrite_hybrid:rag-016": "rag-016:3b9839628bad671745e76dc0d9ada327b138c3b8c809cf3682a399bd69640580",
+    "rewrite_hybrid:rag-017": "rag-017:5144c7a0f2f3c19a8196aeda0b0c9167902a7f058c8129e4fea06e5d3d0fbe0a",
+    "rewrite_hybrid:rag-018": "rag-018:613bba8e4574b89d9df5e5fc0b859d8d1873dacddc84aa5942ed1e550b3c463d",
+    "rewrite_hybrid:rag-019": "rag-019:61391f7bc1addc24e439bd4b1b1ee9e0e0c197d9087af3d51cf3ff580823c103",
+    "rewrite_hybrid:rag-020": "rag-020:0992c9c977ed7032dbbc8af9644bfce8f7befc4d3120973706323dbf47dbd1ea",
+    "rewrite_hybrid:rag-021": "rag-021:d2682dce6a5959fa0f6cb874967e5dd46a4a72e9688c5ca267bb787178e77cf6",
+    "rewrite_hybrid:rag-022": "rag-022:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+    "rewrite_hybrid:rag-023": "rag-023:9c478bffe89e9c9d548a29d416ec73727e27b6275eb2d06ca1bd9122e266d5c8",
+    "rewrite_hybrid:rag-024": "rag-024:358bd888086891a46d671b31a4d8b701b356606f259ba27a98dce7b6875e20b1",
+    "rewrite_hybrid:rag-025": "rag-025:791d9f97f33caab0fc6dcec191de48561d405b500955ad47f22178a1dad69f24",
+    "rewrite_hybrid:rag-026": "rag-026:416c9210c6906d0ea41bb796654df1ce4a1d1905be2a3424fabdf384d5feb772",
+    "rewrite_hybrid:rag-027": "rag-027:3e385ee34e36b57cb76faca22249e51d13120160c51b4e172c66bc9f58d3058c",
+    "rewrite_hybrid:rag-028": "rag-028:5f06ee20bfcdda5aa0479d8965627b91e055946b022d6797c60aa1394e117f3a",
+    "rewrite_hybrid:rag-029": "rag-029:8772d958bb7cd0ec5241aec9bc57187b138dcef4d74e81e6474b1946fee4f299",
+    "rewrite_hybrid:rag-030": "rag-030:457e85690d14f924477999cd6aa1926a659e8eb885722cbd724f11763d2a1441",
+    "rewrite_hybrid:rag-031": "rag-031:baca81e1b926eadc4e10b5cd6333162c8681357bdb8ea9b99f1989d380ee80c0",
+    "rewrite_hybrid:rag-032": "rag-032:074319f2f47ef38909d07d3122195408d4bf5a7af6afbf86fd58d38cc6227ba1",
+    "rewrite_hybrid:rag-033": "rag-033:50d6e92d60ac264c182e7368fd16782ba30444ee3a40f3590ccfd13990b123ee",
+    "rewrite_hybrid:rag-034": "rag-034:dc54c54d692d7f668f69feb347f4895c1860b404e33bea17c9fc73fffa66dc20",
+    "rewrite_hybrid:rag-035": "rag-035:f039f9419337fc361b18ad2937608ed46b6e3a34b8c9d2a9e38b170e15f2a283",
+    "rewrite_hybrid:rag-036": "rag-036:0e257eb0205f1aa62b80ff5edfa2aebe51e72ea1a8bfdb072e69ddee27813b8a",
+    "rewrite_hybrid:rag-037": "rag-037:82ec0310cba1e8cc396d2ced797c135f1b391c6f3f097d218a683ace253f174c",
+    "rewrite_hybrid:rag-038": "rag-038:c936a0fb5f951c6defae7cb22ee1b093a514df67b8d6db56a7735ee699d2f703",
+    "rewrite_hybrid:rag-039": "rag-039:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "rewrite_hybrid:rag-040": "rag-040:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}

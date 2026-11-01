@@ -13,7 +13,7 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
-from customer_support.policy import POLICY_PATH, PolicySection, load_policy_sections
+from customer_support.policy import POLICY_PATH, PolicySection, load_policy_sections, policy_files
 
 DEFAULT_MODEL = "BAAI/bge-small-zh-v1.5"
 DEFAULT_CHROMA_PATH = Path("data/chroma")
@@ -137,7 +137,15 @@ class PolicyKnowledgeBase:
         persist_directory: Path = DEFAULT_CHROMA_PATH,
         embedding: Embeddings | None = None,
         relevance_threshold: float = 0.50,
+        lexical_weight: float = 1.0,
+        lexical_threshold: float = 0.30,
     ) -> None:
+        if not 0 <= relevance_threshold <= 1 or not 0 <= lexical_threshold <= 1:
+            raise ValueError("Relevance thresholds must be in [0, 1]")
+        if not 0 <= lexical_weight <= 1:
+            raise ValueError("lexical_weight must be in [0, 1]")
+        self.lexical_weight = lexical_weight
+        self.lexical_threshold = lexical_threshold
         self.policy_path = policy_path
         self.persist_directory = persist_directory
         self.embedding = embedding or FastEmbedChineseEmbeddings()
@@ -151,7 +159,11 @@ class PolicyKnowledgeBase:
 
     def _source_fingerprint(self, chunks: list[Document]) -> str:
         payload = {
-            "policy": self.policy_path.read_text(encoding="utf-8"),
+            "policy": (
+                self.policy_path.read_text(encoding="utf-8")
+                if self.policy_path.is_file()
+                else [(p.as_posix(), p.read_text(encoding="utf-8")) for p in policy_files(self.policy_path)]
+            ),
             "chunks": [document.metadata["chunk_id"] for document in chunks],
             "embedding": type(self.embedding).__name__,
             "model": getattr(self.embedding, "model_name", "injected"),
@@ -220,6 +232,10 @@ class PolicyKnowledgeBase:
         apply_relevance_threshold: bool = True,
     ) -> list[dict[str, Any]]:
         """Retrieve chunks, fuse rankings, and reject insufficiently relevant results."""
+        if top_k < 1:
+            raise ValueError("top_k must be positive")
+        if method not in ("dense", "lexical", "hybrid"):
+            raise ValueError("Unknown retrieval method")
         if not query.strip():
             return []
         self.ensure_index()
@@ -252,7 +268,11 @@ class PolicyKnowledgeBase:
                 lexical_scores[chunk_id] = lexical_score
                 # A single accidental bigram (for example "处理") should not
                 # override a strong semantic match from the dense retriever.
-                lexical_weight = 1.0 if method == "lexical" else min(1.0, lexical_score * 2)
+                lexical_weight = (
+                    1.0
+                    if method == "lexical"
+                    else self.lexical_weight * min(1.0, lexical_score * 2)
+                )
                 scores[chunk_id] = scores.get(chunk_id, 0.0) + lexical_weight / (10 + rank)
 
         ordered_ids = sorted(scores, key=lambda chunk_id: scores[chunk_id], reverse=True)
@@ -261,7 +281,7 @@ class PolicyKnowledgeBase:
                 chunk_id
                 for chunk_id in ordered_ids
                 if dense_relevance.get(chunk_id, float("-inf")) >= self.relevance_threshold
-                or lexical_scores.get(chunk_id, 0.0) >= 0.30
+                or lexical_scores.get(chunk_id, 0.0) >= self.lexical_threshold
             ]
         ordered_ids = ordered_ids[:top_k]
         return [

@@ -21,9 +21,9 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # Deterministic evaluation only. Never select a paid model or enable tracing here.
 $EvaluationEnvironment = @{
-    USE_FAKE_MODEL = "true"
-    DEFAULT_MODEL = "fake"
-    CUSTOMER_SUPPORT_MODE = "mock"
+    OPENAI_API_KEY = "test-only-not-used"
+    DEFAULT_MODEL = "gpt-5-nano"
+    CUSTOMER_SUPPORT_MODE = "llm"
     LANGFUSE_TRACING = "false"
     LANGCHAIN_TRACING_V2 = "false"
     LANGSMITH_TRACING = "false"

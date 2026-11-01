@@ -84,7 +84,12 @@ static_agent = agent.compile(checkpointer=MemorySaver())
 def mock_database_settings(mock_env):
     """Fixture to ensure database settings are clean"""
     with patch("memory.settings") as mock_settings:
-        yield mock_settings
+        with patch.dict(
+            "agents.agents.agents",
+            {"static-agent": Agent(description="A static agent.", graph_like=static_agent)},
+            clear=True,
+        ):
+            yield mock_settings
 
 
 def test_agent_stream(mock_database_settings, mock_httpx):

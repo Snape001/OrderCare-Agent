@@ -15,20 +15,28 @@
 | 多轮对话 | LangGraph Checkpoint 保存消息和中断状态 | 服务端结合会话凭证、Agent ID 和 thread ID 隔离会话 |
 | 交互与部署 | Streamlit 聊天、FastAPI API、SSE、Docker Compose | 提供健康检查、只读数据库浏览入口与验证脚本 |
 
+### Streamlit 客服工作台
+
+左侧提供「客服工作台、知识库管理、执行记录」三个页面入口，以及不跳转页面的「隐私说明」弹窗。浅色工作台以对话为中心，支持多轮会话、历史会话、新建会话、快捷提问、SSE 请求、思考计时、取消请求和工单人工确认。执行轨迹不在聊天区展示；如需排查请求，可到「执行记录」查看服务端保存的脱敏事件。
+
+知识库管理页展示政策文档和索引信息，提供独立的 RAG 检索调试。Direct 与 Hybrid 使用当前知识库；Rewrite + Hybrid 仅在手动选择后调用所配置的模型。前端不提供 Provider、API Key 或环境变量修改入口，这些设置通过本地 `.env` 管理。
+
+工作台使用 `/workbench/status`、`/workbench/policies`、`/workbench/search`、`/workbench/traces` 与 `/workbench/sessions/{thread_id}`；接口复用服务端的 Bearer 验证与会话凭证。Trace 仅存储筛选、脱敏后的字段，不保存原始模型思考内容。当前客服前端在收到完整安全回答后渲染，SSE 传输和等待计时仍有效；逐 token 的客服正文显示尚未开放，以避免未完成的思考片段或工具消息进入页面。
+
 ## Agent 技术设计
 
 ### 1. 模型决策与工具执行
 
 真实客服通过 `create_agent` 构建图，由框架完成「模型生成结构化 tool calls → 工具执行 → ToolMessage 回传 → 模型继续决策或回答」循环。四个业务工具提供明确参数契约，订单事实与退款判断由工具返回，避免仅靠 Prompt 生成业务结论。
 
-Qwen 模式对意图和必需参数均明确的请求使用确定性工具路由；模糊请求交给模型。Ollama 模式由模型自主选择工具。Mock 模式使用单节点规则图，便于无 API Key 演示和回归验证，不代表真实模型推理效果。
+Qwen 模式对意图和必需参数均明确的请求使用确定性工具路由；模糊请求交给模型。Ollama、DeepSeek 和通用 LLM 模式由模型自主选择工具。运行时只使用真实模型：配置错误直接报错，调用失败向客户端返回明确错误，不自动切换 Provider。测试中注入的假模型仅用于隔离外部服务。
 
 ### 2. 政策 RAG 与证据引用
 
 - 按 Markdown 二级标题解析政策，默认按 220 字符切片、重叠 40 字符，保留标题、来源和切片 ID。
 - 使用 FastEmbed 加载 `BAAI/bge-small-zh-v1.5` 中文向量模型，Chroma 持久化索引；源文与配置指纹变化时重建。
 - 对比 `lexical`、`dense`、`hybrid` 三种检索。词法召回使用中文二元字组与英文数字 token 重叠；混合检索采用自定义加权倒数排名融合，并设置相关性阈值。
-- 工具输出证据与引用；真实模型负责组织答案。当前没有独立 reranker、Query Rewrite 或生成答案事实一致性评分。
+- 工具输出证据与引用；真实模型负责组织答案。线上默认检索不启用 Query Rewrite，也没有独立 reranker；Rewrite 仅在独立实验和知识库调试中显式调用。生成质量评测与线上事实校验应区分。
 
 ### 3. 人工审批、状态恢复与幂等
 
@@ -46,13 +54,13 @@ Qwen 模式对意图和必需参数均明确的请求使用确定性工具路由
 | --- | --- | --- |
 | 语言与依赖 | Python 3.12–3.14、uv、`uv.lock` | 环境隔离与锁定依赖；推荐 Python 3.12 |
 | Agent 编排 | LangChain、LangGraph | Tool Calling、中间件、检查点与中断恢复 |
-| 模型 | Qwen（OpenAI-compatible API）、Ollama | 云端与本地真实模型；另提供 Mock 模式 |
+| 模型 | Qwen、DeepSeek、Ollama、其他已配置的 LLM Provider | 云端与本地真实模型；不提供模拟客服运行入口 |
 | 检索 | FastEmbed、BGE 中文 Embedding、Chroma | 政策向量化、持久化与混合召回 |
 | 服务与界面 | FastAPI、Pydantic、Uvicorn、HTTPX、Streamlit | 输入校验、HTTP/SSE、聊天界面 |
 | 数据 | SQLite、MySQL、PyMySQL | 本地演示、关系型业务数据及工单存储 |
 | 工程 | Docker Compose、pytest、Ruff | 部署编排、回归测试、代码检查 |
 
-具体依赖版本以 [pyproject.toml](pyproject.toml) 和 [uv.lock](uv.lock) 为准。仓库还保留研究、MCP、Supervisor、语音等扩展示例，它们不属于默认客服主链路。
+具体依赖版本以 [pyproject.toml](pyproject.toml) 和 [uv.lock](uv.lock) 为准。客服主链路通过本地 MCP 调用业务工具；仓库还保留研究、Supervisor、语音等扩展示例。
 
 ## 系统架构
 
@@ -62,8 +70,9 @@ flowchart TD
     Client --> API[FastAPI 鉴权与会话隔离]
     API --> Agent[LangGraph 客服 Agent]
     API <--> CP[(会话 Checkpoint)]
-    Agent <--> LLM[Qwen / Ollama]
-    Agent --> Tools[业务工具]
+    Agent <--> LLM[Qwen / DeepSeek / Ollama / LLM]
+    Agent --> MCP[本地 MCP Client / STDIO Server]
+    MCP --> Tools[业务工具]
     Tools --> RAG[政策混合检索]
     Policy[Markdown 政策] --> Index[切片与 BGE Embedding]
     Index --> Chroma[(Chroma)]
@@ -72,49 +81,49 @@ flowchart TD
     Read --> DB[(SQLite / MySQL 业务库)]
     Agent --> Approval{工单写入前审批}
     Approval -->|暂停并请求确认| API
-    Approval -->|确认后恢复执行| Ticket[创建工单与幂等校验]
+    Approval -->|确认后恢复执行| MCP
+    Tools --> Ticket[创建工单与幂等校验]
     Ticket --> DB
 ```
 
-真实图由 `create_agent` 生成；Mock 图在规则节点内执行流程。SSE 是服务传输协议：Ollama 客服当前在图完成或审批暂停后发送最终内容，并非逐 token 输出。
+客服图统一由 `create_agent` 生成。SSE 是服务传输协议：Ollama 客服当前在图完成或审批暂停后发送最终内容，并非逐 token 输出。
 
 ## 安装与运行
 
-### 方式一：本地 Mock 演示（推荐首次运行）
+### 方式一：Ollama 本地模型
 
-需要 Git、Python 3.12 和 uv。Windows 可用 `winget install --id astral-sh.uv -e` 安装 uv，安装后重新打开终端。
+需要 Git、Python 3.12、uv 和已运行的 Ollama。Windows 可用 `winget install --id astral-sh.uv -e` 安装 uv，安装后重新打开终端。
 
 ```powershell
 git clone https://github.com/Snape001/OrderCare-Agent.git
 cd OrderCare-Agent
+ollama pull qwen3:4b
+# 仅首次创建；已有 .env 请直接编辑，避免覆盖密钥
+if (!(Test-Path .env)) { Copy-Item .env.ollama.example .env }
 .\scripts\setup_demo.cmd
 .\scripts\start_demo.cmd
 ```
 
-安装脚本安装依赖、在 `.env` 不存在时复制 Mock 配置、初始化模拟订单、构建并评测 RAG 索引、运行客服测试。已有 `.env` 会被保留；如需 Mock 模式，请检查其中 `CUSTOMER_SUPPORT_MODE=mock`、`USE_FAKE_MODEL=true`、`DEFAULT_MODEL=fake`，并使用 SQLite 业务库。
+初始化脚本检查配置、安装锁定依赖、准备样例订单和 RAG 索引并运行客服测试。首次需联网下载依赖和中文 Embedding 模型。本地模式仍运行真实 LLM，需要足够的内存和推理资源。已有 `.env` 不会自动覆盖；停止服务执行 `.\scripts\stop_demo.cmd`。
 
-首次需联网下载依赖和约 90 MB 的 Embedding 模型；缓存完成后，Mock 演示无需云端模型 API Key。停止服务执行 `.\scripts\stop_demo.cmd`。
-
-也可以在项目根目录手动运行（以下为 PowerShell）：
+手动启动（项目根目录，PowerShell）：
 
 ```powershell
 uv python install 3.12
 uv sync --frozen --python 3.12
-# 仅在尚未创建 .env 时复制
-if (!(Test-Path .env)) { Copy-Item .env.mock.example .env }
 $env:PYTHONPATH = "src"
 uv run python -c "from customer_support.store import initialize_database; initialize_database()"
 uv run python scripts/evaluate_rag.py
 uv run python src/run_service.py
 ```
 
-另开一个项目目录终端启动界面：
+另开终端运行界面：
 
 ```powershell
 uv run streamlit run src/streamlit_app.py --server.address 127.0.0.1 --server.port 8501
 ```
 
-Linux/macOS 使用相同的 `uv` 命令，复制配置使用 `cp .env.mock.example .env`（仅首次），设置路径使用 `export PYTHONPATH=src`。
+Linux/macOS 使用相同 `uv` 命令，首次复制配置用 `cp .env.ollama.example .env`，路径变量用 `export PYTHONPATH=src`。
 
 | 入口 | 地址 |
 | --- | --- |
@@ -122,28 +131,30 @@ Linux/macOS 使用相同的 `uv` 命令，复制配置使用 `cp .env.mock.examp
 | API 文档 | http://127.0.0.1:8080/docs |
 | 存活 / 就绪检查 | http://127.0.0.1:8080/health / http://127.0.0.1:8080/ready |
 
-### 方式二：真实 Qwen / Ollama Agent
+### 方式二：DeepSeek、Qwen 与其他 API Provider
 
-保留本地配置，在 `.env` 中按 [.env.qwen.example](.env.qwen.example) 填入自己的百炼 API Key、业务空间兼容地址和可用模型 ID。建议显式设置 `CUSTOMER_SUPPORT_MODE=qwen`，配置不完整时会启动失败，便于发现问题。`auto` 则在 Qwen 配置不完整时回退 Mock。
+在 `.env` 中选择一个模式，填入自己的密钥并重启服务：
+
+| 模式 | 必需配置 | 示例 |
+| --- | --- | --- |
+| `ollama` | `OLLAMA_MODEL`、可访问的 `OLLAMA_BASE_URL` | [.env.ollama.example](.env.ollama.example) |
+| `deepseek` | `DEEPSEEK_API_KEY`；客服使用 `DEEPSEEK_MODEL`（默认 `deepseek-flash`） | [.env.deepseek.example](.env.deepseek.example) |
+| `qwen` | `DASHSCOPE_API_KEY`、`DASHSCOPE_BASE_URL`、`DASHSCOPE_MODEL` | [.env.qwen.example](.env.qwen.example) |
+| `llm`（默认） | `DEFAULT_MODEL` 和对应 Provider 配置 | [.env.example](.env.example) |
+
+DeepSeek 最小配置：
 
 ```dotenv
-CUSTOMER_SUPPORT_MODE=qwen
-DASHSCOPE_API_KEY=replace-with-your-own-key
-DASHSCOPE_BASE_URL=https://your-workspace.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
-DASHSCOPE_MODEL=replace-with-your-available-model-id
-USE_FAKE_MODEL=true
-DEFAULT_MODEL=fake
+LLM_PROVIDER=deepseek
+DEEPSEEK_API_KEY=replace-with-your-own-key
+DEEPSEEK_MODEL=deepseek-flash
 ```
 
-这里的 Fake 配置供其他演示 Agent 使用；客服模型由 `CUSTOMER_SUPPORT_MODE` 单独选择。修改后重启服务，运行 `uv run python scripts/check_qwen_connection.py` 和 `uv run python scripts/check_qwen_tool_call.py` 检查连接与工具调用；这些操作会调用云端 API。
+`llm` 复用通用模型工厂，支持已有的 OpenAI、Anthropic、DeepSeek 等适配器。兼容 API 使用 `DEFAULT_MODEL=openai-compatible` 及 `COMPATIBLE_MODEL`、`COMPATIBLE_BASE_URL`、`COMPATIBLE_API_KEY`。所选模型必须支持工具调用，并配置相应凭据。
 
-本地模型可参考 [.env.ollama.example](.env.ollama.example)，先安装并启动 Ollama，再运行：
+`mock` 与 `auto` 已移除；旧配置必须显式改为真实 Provider。旧规则图的待办槽位不转换为新图的审批中断，迁移后请新建会话；已有数据库和 Checkpoint 文件不会被删除。`llm` 模式拒绝 `DEFAULT_MODEL=fake`，也不以 `USE_FAKE_MODEL` 绕过模型要求。Ollama 在启动时检查连接与模型是否存在；云端 API 在实际请求中验证连接和认证，失败返回 HTTP 502 或 SSE error，客户端抛出错误，不生成替代答复、不切换 Provider。
 
-```powershell
-ollama pull qwen3:4b
-```
-
-将 `.env` 中的 `CUSTOMER_SUPPORT_MODE` 改为 `ollama`，并设置 `OLLAMA_MODEL=qwen3:4b`、`OLLAMA_BASE_URL=http://127.0.0.1:11434`，重启服务。本地推理速度取决于硬件配置。
+Qwen 连通性与工具验证可运行 `uv run python scripts/check_qwen_connection.py`、`uv run python scripts/check_qwen_tool_call.py`；真实 API 检查会产生模型调用费用。
 
 ### 方式三：Docker Compose + MySQL
 
@@ -167,7 +178,7 @@ Compose 编排 MySQL、数据迁移任务、Agent API、聊天界面和只读数
 
 ## 演示流程
 
-本地 Mock 数据使用后四位 `8821`，可依次输入：
+本地样例订单使用后四位 `8821`，可依次输入：
 
 ```text
 七天无理由退款有什么要求？请标注政策来源。
@@ -188,23 +199,27 @@ uv run python scripts/evaluate_agent.py
 uv run python scripts/evaluate_rag.py
 ```
 
-运行中的 Mock HTTP 主流程可用 `.\scripts\run_tests.cmd` 验收。在线 Qwen/Ollama 验证需要对应服务，相关测试与脚本不能等同于离线回归。
+`.\scripts\run_tests.cmd` 运行单元测试。运行中服务的 HTTP 验证需显式执行 `uv run python scripts/demo_check.py`，会调用真实模型并可能创建演示工单。测试替身仅存在于测试路径，不提供运行时模拟客服。
 
-仓库已有 [RAG 报告](data/evaluation/rag_report.json) 使用 64 条正例与 8 条越界问题，比较 Hit@1、Hit@3、MRR@3、越界拒答率及 P95 检索延迟。[Agent 报告](data/evaluation/agent_report.json) 记录 34 项确定性检查，覆盖路由、业务规则、身份校验和幂等。它们是小规模本地实验快照，不代表生产效果或真实 LLM 端到端成功率；复现实验应重新运行脚本并检查逐题错误。
+新增 [RAG Evaluation Framework](docs/evaluation/rag-evaluation.md)：40条按政策原文标注的问题，固定开发/留出集，默认无需LLM API，评估Recall@K、MRR@K、nDCG@K、标注上下文相关度和检索拒答。可选Ollama或已配置Provider进行回答生成与逐事实Judge，生成指标不与检索指标混用。
+
+[实际优化报告](docs/evaluation/rag-optimization-report.md) 和 [实验数据](data/evaluation/rag/) 保留基线、消融、候选及逐题证据。术语扩展的总体收益仅来自开发集，留出集没有改善，所以未启用到线上；同主题无答案问题仍是主要短板。旧72题与 `data/evaluation/rag_report.json` 作为历史产物保留，不能与新Recall指标混比。[Agent报告](data/evaluation/agent_report.json) 的34项检查是独立的确定性业务验证，不代表真实LLM端到端成功率。
+
+第二轮实验保留原有 40 题与历史结果，另建立 90 题数据集及独立的 [三方案逐题结果和报告](data/evaluation/rag/three-way-comparison-v2/optimization-report.md)。Direct、Hybrid、Rewrite + Hybrid 在相同知识库上完成 90 题检索和生成；报告分别列出开发集、留出集、Judge 有效样本数与不可评分项。实验方案不会自动替换线上默认检索。
 
 ## 项目结构与源码导航
 
 ```text
 src/
   agents/customer_support_agent.py   # 真实客服图、工具路由、审批中间件
-  agents/customer_support_mock.py    # 确定性 Mock 图
   customer_support/                 # 工具、RAG、政策、SQLite/MySQL 数据访问
   service/                          # API、会话隔离、输出展示过滤
   client/                           # HTTP / SSE 客户端
   memory/                           # Checkpoint / Store 适配
   core/                             # 配置与通用模型工厂
   schema/                           # 请求、响应与消息模型
-  streamlit_app.py                  # 聊天入口
+  streamlit_app.py                  # Streamlit 工作台入口
+  workbench_ui.py                   # 工作台页面与样式
 data/policies/                     # 政策知识源
 data/evaluation/                   # 标注用例与实验报告
 scripts/                           # 初始化、部署、数据导入与评测
@@ -221,6 +236,14 @@ docker/                            # 容器构建文件
 
 ## 当前边界与后续方向
 
-当前是可运行的实习演示项目：手机号后四位仅用于演示校验，会话凭证不等同于账户登录；默认长期记忆为进程内存，SQLite Checkpoint 面向单机。默认客服未实现多 Agent 协作、独立规划器或真实退款支付。部署到公网前需补充正式身份认证、权限模型和运行治理。
+当前是可运行的实习演示项目：手机号后四位仅用于演示校验，会话凭证不等同于账户登录；默认长期记忆为进程内存，SQLite Checkpoint 面向单机。Router/Planner 只支持有限的顺序任务和条件分支，尚无通用规划引擎、多 Agent 协作或真实退款支付。部署到公网前需补充正式身份认证、权限模型和运行治理。
 
 后续可围绕独立测试集与真实模型端到端评测、检索重排、生成答案证据一致性、结构化错误处理、持久化长期记忆与并发性能开展迭代。
+
+DeepSeek 通过现有 `ChatOpenAI` 使用官方兼容接口；可在 `.env` 中设置 `LLM_PROVIDER=deepseek` 或 `LLM_PROVIDER=ollama`。DeepSeek 的 `DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL`、`DEEPSEEK_TEMPERATURE`、`DEEPSEEK_MAX_TOKENS`、`DEEPSEEK_TIMEOUT` 可分别配置；API Key 只放本地被 Git 忽略的 `.env`。不设置 `LLM_PROVIDER` 时继续使用 `CUSTOMER_SUPPORT_MODE`。详见 [Provider 配置](docs/deepseek-provider.md)。
+
+客服多意图 Router/Planner 的结构化状态、条件执行与工单确认见 [架构说明](docs/architecture/router-planner.md)。
+
+客服订单、退款、政策与工单工具已通过本地 STDIO MCP 接入，启动和验证见 [MCP 业务工具说明](docs/mcp-business-tools.md)。
+
+三种 RAG 检索方案的第一轮 40 题对比、DeepSeek 重写缓存和生成阶段抽样评测见 [RAG 三方案实验](docs/evaluation/rag-three-way-comparison.md)；第二轮 90 题完整实验见上方报告。

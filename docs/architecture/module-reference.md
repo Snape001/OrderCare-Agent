@@ -7,7 +7,6 @@
 | 3 | `src/service/service.py` | `lifespan` 加载图；`stream → message_generator → _handle_input` 是请求主链；`invoke/history` 是非流式和历史入口 |
 | 4 | `src/agents/agents.py` | `DEFAULT_AGENT`、`agents` 注册表、`load_agent/get_agent` 懒加载边界 |
 | 5 | `src/agents/customer_support_agent.py` | `CustomerSupportAgent.load` 选 Provider；`build_customer_support_graph` 注册工具、中间件、HITL 并构建真实 Agent |
-| 6 | `src/agents/customer_support_mock.py` | `CustomerSupportState`、`customer_support_node` 与单节点规则图；看 `pending_query/pending_ticket` |
 | 7 | `src/customer_support/tools.py` | 四个 `@tool` 的 schema 和对业务函数的委托；工单调用前再校验身份 |
 | 8 | `src/customer_support/store.py` | SQLite 演示业务库、订单/退款/工单逻辑与 MySQL/Olist 分派；MySQL 细节见 `mysql_store.py` |
 | 9 | `src/customer_support/policy.py`、`src/customer_support/rag.py` | 政策读取、切片、BGE、Chroma、词法/向量融合与拒答 |
@@ -21,9 +20,9 @@
 |---|---|
 | 自动化回归 | `tests/`；`scripts/run_tests.ps1` / `scripts/run_tests.cmd`；Docker 用例需 `--run-docker` 与容器环境 |
 | 规则/业务离线评测 | `scripts/evaluate_agent.py`，输入 `data/evaluation/agent_routing_cases.json`，输出 `agent_report.json` |
-| RAG 评测 | `scripts/evaluate_rag.py`，对三种检索方法计算 Hit/MRR/拒答/延迟，输出 `rag_report.json` |
+| RAG 评测 | `scripts/evaluate_rag.py`，用冻结40题计算 Recall/MRR/nDCG/拒答/延迟；可选生成Judge，输出 `data/evaluation/rag/runs/` |
 | 真实 Ollama 工具验证 | `scripts/verify_ollama_agent.py`，需本机模型；与常规 pytest 分开 |
-| 本地启动 | `scripts/setup_demo.*`、`scripts/start_demo.*`，配置示例 `.env.example`、`.env.mock.example`、`.env.ollama.example`、`.env.qwen.example` |
+| 本地启动 | `scripts/setup_demo.*`、`scripts/start_demo.*`，配置示例 `.env.example`、`.env.deepseek.example`、`.env.ollama.example`、`.env.qwen.example` |
 | Docker | `compose.yaml`、`docker/Dockerfile.*`、`scripts/migrate_sqlite_to_mysql.py`：MySQL → 一次性导入 → FastAPI/Streamlit/只读浏览器 |
 
 ## 清理审计结论

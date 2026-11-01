@@ -1,0 +1,3684 @@
+{
+  "version": "ordercare-rag-v2.0",
+  "policy_sha256": "15772bb3dae52d80bc19b5562bae5698ca8711abd4d5cb452797541239ee0b5f",
+  "previous_version": "ordercare-rag-v1.0",
+  "previous_dataset_sha256": "b23b7f972aeeae0fd47f942bc5a510334217c3ffae549cc18a64fed14642dce5",
+  "annotation_method": "新增50题由开发助手逐条对照模拟政策编写；未用待评测检索器或DeepSeek生成Ground Truth，尚未经独立人工复核。旧40题事实标签不变，仅将来源映射至字节相同的基础文档并按场景组重划split。",
+  "split_rule": "按场景组划分dev/test；同一场景组只在一侧，避免近似问法跨集。",
+  "relevance_scale": {
+    "3": "直接回答主要诉求",
+    "2": "支持问题中的补充事实",
+    "1": "弱相关背景",
+    "0": "不能支持答案"
+  },
+  "cases": [
+    {
+      "id": "rag-001",
+      "query": "普通耳机签收第二天拆了包装，配件都在也没损坏，能走无理由退货吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#七天无理由退款": 3
+      },
+      "expected_answer": "签收次日起7个自然日内可申请；商品完好、附件齐全且不影响二次销售；已拆封普通商品可提交审核",
+      "expected_facts": [
+        "签收次日起7个自然日内可申请",
+        "商品完好、附件齐全且不影响二次销售",
+        "已拆封普通商品可提交审核"
+      ],
+      "should_abstain": false,
+      "category": "无理由退货",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "returns",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "chunk_id": "757bee89fd1c1b42"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "757bee89fd1c1b42"
+        ]
+      }
+    },
+    {
+      "id": "rag-002",
+      "query": "七天的期限从下单、发货还是收货那天开始算？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#七天无理由退款": 3
+      },
+      "expected_answer": "自签收次日起计算7个自然日",
+      "expected_facts": [
+        "自签收次日起计算7个自然日"
+      ],
+      "should_abstain": false,
+      "category": "无理由退货",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "returns",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "chunk_id": "757bee89fd1c1b42"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "757bee89fd1c1b42"
+        ]
+      }
+    },
+    {
+      "id": "rag-003",
+      "query": "包裹还没到，我就想按七天无理由退款，现在该怎么办？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "订单取消",
+          "evidence_quote": "订单处于待付款状态时可以直接取消；已付款但尚未进入仓库拣货时可以申请取消并原路退款。订单进入拣货、出库或运输阶段后通常无法直接取消，用户可以联系物流尝试拦截，拦截失败时需在签收后按退货政策处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#七天无理由退款": 3,
+        "data/policies/v2/base-policy.md#订单取消": 2
+      },
+      "expected_answer": "运输中不能按已签收商品申请七天无理由；可尝试物流拦截，失败后签收再按退货政策处理",
+      "expected_facts": [
+        "运输中不能按已签收商品申请七天无理由",
+        "可尝试物流拦截，失败后签收再按退货政策处理"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "returns",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "chunk_id": "757bee89fd1c1b42"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "订单取消",
+          "chunk_id": "33cbf80539161a41"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "757bee89fd1c1b42",
+          "33cbf80539161a41"
+        ]
+      }
+    },
+    {
+      "id": "rag-004",
+      "query": "普通商品用了之后已经影响再次出售，还能无理由退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#七天无理由退款": 3
+      },
+      "expected_answer": "影响二次销售不支持无理由退款",
+      "expected_facts": [
+        "影响二次销售不支持无理由退款"
+      ],
+      "should_abstain": false,
+      "category": "无理由退货",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "returns",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "chunk_id": "757bee89fd1c1b42"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "757bee89fd1c1b42"
+        ]
+      }
+    },
+    {
+      "id": "rag-005",
+      "query": "名字刻在杯子上了，现在不喜欢了，七天内也不能退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 3
+      },
+      "expected_answer": "定制商品不适用七天无理由退货",
+      "expected_facts": [
+        "定制商品不适用七天无理由退货"
+      ],
+      "should_abstain": false,
+      "category": "特殊商品",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "special",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd"
+        ]
+      }
+    },
+    {
+      "id": "rag-006",
+      "query": "买的软件已经激活，贴身用品也拆封了，这两种都支持无理由退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 3
+      },
+      "expected_answer": "激活后的数字商品不适用七天无理由；拆封后影响健康安全的贴身用品不适用七天无理由",
+      "expected_facts": [
+        "激活后的数字商品不适用七天无理由",
+        "拆封后影响健康安全的贴身用品不适用七天无理由"
+      ],
+      "should_abstain": false,
+      "category": "特殊商品",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "special",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd"
+        ]
+      }
+    },
+    {
+      "id": "rag-007",
+      "query": "定做的东西本身就是坏的，是不是因为定制就完全不能售后？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 3
+      },
+      "expected_answer": "质量问题不受无理由退货范围限制；应提交故障照片、检测结果或其他证明走质量售后",
+      "expected_facts": [
+        "质量问题不受无理由退货范围限制",
+        "应提交故障照片、检测结果或其他证明走质量售后"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "special",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd"
+        ]
+      }
+    },
+    {
+      "id": "rag-008",
+      "query": "拆包发现外壳碎了还少一条线，需要什么时候提交什么材料？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#换货与缺件补发": 3
+      },
+      "expected_answer": "签收后48小时内上传外包装、商品、快递面单照片；核验通过可换货或缺件补发",
+      "expected_facts": [
+        "签收后48小时内上传外包装、商品、快递面单照片",
+        "核验通过可换货或缺件补发"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "exchange",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "chunk_id": "09c88c0bd44774c9"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "09c88c0bd44774c9"
+        ]
+      }
+    },
+    {
+      "id": "rag-009",
+      "query": "发错货后我已经拿到退款，还能让店家再补一件吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#换货与缺件补发": 3
+      },
+      "expected_answer": "同一问题已完成退款不再重复补发",
+      "expected_facts": [
+        "同一问题已完成退款不再重复补发"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "exchange",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "chunk_id": "09c88c0bd44774c9"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "09c88c0bd44774c9"
+        ]
+      }
+    },
+    {
+      "id": "rag-010",
+      "query": "换货的新包裹还能沿用原来那个运单号查吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#换货与缺件补发": 3
+      },
+      "expected_answer": "换货商品发出后生成新的物流单号",
+      "expected_facts": [
+        "换货商品发出后生成新的物流单号"
+      ],
+      "should_abstain": false,
+      "category": "质量售后",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "exchange",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "chunk_id": "09c88c0bd44774c9"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "09c88c0bd44774c9"
+        ]
+      }
+    },
+    {
+      "id": "rag-011",
+      "query": "东西退回去了，钱是收到退件立刻打回来还是要验货？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#退款到账时效": 3
+      },
+      "expected_answer": "仓库验收通过后发起原路退款",
+      "expected_facts": [
+        "仓库验收通过后发起原路退款"
+      ],
+      "should_abstain": false,
+      "category": "退款流程",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "refund",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "chunk_id": "6851538c22365324"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6851538c22365324"
+        ]
+      }
+    },
+    {
+      "id": "rag-012",
+      "query": "信用卡退的钱和平台余额退的钱，到账速度一样吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#退款到账时效": 3
+      },
+      "expected_answer": "银行卡和信用卡通常3至7个工作日；平台余额一般实时到账",
+      "expected_facts": [
+        "银行卡和信用卡通常3至7个工作日",
+        "平台余额一般实时到账"
+      ],
+      "should_abstain": false,
+      "category": "退款流程",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "refund",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "chunk_id": "6851538c22365324"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6851538c22365324"
+        ]
+      }
+    },
+    {
+      "id": "rag-013",
+      "query": "银行卡退款已经超过七个工作日，我该准备哪些信息请人工核查？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "客服升级与工单",
+          "evidence_quote": "知识库无法回答、物流异常、支付异常、需要人工审核或用户明确要求真人处理时，可以创建客服工单。创建工单属于写入操作，系统必须先获得用户明确确认；同一个幂等键只能创建一张工单，重复请求应返回原工单编号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#退款到账时效": 3,
+        "data/policies/v2/base-policy.md#客服升级与工单": 2
+      },
+      "expected_answer": "提供订单号和退款流水号创建退款异常工单；创建工单需用户明确确认",
+      "expected_facts": [
+        "提供订单号和退款流水号创建退款异常工单",
+        "创建工单需用户明确确认"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "refund",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "chunk_id": "6851538c22365324"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "客服升级与工单",
+          "chunk_id": "4b018c74e18f117a"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6851538c22365324",
+          "4b018c74e18f117a"
+        ]
+      }
+    },
+    {
+      "id": "rag-014",
+      "query": "钱刚付完还没有开始拣货，我不买了能取消并退钱吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "订单取消",
+          "evidence_quote": "订单处于待付款状态时可以直接取消；已付款但尚未进入仓库拣货时可以申请取消并原路退款。订单进入拣货、出库或运输阶段后通常无法直接取消，用户可以联系物流尝试拦截，拦截失败时需在签收后按退货政策处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#订单取消": 3
+      },
+      "expected_answer": "已付款但尚未拣货可申请取消并原路退款",
+      "expected_facts": [
+        "已付款但尚未拣货可申请取消并原路退款"
+      ],
+      "should_abstain": false,
+      "category": "退款资格",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "returns",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "订单取消",
+          "chunk_id": "33cbf80539161a41"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "33cbf80539161a41"
+        ]
+      }
+    },
+    {
+      "id": "rag-015",
+      "query": "物流五六天不动弹了，客服会找谁问，多久去核实？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流异常",
+          "evidence_quote": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#物流异常": 3
+      },
+      "expected_answer": "超过5天没有新轨迹可创建物流异常工单；客服24小时内联系承运商核查",
+      "expected_facts": [
+        "超过5天没有新轨迹可创建物流异常工单",
+        "客服24小时内联系承运商核查"
+      ],
+      "should_abstain": false,
+      "category": "物流异常",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "shipping",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流异常",
+          "chunk_id": "fa481ac329554f6a"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa481ac329554f6a"
+        ]
+      }
+    },
+    {
+      "id": "rag-016",
+      "query": "页面写着已签收可我根本没拿到，你能保证直接退款吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流异常",
+          "evidence_quote": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#物流异常": 3
+      },
+      "expected_answer": "显示签收但本人未收到可创建物流异常工单；核查前不直接承诺退款结果",
+      "expected_facts": [
+        "显示签收但本人未收到可创建物流异常工单",
+        "核查前不直接承诺退款结果"
+      ],
+      "should_abstain": false,
+      "category": "物流异常",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "shipping",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流异常",
+          "chunk_id": "fa481ac329554f6a"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa481ac329554f6a"
+        ]
+      }
+    },
+    {
+      "id": "rag-017",
+      "query": "预计周五送到就是保证周五能收到吧？偏远地区还要多等多久？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流时效与轨迹",
+          "evidence_quote": "普通快递预计 3 至 5 个自然日送达，偏远地区可能增加 2 至 3 天。预计送达时间是基于仓库和承运商计算的参考时间，不等于承诺到达时间。订单发货后可以通过订单详情查看承运商、物流单号和最新轨迹。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#物流时效与轨迹": 3
+      },
+      "expected_answer": "预计送达时间不等于承诺到达时间；偏远地区可能增加2至3天",
+      "expected_facts": [
+        "预计送达时间不等于承诺到达时间",
+        "偏远地区可能增加2至3天"
+      ],
+      "should_abstain": false,
+      "category": "物流时效",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "shipping",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流时效与轨迹",
+          "chunk_id": "d49a490db0fc6f11"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "d49a490db0fc6f11"
+        ]
+      }
+    },
+    {
+      "id": "rag-018",
+      "query": "已经发出来的货想转寄到别的省，平台能直接改吗，费用谁说了算？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "收货地址修改",
+          "evidence_quote": "订单未进入仓库拣货前，可以在订单详情申请修改收货地址。订单已出库后平台不能直接修改，用户可以联系承运商尝试转寄，产生的费用和时效变化以承运商结果为准。涉及跨省或跨配送区域的修改可能被拒绝。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#收货地址修改": 3
+      },
+      "expected_answer": "出库后平台不能直接修改；可联系承运商尝试转寄，费用和时效以承运商结果为准；跨省修改可能被拒绝",
+      "expected_facts": [
+        "出库后平台不能直接修改",
+        "可联系承运商尝试转寄，费用和时效以承运商结果为准",
+        "跨省修改可能被拒绝"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "shipping",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "收货地址修改",
+          "chunk_id": "5f52e9b3d194f21b"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "5f52e9b3d194f21b"
+        ]
+      }
+    },
+    {
+      "id": "rag-019",
+      "query": "电子产品没摔没泡水自己坏了，有限保修通常多久，可以修吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "商品保修",
+          "evidence_quote": "电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。非人为性能故障可以申请检测和维修；摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#商品保修": 3
+      },
+      "expected_answer": "自签收起12个月有限保修，具体以商品页面和凭证为准；非人为性能故障可申请检测维修",
+      "expected_facts": [
+        "自签收起12个月有限保修，具体以商品页面和凭证为准",
+        "非人为性能故障可申请检测维修"
+      ],
+      "should_abstain": false,
+      "category": "保修",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "warranty",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "商品保修",
+          "chunk_id": "36b9ee16da871ebb"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "36b9ee16da871ebb"
+        ]
+      }
+    },
+    {
+      "id": "rag-020",
+      "query": "我不小心把水洒进键盘，又自己拆开了，还能免费修吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "商品保修",
+          "evidence_quote": "电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。非人为性能故障可以申请检测和维修；摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#商品保修": 3
+      },
+      "expected_answer": "进水和私自拆机不属于免费保修范围",
+      "expected_facts": [
+        "进水和私自拆机不属于免费保修范围"
+      ],
+      "should_abstain": false,
+      "category": "保修",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "warranty",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "商品保修",
+          "chunk_id": "36b9ee16da871ebb"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "36b9ee16da871ebb"
+        ]
+      }
+    },
+    {
+      "id": "rag-021",
+      "query": "东西要寄去修，申请需要什么资料，到售后后多久初检？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "evidence_quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。售后中心收货后通常在 3 个工作日内完成初检，并在维修状态变化时更新进度。涉及付费维修时，必须先向用户展示报价并获得确认。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#维修申请与进度": 3
+      },
+      "expected_answer": "需订单号、故障描述、设备序列号和必要图片或视频；售后中心收货后通常3个工作日内初检",
+      "expected_facts": [
+        "需订单号、故障描述、设备序列号和必要图片或视频",
+        "售后中心收货后通常3个工作日内初检"
+      ],
+      "should_abstain": false,
+      "category": "维修",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "repair",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "chunk_id": "2cbb76b24ce13acb"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "2cbb76b24ce13acb"
+        ]
+      }
+    },
+    {
+      "id": "rag-022",
+      "query": "如果检查出要收费，可以不问我直接维修扣钱吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "evidence_quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。售后中心收货后通常在 3 个工作日内完成初检，并在维修状态变化时更新进度。涉及付费维修时，必须先向用户展示报价并获得确认。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#维修申请与进度": 3
+      },
+      "expected_answer": "付费维修必须先展示报价并获得确认",
+      "expected_facts": [
+        "付费维修必须先展示报价并获得确认"
+      ],
+      "should_abstain": false,
+      "category": "维修",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "repair",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "chunk_id": "2cbb76b24ce13acb"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "2cbb76b24ce13acb"
+        ]
+      }
+    },
+    {
+      "id": "rag-023",
+      "query": "单位要报销，订单完成一个月还能补开票吗，要校验什么？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "evidence_quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#发票服务": 3
+      },
+      "expected_answer": "订单完成45天内可申请电子普通发票或符合条件的专票；抬头和税号提交前须格式校验",
+      "expected_facts": [
+        "订单完成45天内可申请电子普通发票或符合条件的专票",
+        "抬头和税号提交前须格式校验"
+      ],
+      "should_abstain": false,
+      "category": "发票",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "invoice",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "chunk_id": "fe6510581d4191bd"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fe6510581d4191bd"
+        ]
+      }
+    },
+    {
+      "id": "rag-024",
+      "query": "增值税专票已经开了，税号错了能直接改吗？退货后发票怎么办？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "evidence_quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#发票服务": 3
+      },
+      "expected_answer": "已开专票不能直接修改，先红冲并经财务审核；退款后发票可能作废或红冲",
+      "expected_facts": [
+        "已开专票不能直接修改，先红冲并经财务审核",
+        "退款后发票可能作废或红冲"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "invoice",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "chunk_id": "fe6510581d4191bd"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fe6510581d4191bd"
+        ]
+      }
+    },
+    {
+      "id": "rag-025",
+      "query": "付款提示没成功，银行卡却扣了，我要不要再付一次？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "支付与重复扣款",
+          "evidence_quote": "支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账；通常会在 1 个工作日内自动恢复订单或原路退回。发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单，客服不得要求用户提供完整银行卡号或支付密码。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#支付与重复扣款": 3
+      },
+      "expected_answer": "不应重复支付，先等待支付渠道对账；通常1个工作日内恢复订单或原路退回",
+      "expected_facts": [
+        "不应重复支付，先等待支付渠道对账",
+        "通常1个工作日内恢复订单或原路退回"
+      ],
+      "should_abstain": false,
+      "category": "支付",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "payment",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "支付与重复扣款",
+          "chunk_id": "6b50ff3e521382de"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6b50ff3e521382de"
+        ]
+      }
+    },
+    {
+      "id": "rag-026",
+      "query": "同一单扣了两次，要保留什么？客服能要我的支付密码吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "支付与重复扣款",
+          "evidence_quote": "支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账；通常会在 1 个工作日内自动恢复订单或原路退回。发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单，客服不得要求用户提供完整银行卡号或支付密码。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "evidence_quote": "客服查询订单前必须验证订单号和手机号后四位，不得向未验证用户披露收货地址、完整手机号、支付账号等信息。客服不得索要密码、短信验证码或完整银行卡号。用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#支付与重复扣款": 3,
+        "data/policies/v2/base-policy.md#账户与隐私": 2
+      },
+      "expected_answer": "保留两笔支付流水并创建支付异常工单；客服不得索要支付密码或完整银行卡号",
+      "expected_facts": [
+        "保留两笔支付流水并创建支付异常工单",
+        "客服不得索要支付密码或完整银行卡号"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "payment",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "支付与重复扣款",
+          "chunk_id": "6b50ff3e521382de"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "chunk_id": "db18865611508ce0"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6b50ff3e521382de",
+          "db18865611508ce0"
+        ]
+      }
+    },
+    {
+      "id": "rag-027",
+      "query": "取消了订单，用掉的券还能回来吗，需要等多久？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "优惠券与促销",
+          "evidence_quote": "优惠券需要满足有效期、适用商品、最低金额和用户范围等条件，不同活动是否叠加以结算页为准。订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回；因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#优惠券与促销": 3
+      },
+      "expected_answer": "未过期且未被活动规则排除的券通常24小时内退回",
+      "expected_facts": [
+        "未过期且未被活动规则排除的券通常24小时内退回"
+      ],
+      "should_abstain": false,
+      "category": "优惠券",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "coupon",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "优惠券与促销",
+          "chunk_id": "d90ad7cbbf8e56c7"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "d90ad7cbbf8e56c7"
+        ]
+      }
+    },
+    {
+      "id": "rag-028",
+      "query": "用了满减后又退掉部分商品，为什么退款金额不是原价？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "优惠券与促销",
+          "evidence_quote": "优惠券需要满足有效期、适用商品、最低金额和用户范围等条件，不同活动是否叠加以结算页为准。订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回；因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#优惠券与促销": 3
+      },
+      "expected_answer": "因退款不再满足满减条件时扣除相应优惠分摊",
+      "expected_facts": [
+        "因退款不再满足满减条件时扣除相应优惠分摊"
+      ],
+      "should_abstain": false,
+      "category": "优惠券",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "coupon",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "优惠券与促销",
+          "chunk_id": "d90ad7cbbf8e56c7"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "d90ad7cbbf8e56c7"
+        ]
+      }
+    },
+    {
+      "id": "rag-029",
+      "query": "我不想让你们保留账户资料，要走什么手续？能直接删吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "evidence_quote": "客服查询订单前必须验证订单号和手机号后四位，不得向未验证用户披露收货地址、完整手机号、支付账号等信息。客服不得索要密码、短信验证码或完整银行卡号。用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#账户与隐私": 3
+      },
+      "expected_answer": "导出或删除账户信息需专门身份验证和隐私工单",
+      "expected_facts": [
+        "导出或删除账户信息需专门身份验证和隐私工单"
+      ],
+      "should_abstain": false,
+      "category": "隐私",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "privacy",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "chunk_id": "db18865611508ce0"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "db18865611508ce0"
+        ]
+      }
+    },
+    {
+      "id": "rag-030",
+      "query": "物流工单一直没解决，重复提交能更快吗？目标响应时间是多少？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "投诉与服务时效",
+          "evidence_quote": "普通咨询工单目标响应时间为 24 小时，物流、支付和退款异常工单目标响应时间为 12 小时。用户对处理结果有异议时可以在原工单中补充证据并申请升级，不应通过重复创建相同工单提高优先级。涉及威胁、人身安全或大规模资金风险时应立即升级人工处理。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "客服升级与工单",
+          "evidence_quote": "知识库无法回答、物流异常、支付异常、需要人工审核或用户明确要求真人处理时，可以创建客服工单。创建工单属于写入操作，系统必须先获得用户明确确认；同一个幂等键只能创建一张工单，重复请求应返回原工单编号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#投诉与服务时效": 3,
+        "data/policies/v2/base-policy.md#客服升级与工单": 2
+      },
+      "expected_answer": "物流异常工单目标响应时间12小时；应在原工单补充证据并申请升级，不应重复建单提高优先级；相同幂等键只创建一张工单",
+      "expected_facts": [
+        "物流异常工单目标响应时间12小时",
+        "应在原工单补充证据并申请升级，不应重复建单提高优先级",
+        "相同幂等键只创建一张工单"
+      ],
+      "should_abstain": false,
+      "category": "复杂条件",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "ticket",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "投诉与服务时效",
+          "chunk_id": "b19134fc1232ea2d"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "客服升级与工单",
+          "chunk_id": "4b018c74e18f117a"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "b19134fc1232ea2d",
+          "4b018c74e18f117a"
+        ]
+      }
+    },
+    {
+      "id": "rag-031",
+      "query": "无理由退货的快递费具体由买家还是卖家承担？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有退货运费承担规则，不能自行判断，应转人工确认",
+      "expected_facts": [
+        "知识库没有退货运费承担规则，不能自行判断，应转人工确认"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "returns",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-032",
+      "query": "请告诉我上海线下退货门店的详细地址和营业时间。",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有线下退货门店地址或营业时间",
+      "expected_facts": [
+        "知识库没有线下退货门店地址或营业时间"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "repair",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-033",
+      "query": "订单完成一年后还可以申请电子发票吗？如果可以流程是什么？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库仅规定45天内申请，没有一年后的申请流程，不能编造",
+      "expected_facts": [
+        "知识库仅规定45天内申请，没有一年后的申请流程，不能编造"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "invoice",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-034",
+      "query": "会员每个月能领几张券？每张优惠券面额是多少？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有会员领券数量或面额规则",
+      "expected_facts": [
+        "知识库没有会员领券数量或面额规则"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "coupon",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-035",
+      "query": "我的订单 ORD1001 今天下午具体几点送到？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "政策知识库不包含具体订单实时配送时间，需查询业务工具且不能保证具体时刻",
+      "expected_facts": [
+        "政策知识库不包含具体订单实时配送时间，需查询业务工具且不能保证具体时刻"
+      ],
+      "should_abstain": true,
+      "category": "动态事实",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "shipping",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-036",
+      "query": "苹果手机换电池的维修报价是多少元？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有具体维修价目表，需售后报价",
+      "expected_facts": [
+        "知识库没有具体维修价目表，需售后报价"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "repair",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-037",
+      "query": "退到银行卡可以指定另外一个人的卡吗？银行会收多少手续费？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库只有原路退款与到账时效，没有指定他人银行卡流程或手续费数额",
+      "expected_facts": [
+        "知识库只有原路退款与到账时效，没有指定他人银行卡流程或手续费数额"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "refund",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-038",
+      "query": "保修期内给我免费提供备用机吗？借用最长多少天？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有备用机提供条件或借用时限",
+      "expected_facts": [
+        "知识库没有备用机提供条件或借用时限"
+      ],
+      "should_abstain": true,
+      "category": "库内缺失",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "repair",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-039",
+      "query": "请推导快速排序平均时间复杂度并写一段代码。",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "与商城客服知识库无关，应说明无法据此回答",
+      "expected_facts": [
+        "与商城客服知识库无关，应说明无法据此回答"
+      ],
+      "should_abstain": true,
+      "category": "业务无关",
+      "split": "dev",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "unrelated_dev",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-040",
+      "query": "明天北京会下雨吗？帮我预测气温。",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "expected_answer": "知识库没有天气信息，不应编造天气",
+      "expected_facts": [
+        "知识库没有天气信息，不应编造天气"
+      ],
+      "should_abstain": true,
+      "category": "业务无关",
+      "split": "test",
+      "annotation_note": "逐条对照政策原文标注；无答案项标注为不得据政策推断，未使用待测检索输出。",
+      "scenario_group": "unrelated_test",
+      "annotation_origin": "v1_label_copied_without_fact_changes; source remapped to byte-identical base-policy.md",
+      "relevant_chunks": [],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": []
+      }
+    },
+    {
+      "id": "rag-041",
+      "query": "耳机刚签收，包装拆了但配件都在，点了退货申请就算通过了吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "退货申请与审核材料",
+          "evidence_quote": "申请无理由退货时应填写订单号、退货商品和原因，并按页面提示上传商品及附件照片。提交申请不等于审核通过；审核以商品完好、附件齐全和不影响二次销售为准。尚未收到的商品不能作为已签收退货申请。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#七天无理由退款": 3,
+        "data/policies/v2/returns.md#退货申请与审核材料": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "chunk_id": "757bee89fd1c1b42"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "退货申请与审核材料",
+          "chunk_id": "e39e0ae71d03a041"
+        }
+      ],
+      "expected_answer": "签收次日起7个自然日内可申请；拆封普通商品完好且附件齐全可提交审核；提交申请不等于审核通过",
+      "expected_facts": [
+        "签收次日起7个自然日内可申请",
+        "拆封普通商品完好且附件齐全可提交审核",
+        "提交申请不等于审核通过"
+      ],
+      "should_abstain": false,
+      "category": "returns",
+      "scenario_group": "returns",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "757bee89fd1c1b42",
+          "e39e0ae71d03a041"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-042",
+      "query": "货还在路上，我想先按收到货的七天退，能把期限从今天算吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "分批发货与签收状态",
+          "evidence_quote": "同一订单分批发货时，每个包裹按各自签收状态处理。已签收商品的无理由期限从该包裹签收次日起算；仍在运输的商品先查询物流或尝试拦截。不能用先签收包裹的日期替未签收包裹计算退货期限。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#七天无理由退款": 3,
+        "data/policies/v2/returns.md#分批发货与签收状态": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "chunk_id": "757bee89fd1c1b42"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "分批发货与签收状态",
+          "chunk_id": "5f92469da26e99e5"
+        }
+      ],
+      "expected_answer": "未签收商品不能作为已签收无理由退货；期限从该包裹签收次日起算；运输中先查询物流或尝试拦截",
+      "expected_facts": [
+        "未签收商品不能作为已签收无理由退货",
+        "期限从该包裹签收次日起算",
+        "运输中先查询物流或尝试拦截"
+      ],
+      "should_abstain": false,
+      "category": "returns",
+      "scenario_group": "returns",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "757bee89fd1c1b42",
+          "5f92469da26e99e5"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-043",
+      "query": "套装只想退里面一件，赠品我丢了，退款能按那件原价给吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "套装、赠品与部分退货",
+          "evidence_quote": "套装内只退一件时，客服先核对订单是否支持拆分，以及保留商品是否仍满足活动条件；不支持拆分的套装须整体提交审核。随单赠品应一并退回；无法退回时，退款金额可能扣除页面展示的赠品分摊价值。不得在未核算前承诺固定退款金额。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/returns.md#套装、赠品与部分退货": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "套装、赠品与部分退货",
+          "chunk_id": "e990d2d547668f23"
+        }
+      ],
+      "expected_answer": "先核对套装是否支持拆分，不支持时整体审核；赠品无法退回可能扣除展示的分摊价值；未核算前不能承诺固定退款金额",
+      "expected_facts": [
+        "先核对套装是否支持拆分，不支持时整体审核",
+        "赠品无法退回可能扣除展示的分摊价值",
+        "未核算前不能承诺固定退款金额"
+      ],
+      "should_abstain": false,
+      "category": "returns",
+      "scenario_group": "returns",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "e990d2d547668f23"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-044",
+      "query": "满减券买的两件只退一件，留下那件不够门槛，钱和券怎么算？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "退换货与优惠分摊",
+          "evidence_quote": "使用满减券的订单部分退货后，若保留商品金额不再满足优惠门槛，退款需重新计算原订单优惠分摊；实际金额以审核后的退款明细为准。取消尚未支付的订单不产生退款；已支付订单的取消与退货分别按基础政策处理。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "优惠券与促销",
+          "evidence_quote": "优惠券需要满足有效期、适用商品、最低金额和用户范围等条件，不同活动是否叠加以结算页为准。订单取消后，未过期且未被活动规则排除的优惠券通常会在 24 小时内退回；因退款导致订单不再满足满减条件时，退款金额会扣除相应优惠分摊。"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "优惠券返还与门槛",
+          "evidence_quote": "订单取消后，未过期且不受活动规则排除的优惠券通常 24 小时内退回。部分退款使保留商品不再满足满减门槛时，退款金额应扣除对应优惠分摊。券是否可用仍须核对有效期、适用品、最低金额及用户范围；不承诺每月发券数量。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/returns.md#退换货与优惠分摊": 3,
+        "data/policies/v2/base-policy.md#优惠券与促销": 2,
+        "data/policies/v2/finance.md#优惠券返还与门槛": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "退换货与优惠分摊",
+          "chunk_id": "6b763cf47ce001c1"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "优惠券与促销",
+          "chunk_id": "d90ad7cbbf8e56c7"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "优惠券返还与门槛",
+          "chunk_id": "d72c033a92083298"
+        }
+      ],
+      "expected_answer": "部分退货后不满足门槛需重算优惠分摊；实际退款以审核明细为准；取消订单的券返还与部分退货不同",
+      "expected_facts": [
+        "部分退货后不满足门槛需重算优惠分摊",
+        "实际退款以审核明细为准",
+        "取消订单的券返还与部分退货不同"
+      ],
+      "should_abstain": false,
+      "category": "returns",
+      "scenario_group": "returns",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6b763cf47ce001c1",
+          "d90ad7cbbf8e56c7",
+          "d72c033a92083298"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-045",
+      "query": "换来的耳机又坏了，我还能重新按七天无理由退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "换货后再次申请",
+          "evidence_quote": "换货商品出现新质量问题时可再次提交质量售后并提供新物流单号及故障证据。换货不自动重置原订单的七天无理由期限；是否仍可无理由退货须核对原签收时间和商品状态。已完成退款的同一问题不得再重复换货。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "evidence_quote": "标准商品自签收次日起 7 个自然日内，在商品完好、附件齐全且不影响二次销售的情况下，可以申请无理由退货。已拆封但不影响商品完好性的普通商品可提交审核；影响二次销售时不支持无理由退款。运输中的订单应先处理物流或取消订单，不能按已签收商品申请七天无理由退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/returns.md#换货后再次申请": 3,
+        "data/policies/v2/base-policy.md#七天无理由退款": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "换货后再次申请",
+          "chunk_id": "41050c01b4cd6d66"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "七天无理由退款",
+          "chunk_id": "757bee89fd1c1b42"
+        }
+      ],
+      "expected_answer": "换货不自动重置原订单无理由期限；新质量问题可提交质量售后并提供证据；无理由资格须核对原签收时间及商品状态",
+      "expected_facts": [
+        "换货不自动重置原订单无理由期限",
+        "新质量问题可提交质量售后并提供证据",
+        "无理由资格须核对原签收时间及商品状态"
+      ],
+      "should_abstain": false,
+      "category": "returns",
+      "scenario_group": "returns",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "41050c01b4cd6d66",
+          "757bee89fd1c1b42"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-046",
+      "query": "刻了名字的杯子有裂纹，不能无理由退是不是连售后也没了？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "evidence_quote": "质量故障不按“是否喜欢”判断。用户应提供故障描述、照片或视频；必要时以检测结果确认。即使商品属于定制或已激活数字商品，也可进入质量售后核验，但不能据此直接承诺退款或免费维修。质量售后与无理由退货是不同申请路径。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 3,
+        "data/policies/v2/returns.md#质量问题退换路径": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "chunk_id": "756fe092a05877ca"
+        }
+      ],
+      "expected_answer": "定制品不适用七天无理由；质量问题仍可提交证据进入质量售后核验；核验前不能承诺退款",
+      "expected_facts": [
+        "定制品不适用七天无理由",
+        "质量问题仍可提交证据进入质量售后核验",
+        "核验前不能承诺退款"
+      ],
+      "should_abstain": false,
+      "category": "special",
+      "scenario_group": "special",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd",
+          "756fe092a05877ca"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-047",
+      "query": "数字商品激活了但打不开，能因为质量问题申请处理吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "evidence_quote": "质量故障不按“是否喜欢”判断。用户应提供故障描述、照片或视频；必要时以检测结果确认。即使商品属于定制或已激活数字商品，也可进入质量售后核验，但不能据此直接承诺退款或免费维修。质量售后与无理由退货是不同申请路径。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 3,
+        "data/policies/v2/returns.md#质量问题退换路径": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "chunk_id": "756fe092a05877ca"
+        }
+      ],
+      "expected_answer": "激活数字商品不适用无理由退货；故障可进入质量售后核验；应提供故障描述和必要证据",
+      "expected_facts": [
+        "激活数字商品不适用无理由退货",
+        "故障可进入质量售后核验",
+        "应提供故障描述和必要证据"
+      ],
+      "should_abstain": false,
+      "category": "special",
+      "scenario_group": "special",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd",
+          "756fe092a05877ca"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-048",
+      "query": "贴身用品拆封后有破损，我还可以走质量问题流程吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "evidence_quote": "质量故障不按“是否喜欢”判断。用户应提供故障描述、照片或视频；必要时以检测结果确认。即使商品属于定制或已激活数字商品，也可进入质量售后核验，但不能据此直接承诺退款或免费维修。质量售后与无理由退货是不同申请路径。"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "破损包裹与证据",
+          "evidence_quote": "发现包裹破损、内件损坏或缺件，应在签收后 48 小时内提交外包装、商品及快递面单照片。核验通过后按换货或缺件补发流程处理；若用户主张商品质量问题，还须描述故障并视情况检测。照片缺失时先请用户补充，不能直接宣称已核验通过。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 3,
+        "data/policies/v2/returns.md#质量问题退换路径": 3,
+        "data/policies/v2/shipping.md#破损包裹与证据": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "chunk_id": "756fe092a05877ca"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "破损包裹与证据",
+          "chunk_id": "a076dd906e643bf8"
+        }
+      ],
+      "expected_answer": "拆封影响健康安全的贴身用品不适用无理由；破损可按质量或物流售后核验；应提交对应照片及故障证据",
+      "expected_facts": [
+        "拆封影响健康安全的贴身用品不适用无理由",
+        "破损可按质量或物流售后核验",
+        "应提交对应照片及故障证据"
+      ],
+      "should_abstain": false,
+      "category": "special",
+      "scenario_group": "special",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd",
+          "756fe092a05877ca",
+          "a076dd906e643bf8"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-049",
+      "query": "定制杯子只是颜色不喜欢，签收两天还能无理由退吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        }
+      ],
+      "expected_answer": "定制商品不适用七天无理由退货；仅不喜欢不构成已核实质量问题",
+      "expected_facts": [
+        "定制商品不适用七天无理由退货",
+        "仅不喜欢不构成已核实质量问题"
+      ],
+      "should_abstain": false,
+      "category": "special",
+      "scenario_group": "special",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-050",
+      "query": "定制礼物有故障但我没照片，客服可以直接保证退款吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "evidence_quote": "定制商品、鲜活易腐商品、下载或激活后的数字商品、拆封后影响健康安全的贴身用品不适用七天无理由退货。商品存在质量问题时不受无理由退货范围限制，应提交故障照片、检测结果或其他证明，按质量售后流程处理。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "evidence_quote": "质量故障不按“是否喜欢”判断。用户应提供故障描述、照片或视频；必要时以检测结果确认。即使商品属于定制或已激活数字商品，也可进入质量售后核验，但不能据此直接承诺退款或免费维修。质量售后与无理由退货是不同申请路径。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#特殊商品退换限制": 2,
+        "data/policies/v2/returns.md#质量问题退换路径": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "特殊商品退换限制",
+          "chunk_id": "fa187321ddb87bfd"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "chunk_id": "756fe092a05877ca"
+        }
+      ],
+      "expected_answer": "定制商品质量问题可进入售后核验；须补故障描述和照片视频等证据；不能直接承诺退款",
+      "expected_facts": [
+        "定制商品质量问题可进入售后核验",
+        "须补故障描述和照片视频等证据",
+        "不能直接承诺退款"
+      ],
+      "should_abstain": false,
+      "category": "special",
+      "scenario_group": "special",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa187321ddb87bfd",
+          "756fe092a05877ca"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-051",
+      "query": "给我发错型号了，签收后一天要换货，得拍哪些地方？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "破损包裹与证据",
+          "evidence_quote": "发现包裹破损、内件损坏或缺件，应在签收后 48 小时内提交外包装、商品及快递面单照片。核验通过后按换货或缺件补发流程处理；若用户主张商品质量问题，还须描述故障并视情况检测。照片缺失时先请用户补充，不能直接宣称已核验通过。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#换货与缺件补发": 3,
+        "data/policies/v2/shipping.md#破损包裹与证据": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "chunk_id": "09c88c0bd44774c9"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "破损包裹与证据",
+          "chunk_id": "a076dd906e643bf8"
+        }
+      ],
+      "expected_answer": "错发应在签收后48小时内提交；上传外包装、商品和快递面单照片；核验通过后可选择换货",
+      "expected_facts": [
+        "错发应在签收后48小时内提交",
+        "上传外包装、商品和快递面单照片",
+        "核验通过后可选择换货"
+      ],
+      "should_abstain": false,
+      "category": "exchange",
+      "scenario_group": "exchange",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "09c88c0bd44774c9",
+          "a076dd906e643bf8"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-052",
+      "query": "漏发的配件已经退款成功了，还能让你们再补一份吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "换货后再次申请",
+          "evidence_quote": "换货商品出现新质量问题时可再次提交质量售后并提供新物流单号及故障证据。换货不自动重置原订单的七天无理由期限；是否仍可无理由退货须核对原签收时间和商品状态。已完成退款的同一问题不得再重复换货。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#换货与缺件补发": 3,
+        "data/policies/v2/returns.md#换货后再次申请": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "chunk_id": "09c88c0bd44774c9"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "换货后再次申请",
+          "chunk_id": "41050c01b4cd6d66"
+        }
+      ],
+      "expected_answer": "同一问题已完成退款不再重复补发；不能同时完成退款和补发",
+      "expected_facts": [
+        "同一问题已完成退款不再重复补发",
+        "不能同时完成退款和补发"
+      ],
+      "should_abstain": false,
+      "category": "exchange",
+      "scenario_group": "exchange",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "09c88c0bd44774c9",
+          "41050c01b4cd6d66"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-053",
+      "query": "同一单两箱，只收到第一箱，我想退第二箱，七天从第一箱签收算吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "分批发货与签收状态",
+          "evidence_quote": "同一订单分批发货时，每个包裹按各自签收状态处理。已签收商品的无理由期限从该包裹签收次日起算；仍在运输的商品先查询物流或尝试拦截。不能用先签收包裹的日期替未签收包裹计算退货期限。"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "多包裹与错投",
+          "evidence_quote": "一个订单有多个物流单号时，分别核对每个包裹的轨迹和签收状态；不能因其中一件签收就认定整单已交付。疑似错投按对应物流单号提交异常核查。已签收的其他包裹仍按各自的退换货期限处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/returns.md#分批发货与签收状态": 3,
+        "data/policies/v2/shipping.md#多包裹与错投": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "分批发货与签收状态",
+          "chunk_id": "5f92469da26e99e5"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "多包裹与错投",
+          "chunk_id": "86a2b84839cb2439"
+        }
+      ],
+      "expected_answer": "每包裹按各自签收状态处理；未收第二箱先查物流而非按已签收退货；第二箱无理由期限不能按第一箱日期计算",
+      "expected_facts": [
+        "每包裹按各自签收状态处理",
+        "未收第二箱先查物流而非按已签收退货",
+        "第二箱无理由期限不能按第一箱日期计算"
+      ],
+      "should_abstain": false,
+      "category": "exchange",
+      "scenario_group": "exchange",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "5f92469da26e99e5",
+          "86a2b84839cb2439"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-054",
+      "query": "套装只退坏的一件又没法把赠品寄回，客服能先确定退款数吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "套装、赠品与部分退货",
+          "evidence_quote": "套装内只退一件时，客服先核对订单是否支持拆分，以及保留商品是否仍满足活动条件；不支持拆分的套装须整体提交审核。随单赠品应一并退回；无法退回时，退款金额可能扣除页面展示的赠品分摊价值。不得在未核算前承诺固定退款金额。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "evidence_quote": "质量故障不按“是否喜欢”判断。用户应提供故障描述、照片或视频；必要时以检测结果确认。即使商品属于定制或已激活数字商品，也可进入质量售后核验，但不能据此直接承诺退款或免费维修。质量售后与无理由退货是不同申请路径。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/returns.md#套装、赠品与部分退货": 3,
+        "data/policies/v2/returns.md#质量问题退换路径": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "套装、赠品与部分退货",
+          "chunk_id": "e990d2d547668f23"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "质量问题退换路径",
+          "chunk_id": "756fe092a05877ca"
+        }
+      ],
+      "expected_answer": "先核对套装是否支持拆分及质量证据；赠品无法退回可能扣分摊价值；未核算前不能确定退款金额",
+      "expected_facts": [
+        "先核对套装是否支持拆分及质量证据",
+        "赠品无法退回可能扣分摊价值",
+        "未核算前不能确定退款金额"
+      ],
+      "should_abstain": false,
+      "category": "exchange",
+      "scenario_group": "exchange",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "e990d2d547668f23",
+          "756fe092a05877ca"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-055",
+      "query": "换货包裹刚到又是同样故障，应该重新补发还是能继续申请售后？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "换货后再次申请",
+          "evidence_quote": "换货商品出现新质量问题时可再次提交质量售后并提供新物流单号及故障证据。换货不自动重置原订单的七天无理由期限；是否仍可无理由退货须核对原签收时间和商品状态。已完成退款的同一问题不得再重复换货。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "evidence_quote": "收到错发、漏发、破损或存在质量问题的商品时，用户应在签收后 48 小时内上传外包装、商品和快递面单照片。核验通过后可以选择换货或缺件补发；同一问题已经完成退款时，不再重复补发。换货商品发出后会生成新的物流单号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/returns.md#换货后再次申请": 3,
+        "data/policies/v2/base-policy.md#换货与缺件补发": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "换货后再次申请",
+          "chunk_id": "41050c01b4cd6d66"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "换货与缺件补发",
+          "chunk_id": "09c88c0bd44774c9"
+        }
+      ],
+      "expected_answer": "新故障可再次提交质量售后；提供新物流单号与故障证据；不能未经核验直接承诺再次补发",
+      "expected_facts": [
+        "新故障可再次提交质量售后",
+        "提供新物流单号与故障证据",
+        "不能未经核验直接承诺再次补发"
+      ],
+      "should_abstain": false,
+      "category": "exchange",
+      "scenario_group": "exchange",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "41050c01b4cd6d66",
+          "09c88c0bd44774c9"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-056",
+      "query": "退货昨天才寄回去，第三方支付的钱今天应该到账了吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "evidence_quote": "退货退款以仓库验收通过为发起节点，通常原路退回原支付渠道。银行卡或信用卡通常 3 至 7 个工作日，第三方支付通常 1 至 3 个工作日，平台余额一般实时到账。审核中、运输中或仅提交退货申请不等于已发起退款。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#退款发起与渠道时效": 3,
+        "data/policies/v2/base-policy.md#退款到账时效": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "chunk_id": "11528a944215d7c5"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "chunk_id": "6851538c22365324"
+        }
+      ],
+      "expected_answer": "退款以仓库验收通过后发起；第三方支付通常1至3个工作日；仅寄回不等于已发起退款",
+      "expected_facts": [
+        "退款以仓库验收通过后发起",
+        "第三方支付通常1至3个工作日",
+        "仅寄回不等于已发起退款"
+      ],
+      "should_abstain": false,
+      "category": "refund",
+      "scenario_group": "refund",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "11528a944215d7c5",
+          "6851538c22365324"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-057",
+      "query": "银行卡退款发起第4个工作日没到，是不是已经超时要建异常单？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "evidence_quote": "退货退款以仓库验收通过为发起节点，通常原路退回原支付渠道。银行卡或信用卡通常 3 至 7 个工作日，第三方支付通常 1 至 3 个工作日，平台余额一般实时到账。审核中、运输中或仅提交退货申请不等于已发起退款。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#退款发起与渠道时效": 3,
+        "data/policies/v2/base-policy.md#退款到账时效": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "chunk_id": "11528a944215d7c5"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "chunk_id": "6851538c22365324"
+        }
+      ],
+      "expected_answer": "银行卡通常3至7个工作日；第4个工作日不一定超出通常时效；超过对应时效再凭订单号和流水号建异常工单",
+      "expected_facts": [
+        "银行卡通常3至7个工作日",
+        "第4个工作日不一定超出通常时效",
+        "超过对应时效再凭订单号和流水号建异常工单"
+      ],
+      "should_abstain": false,
+      "category": "refund",
+      "scenario_group": "refund",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "11528a944215d7c5",
+          "6851538c22365324"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-058",
+      "query": "余额加第三方支付的订单只退回余额部分，算全额到账了吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "多支付方式退款核对",
+          "evidence_quote": "同一订单使用余额和第三方支付组合付款时，退款应按原支付组成核对各渠道明细；不同渠道可能在不同时间到账。客服不能将某一渠道到账视为全额到账。超过各渠道对应时效时，提供订单号和退款流水号创建退款异常工单。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "evidence_quote": "退货退款在仓库验收通过后发起原路退款。银行卡和信用卡通常需要 3 至 7 个工作日，第三方支付通常需要 1 至 3 个工作日，平台余额一般实时到账。超过对应时效仍未到账时，可以提供订单号和退款流水号创建退款异常工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#多支付方式退款核对": 3,
+        "data/policies/v2/base-policy.md#退款到账时效": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "多支付方式退款核对",
+          "chunk_id": "ab5fa3a0840d8561"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "退款到账时效",
+          "chunk_id": "6851538c22365324"
+        }
+      ],
+      "expected_answer": "组合支付应分别核对原渠道退款明细；余额到账不代表第三方支付部分到账；各渠道时效不同",
+      "expected_facts": [
+        "组合支付应分别核对原渠道退款明细",
+        "余额到账不代表第三方支付部分到账",
+        "各渠道时效不同"
+      ],
+      "should_abstain": false,
+      "category": "refund",
+      "scenario_group": "refund",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "ab5fa3a0840d8561",
+          "6851538c22365324"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-059",
+      "query": "我只提交了退货申请仓库还没验收，能从提交那天算银行卡7个工作日吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "evidence_quote": "退货退款以仓库验收通过为发起节点，通常原路退回原支付渠道。银行卡或信用卡通常 3 至 7 个工作日，第三方支付通常 1 至 3 个工作日，平台余额一般实时到账。审核中、运输中或仅提交退货申请不等于已发起退款。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "退货申请与审核材料",
+          "evidence_quote": "申请无理由退货时应填写订单号、退货商品和原因，并按页面提示上传商品及附件照片。提交申请不等于审核通过；审核以商品完好、附件齐全和不影响二次销售为准。尚未收到的商品不能作为已签收退货申请。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#退款发起与渠道时效": 3,
+        "data/policies/v2/returns.md#退货申请与审核材料": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "chunk_id": "11528a944215d7c5"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "退货申请与审核材料",
+          "chunk_id": "e39e0ae71d03a041"
+        }
+      ],
+      "expected_answer": "提交申请不等于审核通过；退款时效从仓库验收通过后发起计算；银行卡通常3至7个工作日",
+      "expected_facts": [
+        "提交申请不等于审核通过",
+        "退款时效从仓库验收通过后发起计算",
+        "银行卡通常3至7个工作日"
+      ],
+      "should_abstain": false,
+      "category": "refund",
+      "scenario_group": "refund",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "11528a944215d7c5",
+          "e39e0ae71d03a041"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-060",
+      "query": "退款能转到我朋友的银行卡吗，具体改收款账户步骤是什么？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "relevant_chunks": [],
+      "expected_answer": "知识库没有转至他人银行卡的办理规则或步骤，应说明无法确认并转人工核实",
+      "expected_facts": [
+        "知识库没有转至他人银行卡的办理规则或步骤，应说明无法确认并转人工核实"
+      ],
+      "should_abstain": true,
+      "category": "refund",
+      "scenario_group": "refund",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [],
+        "missing_information_requires_abstention": true
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-061",
+      "query": "快递六天没新轨迹，异常工单12小时响应是不是12小时就能找到包裹？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "延迟与无轨迹核查",
+          "evidence_quote": "运输中超过 5 天没有新轨迹，或超过预计送达时间仍未签收，可以创建物流异常工单。客服在 24 小时内联系承运商核查，并向用户说明已知轨迹和下一步核查；不能把预计送达日期当作赔付或退款承诺。"
+        },
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "工单类别与响应时效",
+          "evidence_quote": "普通咨询工单目标响应时间为 24 小时；物流、支付及退款异常工单目标响应时间为 12 小时。物流承运商核查会在 24 小时内联系承运商；工单响应目标不等于异常已经查清或退款到账。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/shipping.md#延迟与无轨迹核查": 3,
+        "data/policies/v2/tickets.md#工单类别与响应时效": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "延迟与无轨迹核查",
+          "chunk_id": "6db3e32527e688b8"
+        },
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "工单类别与响应时效",
+          "chunk_id": "78f2fa2f4eeda5d2"
+        }
+      ],
+      "expected_answer": "超过5天无新轨迹可建物流异常工单；异常工单目标响应12小时；24小时内联系承运商核查，响应不等于查清包裹",
+      "expected_facts": [
+        "超过5天无新轨迹可建物流异常工单",
+        "异常工单目标响应12小时",
+        "24小时内联系承运商核查，响应不等于查清包裹"
+      ],
+      "should_abstain": false,
+      "category": "shipping",
+      "scenario_group": "shipping",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6db3e32527e688b8",
+          "78f2fa2f4eeda5d2"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-062",
+      "query": "页面签收了我没拿到，邻居代签的信息能直接告诉没验证订单的我吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "代签与签收争议",
+          "evidence_quote": "物流显示已签收而本人未收到时，先核对承运商签收记录、代签信息和投递位置，再按物流异常工单处理。客服不得向未完成订单身份校验的人披露代签人姓名、收货地址或完整电话。核查完成前不能把显示签收等同于本人已收货。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "evidence_quote": "客服查询订单前必须验证订单号和手机号后四位，不得向未验证用户披露收货地址、完整手机号、支付账号等信息。客服不得索要密码、短信验证码或完整银行卡号。用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/shipping.md#代签与签收争议": 3,
+        "data/policies/v2/base-policy.md#账户与隐私": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "代签与签收争议",
+          "chunk_id": "79749f8264b619fd"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "chunk_id": "db18865611508ce0"
+        }
+      ],
+      "expected_answer": "先核对代签及投递记录并走物流异常；未核验订单身份不能披露代签人和地址电话；显示签收不等于本人收到",
+      "expected_facts": [
+        "先核对代签及投递记录并走物流异常",
+        "未核验订单身份不能披露代签人和地址电话",
+        "显示签收不等于本人收到"
+      ],
+      "should_abstain": false,
+      "category": "shipping",
+      "scenario_group": "shipping",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "79749f8264b619fd",
+          "db18865611508ce0"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-063",
+      "query": "承运商确认包裹丢了而且有货，我能选择补发还是退款？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "丢件核实后的选择",
+          "evidence_quote": "包裹疑似丢失时先创建物流异常工单，由承运商核实。确认丢失且商品仍可供货时，用户可在重新发货与申请退款之间选择；缺货时只可申请退款审核。核实前不能按“已丢件”直接创建退款结论，同一包裹不得同时完成补发与退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/shipping.md#丢件核实后的选择": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "丢件核实后的选择",
+          "chunk_id": "852facc354234d16"
+        }
+      ],
+      "expected_answer": "承运商确认丢失且仍有货时可在重发和申请退款间选择；退款仍需审核；不能同一包裹同时完成补发和退款",
+      "expected_facts": [
+        "承运商确认丢失且仍有货时可在重发和申请退款间选择",
+        "退款仍需审核",
+        "不能同一包裹同时完成补发和退款"
+      ],
+      "should_abstain": false,
+      "category": "shipping",
+      "scenario_group": "shipping",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "852facc354234d16"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-064",
+      "query": "物流疑似丢件还没核实，客服可以马上保证退钱吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流异常",
+          "evidence_quote": "订单运输中超过 5 天没有新轨迹、超过预计送达时间仍未签收、显示签收但本人未收到或包裹疑似丢失时，可以创建物流异常工单。客服会在 24 小时内联系承运商核查；核查完成前不能虚构包裹位置，也不直接承诺退款结果。"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "丢件核实后的选择",
+          "evidence_quote": "包裹疑似丢失时先创建物流异常工单，由承运商核实。确认丢失且商品仍可供货时，用户可在重新发货与申请退款之间选择；缺货时只可申请退款审核。核实前不能按“已丢件”直接创建退款结论，同一包裹不得同时完成补发与退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#物流异常": 3,
+        "data/policies/v2/shipping.md#丢件核实后的选择": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "物流异常",
+          "chunk_id": "fa481ac329554f6a"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "丢件核实后的选择",
+          "chunk_id": "852facc354234d16"
+        }
+      ],
+      "expected_answer": "疑似丢失先创建物流异常工单并核实；核实前不能直接承诺退款结果",
+      "expected_facts": [
+        "疑似丢失先创建物流异常工单并核实",
+        "核实前不能直接承诺退款结果"
+      ],
+      "should_abstain": false,
+      "category": "shipping",
+      "scenario_group": "shipping",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa481ac329554f6a",
+          "852facc354234d16"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-065",
+      "query": "一单两个物流号，一箱签收一箱错投，能说整单到了并一起算退货期限吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "多包裹与错投",
+          "evidence_quote": "一个订单有多个物流单号时，分别核对每个包裹的轨迹和签收状态；不能因其中一件签收就认定整单已交付。疑似错投按对应物流单号提交异常核查。已签收的其他包裹仍按各自的退换货期限处理。"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "分批发货与签收状态",
+          "evidence_quote": "同一订单分批发货时，每个包裹按各自签收状态处理。已签收商品的无理由期限从该包裹签收次日起算；仍在运输的商品先查询物流或尝试拦截。不能用先签收包裹的日期替未签收包裹计算退货期限。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/shipping.md#多包裹与错投": 3,
+        "data/policies/v2/returns.md#分批发货与签收状态": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "多包裹与错投",
+          "chunk_id": "86a2b84839cb2439"
+        },
+        {
+          "source": "data/policies/v2/returns.md",
+          "section": "分批发货与签收状态",
+          "chunk_id": "5f92469da26e99e5"
+        }
+      ],
+      "expected_answer": "每包裹分别核对轨迹和签收；错投的包裹按对应物流号核查；退货期限按各自签收次日起算",
+      "expected_facts": [
+        "每包裹分别核对轨迹和签收",
+        "错投的包裹按对应物流号核查",
+        "退货期限按各自签收次日起算"
+      ],
+      "should_abstain": false,
+      "category": "shipping",
+      "scenario_group": "shipping",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "86a2b84839cb2439",
+          "5f92469da26e99e5"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-066",
+      "query": "耳机签收11个月没摔没进水坏了，有订单没发票一定免费修吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "保修起算与凭证",
+          "evidence_quote": "电子产品通用保修从签收之日起计算 12 个月，具体期限以商品页和保修凭证为准。申请时应提供订单号、设备序列号及故障描述；电子发票可以辅助核对购买记录，但不能替代故障检测。缺少凭证时先核对订单，不直接承诺免费维修。"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "evidence_quote": "非人为性能故障经检测确认且在适用保修期内，可进入免费维修。摔落、进水、挤压、私自拆机、错误使用及超过保修期均不在免费保修范围。正常磨损或耗材自然衰减是否覆盖，须以该商品页面和保修凭证为准，不能仅凭通用条款承诺免费更换。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/warranty.md#保修起算与凭证": 3,
+        "data/policies/v2/warranty.md#免费保修的例外": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "保修起算与凭证",
+          "chunk_id": "76029722fb7c4132"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "chunk_id": "5ca849ad53881e68"
+        }
+      ],
+      "expected_answer": "通用电子产品签收日起12个月有限保修且以商品页凭证为准；可用订单核对购买记录；非人为故障仍须检测，不能直接保证免费",
+      "expected_facts": [
+        "通用电子产品签收日起12个月有限保修且以商品页凭证为准",
+        "可用订单核对购买记录",
+        "非人为故障仍须检测，不能直接保证免费"
+      ],
+      "should_abstain": false,
+      "category": "warranty",
+      "scenario_group": "warranty",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "76029722fb7c4132",
+          "5ca849ad53881e68"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-067",
+      "query": "手机还没过一年但我把它泡水里了，通用保修包不包免费？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "商品保修",
+          "evidence_quote": "电子产品自签收之日起享受 12 个月有限保修，具体期限以商品页面和保修凭证为准。非人为性能故障可以申请检测和维修；摔落、进水、挤压、私自拆机、错误使用或超过保修期不属于免费保修范围。"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "evidence_quote": "非人为性能故障经检测确认且在适用保修期内，可进入免费维修。摔落、进水、挤压、私自拆机、错误使用及超过保修期均不在免费保修范围。正常磨损或耗材自然衰减是否覆盖，须以该商品页面和保修凭证为准，不能仅凭通用条款承诺免费更换。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#商品保修": 3,
+        "data/policies/v2/warranty.md#免费保修的例外": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "商品保修",
+          "chunk_id": "36b9ee16da871ebb"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "chunk_id": "5ca849ad53881e68"
+        }
+      ],
+      "expected_answer": "进水属于免费保修排除项；是否可维修仍需检测及可能报价",
+      "expected_facts": [
+        "进水属于免费保修排除项",
+        "是否可维修仍需检测及可能报价"
+      ],
+      "should_abstain": false,
+      "category": "warranty",
+      "scenario_group": "warranty",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "36b9ee16da871ebb",
+          "5ca849ad53881e68"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-068",
+      "query": "发票找不到但订单号和序列号都有，能先申请检测吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "保修起算与凭证",
+          "evidence_quote": "电子产品通用保修从签收之日起计算 12 个月，具体期限以商品页和保修凭证为准。申请时应提供订单号、设备序列号及故障描述；电子发票可以辅助核对购买记录，但不能替代故障检测。缺少凭证时先核对订单，不直接承诺免费维修。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "evidence_quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。售后中心收货后通常在 3 个工作日内完成初检，并在维修状态变化时更新进度。涉及付费维修时，必须先向用户展示报价并获得确认。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/warranty.md#保修起算与凭证": 3,
+        "data/policies/v2/base-policy.md#维修申请与进度": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "保修起算与凭证",
+          "chunk_id": "76029722fb7c4132"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "chunk_id": "2cbb76b24ce13acb"
+        }
+      ],
+      "expected_answer": "缺发票可先核对订单；提供序列号及故障描述申请检测；不能未检测就承诺免费维修",
+      "expected_facts": [
+        "缺发票可先核对订单",
+        "提供序列号及故障描述申请检测",
+        "不能未检测就承诺免费维修"
+      ],
+      "should_abstain": false,
+      "category": "warranty",
+      "scenario_group": "warranty",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "76029722fb7c4132",
+          "2cbb76b24ce13acb"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-069",
+      "query": "电池用久了续航变差，一年内是不是一定免费换新？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "evidence_quote": "非人为性能故障经检测确认且在适用保修期内，可进入免费维修。摔落、进水、挤压、私自拆机、错误使用及超过保修期均不在免费保修范围。正常磨损或耗材自然衰减是否覆盖，须以该商品页面和保修凭证为准，不能仅凭通用条款承诺免费更换。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/warranty.md#免费保修的例外": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "chunk_id": "5ca849ad53881e68"
+        }
+      ],
+      "expected_answer": "正常磨损或耗材衰减是否覆盖以商品页和凭证为准；不能仅凭通用一年保修承诺免费换新",
+      "expected_facts": [
+        "正常磨损或耗材衰减是否覆盖以商品页和凭证为准",
+        "不能仅凭通用一年保修承诺免费换新"
+      ],
+      "should_abstain": false,
+      "category": "warranty",
+      "scenario_group": "warranty",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "5ca849ad53881e68"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-070",
+      "query": "电池自然衰减需要付费换电池的话，具体收我多少钱？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "relevant_chunks": [],
+      "expected_answer": "知识库没有该商品电池更换价格；报价须经检测后展示，不能编造金额",
+      "expected_facts": [
+        "知识库没有该商品电池更换价格；报价须经检测后展示，不能编造金额"
+      ],
+      "should_abstain": true,
+      "category": "warranty",
+      "scenario_group": "warranty",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [],
+        "missing_information_requires_abstention": true
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-071",
+      "query": "设备寄修收到了，初检一般几天？如果要收钱能不问我就动手吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "evidence_quote": "申请维修时需要提供订单号、故障描述、设备序列号以及必要的图片或视频。售后中心收货后通常在 3 个工作日内完成初检，并在维修状态变化时更新进度。涉及付费维修时，必须先向用户展示报价并获得确认。"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "初检、报价与用户选择",
+          "evidence_quote": "售后中心收到设备后通常在 3 个工作日内完成初检。需要付费维修时，应先展示故障结论和报价并取得用户确认；用户不同意报价时不实施付费维修，可申请按原状态寄回。报价前不得告知确定的维修金额。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#维修申请与进度": 3,
+        "data/policies/v2/warranty.md#初检、报价与用户选择": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "维修申请与进度",
+          "chunk_id": "2cbb76b24ce13acb"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "初检、报价与用户选择",
+          "chunk_id": "d862a773a6012fc6"
+        }
+      ],
+      "expected_answer": "售后收货后通常3个工作日内初检；付费维修先展示故障结论和报价并获确认；未确认不能实施付费维修",
+      "expected_facts": [
+        "售后收货后通常3个工作日内初检",
+        "付费维修先展示故障结论和报价并获确认",
+        "未确认不能实施付费维修"
+      ],
+      "should_abstain": false,
+      "category": "repair",
+      "scenario_group": "repair",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "2cbb76b24ce13acb",
+          "d862a773a6012fc6"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-072",
+      "query": "报价太高我没同意，还会继续修吗？可以原样寄回来吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "初检、报价与用户选择",
+          "evidence_quote": "售后中心收到设备后通常在 3 个工作日内完成初检。需要付费维修时，应先展示故障结论和报价并取得用户确认；用户不同意报价时不实施付费维修，可申请按原状态寄回。报价前不得告知确定的维修金额。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/warranty.md#初检、报价与用户选择": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "初检、报价与用户选择",
+          "chunk_id": "d862a773a6012fc6"
+        }
+      ],
+      "expected_answer": "不同意报价时不实施付费维修；可以申请按原状态寄回",
+      "expected_facts": [
+        "不同意报价时不实施付费维修",
+        "可以申请按原状态寄回"
+      ],
+      "should_abstain": false,
+      "category": "repair",
+      "scenario_group": "repair",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "d862a773a6012fc6"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-073",
+      "query": "修好寄回20天同一个毛病又犯了，还要再付同一项目的钱吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "维修后同故障复检",
+          "evidence_quote": "维修完成并返还后 30 个自然日内，若同一故障再次出现，可凭原维修记录申请复检。复检确认属于原维修未解决的问题时，不重复收取同一维修项目费用；新故障、人为损坏或不同项目仍需重新检测并按保修及报价规则处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/warranty.md#维修后同故障复检": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "维修后同故障复检",
+          "chunk_id": "2f2d15a34af0285e"
+        }
+      ],
+      "expected_answer": "返还后30个自然日内同故障可凭维修记录复检；复检确认原维修未解决时不重复收取同项目费用；须先确认是否同一故障",
+      "expected_facts": [
+        "返还后30个自然日内同故障可凭维修记录复检",
+        "复检确认原维修未解决时不重复收取同项目费用",
+        "须先确认是否同一故障"
+      ],
+      "should_abstain": false,
+      "category": "repair",
+      "scenario_group": "repair",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "2f2d15a34af0285e"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-074",
+      "query": "刚修完又摔坏了，30天内能按同故障免费复检吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "维修后同故障复检",
+          "evidence_quote": "维修完成并返还后 30 个自然日内，若同一故障再次出现，可凭原维修记录申请复检。复检确认属于原维修未解决的问题时，不重复收取同一维修项目费用；新故障、人为损坏或不同项目仍需重新检测并按保修及报价规则处理。"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "evidence_quote": "非人为性能故障经检测确认且在适用保修期内，可进入免费维修。摔落、进水、挤压、私自拆机、错误使用及超过保修期均不在免费保修范围。正常磨损或耗材自然衰减是否覆盖，须以该商品页面和保修凭证为准，不能仅凭通用条款承诺免费更换。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/warranty.md#维修后同故障复检": 3,
+        "data/policies/v2/warranty.md#免费保修的例外": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "维修后同故障复检",
+          "chunk_id": "2f2d15a34af0285e"
+        },
+        {
+          "source": "data/policies/v2/warranty.md",
+          "section": "免费保修的例外",
+          "chunk_id": "5ca849ad53881e68"
+        }
+      ],
+      "expected_answer": "人为摔坏或新故障不属于原维修未解决；仍需重新检测并按保修及报价规则处理",
+      "expected_facts": [
+        "人为摔坏或新故障不属于原维修未解决",
+        "仍需重新检测并按保修及报价规则处理"
+      ],
+      "should_abstain": false,
+      "category": "repair",
+      "scenario_group": "repair",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "2f2d15a34af0285e",
+          "5ca849ad53881e68"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-075",
+      "query": "手机寄修期间你们能免费借我备用机吗，最多借几天？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "relevant_chunks": [],
+      "expected_answer": "知识库未规定维修期间备用机、费用或借用时长，应说明无法确认",
+      "expected_facts": [
+        "知识库未规定维修期间备用机、费用或借用时长，应说明无法确认"
+      ],
+      "should_abstain": true,
+      "category": "repair",
+      "scenario_group": "repair",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [],
+        "missing_information_requires_abstention": true
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-076",
+      "query": "订单完成30天想开电子普票，抬头还要先核什么？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "evidence_quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "evidence_quote": "订单完成后 45 天内可按基础政策申请电子普通发票或符合条件的增值税专用发票。已开具的专票不能直接改抬头或税号，须先申请红冲并通过财务审核。退款后原发票可能需要作废或红冲；发票处理不代表退款已到账。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#发票服务": 3,
+        "data/policies/v2/finance.md#发票、红冲与退款": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "chunk_id": "fe6510581d4191bd"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "chunk_id": "24899b18ef0b0492"
+        }
+      ],
+      "expected_answer": "订单完成45天内可申请电子普通发票；提交前需校验抬头和税号格式",
+      "expected_facts": [
+        "订单完成45天内可申请电子普通发票",
+        "提交前需校验抬头和税号格式"
+      ],
+      "should_abstain": false,
+      "category": "invoice",
+      "scenario_group": "invoice",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fe6510581d4191bd",
+          "24899b18ef0b0492"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-077",
+      "query": "专票税号写错已经开出，能直接在线改掉吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "evidence_quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "evidence_quote": "订单完成后 45 天内可按基础政策申请电子普通发票或符合条件的增值税专用发票。已开具的专票不能直接改抬头或税号，须先申请红冲并通过财务审核。退款后原发票可能需要作废或红冲；发票处理不代表退款已到账。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/base-policy.md#发票服务": 3,
+        "data/policies/v2/finance.md#发票、红冲与退款": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "chunk_id": "fe6510581d4191bd"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "chunk_id": "24899b18ef0b0492"
+        }
+      ],
+      "expected_answer": "已开增值税专用发票不能直接修改；先申请红冲并经财务审核",
+      "expected_facts": [
+        "已开增值税专用发票不能直接修改",
+        "先申请红冲并经财务审核"
+      ],
+      "should_abstain": false,
+      "category": "invoice",
+      "scenario_group": "invoice",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fe6510581d4191bd",
+          "24899b18ef0b0492"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-078",
+      "query": "订单退了钱，之前开的专票肯定不用处理了吧？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "evidence_quote": "订单完成后 45 天内可按基础政策申请电子普通发票或符合条件的增值税专用发票。已开具的专票不能直接改抬头或税号，须先申请红冲并通过财务审核。退款后原发票可能需要作废或红冲；发票处理不代表退款已到账。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "evidence_quote": "订单完成后 45 天内可以申请电子普通发票或符合条件的增值税专用发票。发票抬头和税号提交前需要完成格式校验；已开具的增值税专用发票不能在系统中直接修改，需要先申请红冲并通过财务审核。退款后发票可能需要作废或红冲。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#发票、红冲与退款": 3,
+        "data/policies/v2/base-policy.md#发票服务": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "chunk_id": "24899b18ef0b0492"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "发票服务",
+          "chunk_id": "fe6510581d4191bd"
+        }
+      ],
+      "expected_answer": "退款后原发票可能需要作废或红冲；发票处理与退款到账不是同一状态",
+      "expected_facts": [
+        "退款后原发票可能需要作废或红冲",
+        "发票处理与退款到账不是同一状态"
+      ],
+      "should_abstain": false,
+      "category": "invoice",
+      "scenario_group": "invoice",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "24899b18ef0b0492",
+          "fe6510581d4191bd"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-079",
+      "query": "订单完成两个月了，现在补开专票走哪个入口、审核几天？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "relevant_chunks": [],
+      "expected_answer": "知识库只说明完成后45天内的申请规则，未提供两个月后的补开入口或审核时长",
+      "expected_facts": [
+        "知识库只说明完成后45天内的申请规则，未提供两个月后的补开入口或审核时长"
+      ],
+      "should_abstain": true,
+      "category": "invoice",
+      "scenario_group": "invoice",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [],
+        "missing_information_requires_abstention": true
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-080",
+      "query": "专票红冲审核过了，是不是说明银行卡退款已经到账？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "evidence_quote": "订单完成后 45 天内可按基础政策申请电子普通发票或符合条件的增值税专用发票。已开具的专票不能直接改抬头或税号，须先申请红冲并通过财务审核。退款后原发票可能需要作废或红冲；发票处理不代表退款已到账。"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "evidence_quote": "退货退款以仓库验收通过为发起节点，通常原路退回原支付渠道。银行卡或信用卡通常 3 至 7 个工作日，第三方支付通常 1 至 3 个工作日，平台余额一般实时到账。审核中、运输中或仅提交退货申请不等于已发起退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#发票、红冲与退款": 3,
+        "data/policies/v2/finance.md#退款发起与渠道时效": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "发票、红冲与退款",
+          "chunk_id": "24899b18ef0b0492"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "chunk_id": "11528a944215d7c5"
+        }
+      ],
+      "expected_answer": "发票红冲不代表退款到账；银行卡退款以仓库验收后发起，通常3至7个工作日",
+      "expected_facts": [
+        "发票红冲不代表退款到账",
+        "银行卡退款以仓库验收后发起，通常3至7个工作日"
+      ],
+      "should_abstain": false,
+      "category": "invoice",
+      "scenario_group": "invoice",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "24899b18ef0b0492",
+          "11528a944215d7c5"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-081",
+      "query": "支付失败却扣钱，我再付一笔保险吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "支付失败与重复扣款",
+          "evidence_quote": "支付页提示失败但渠道扣款时，先等待通常 1 个工作日的对账结果，不应立即重复支付。同一订单出现两笔扣款，应保留两笔支付流水并创建支付异常工单；不得要求完整银行卡号、支付密码或验证码。对账前不能保证两笔都已入账或都已退回。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "支付与重复扣款",
+          "evidence_quote": "支付失败但账户已扣款时，用户不应重复支付，应先等待支付渠道对账；通常会在 1 个工作日内自动恢复订单或原路退回。发现同一订单重复扣款时，应保留两笔支付流水并创建支付异常工单，客服不得要求用户提供完整银行卡号或支付密码。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#支付失败与重复扣款": 3,
+        "data/policies/v2/base-policy.md#支付与重复扣款": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "支付失败与重复扣款",
+          "chunk_id": "4451f1cfcb9c20f5"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "支付与重复扣款",
+          "chunk_id": "6b50ff3e521382de"
+        }
+      ],
+      "expected_answer": "先等待通常1个工作日的渠道对账；不应立即重复支付",
+      "expected_facts": [
+        "先等待通常1个工作日的渠道对账",
+        "不应立即重复支付"
+      ],
+      "should_abstain": false,
+      "category": "payment",
+      "scenario_group": "payment",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "4451f1cfcb9c20f5",
+          "6b50ff3e521382de"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-082",
+      "query": "同一订单扣了两次，只给你一张流水截图够吗？能要我完整卡号吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "支付失败与重复扣款",
+          "evidence_quote": "支付页提示失败但渠道扣款时，先等待通常 1 个工作日的对账结果，不应立即重复支付。同一订单出现两笔扣款，应保留两笔支付流水并创建支付异常工单；不得要求完整银行卡号、支付密码或验证码。对账前不能保证两笔都已入账或都已退回。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "evidence_quote": "客服查询订单前必须验证订单号和手机号后四位，不得向未验证用户披露收货地址、完整手机号、支付账号等信息。客服不得索要密码、短信验证码或完整银行卡号。用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#支付失败与重复扣款": 3,
+        "data/policies/v2/base-policy.md#账户与隐私": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "支付失败与重复扣款",
+          "chunk_id": "4451f1cfcb9c20f5"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "chunk_id": "db18865611508ce0"
+        }
+      ],
+      "expected_answer": "应保留两笔支付流水并建支付异常工单；不得索要完整银行卡号、密码或验证码",
+      "expected_facts": [
+        "应保留两笔支付流水并建支付异常工单",
+        "不得索要完整银行卡号、密码或验证码"
+      ],
+      "should_abstain": false,
+      "category": "payment",
+      "scenario_group": "payment",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "4451f1cfcb9c20f5",
+          "db18865611508ce0"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-083",
+      "query": "余额和第三方一起付，余额退回了但微信没到，该按哪个时效查？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "多支付方式退款核对",
+          "evidence_quote": "同一订单使用余额和第三方支付组合付款时，退款应按原支付组成核对各渠道明细；不同渠道可能在不同时间到账。客服不能将某一渠道到账视为全额到账。超过各渠道对应时效时，提供订单号和退款流水号创建退款异常工单。"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "evidence_quote": "退货退款以仓库验收通过为发起节点，通常原路退回原支付渠道。银行卡或信用卡通常 3 至 7 个工作日，第三方支付通常 1 至 3 个工作日，平台余额一般实时到账。审核中、运输中或仅提交退货申请不等于已发起退款。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/finance.md#多支付方式退款核对": 3,
+        "data/policies/v2/finance.md#退款发起与渠道时效": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "多支付方式退款核对",
+          "chunk_id": "ab5fa3a0840d8561"
+        },
+        {
+          "source": "data/policies/v2/finance.md",
+          "section": "退款发起与渠道时效",
+          "chunk_id": "11528a944215d7c5"
+        }
+      ],
+      "expected_answer": "两个渠道分别核对原路退款；第三方支付通常1至3个工作日；仅余额到账不代表全额到账",
+      "expected_facts": [
+        "两个渠道分别核对原路退款",
+        "第三方支付通常1至3个工作日",
+        "仅余额到账不代表全额到账"
+      ],
+      "should_abstain": false,
+      "category": "payment",
+      "scenario_group": "payment",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "ab5fa3a0840d8561",
+          "11528a944215d7c5"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-084",
+      "query": "礼品卡和券能叠加吗？礼品卡余额退回要多久？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "relevant_chunks": [],
+      "expected_answer": "知识库没有礼品卡叠加或余额退款时效规则，应拒答并建议人工核实",
+      "expected_facts": [
+        "知识库没有礼品卡叠加或余额退款时效规则，应拒答并建议人工核实"
+      ],
+      "should_abstain": true,
+      "category": "payment",
+      "scenario_group": "payment",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [],
+        "missing_information_requires_abstention": true
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-085",
+      "query": "重复扣款明天一定全退吗？要是没退赔我多少违约金？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "relevant_chunks": [],
+      "expected_answer": "知识库只说明通常1个工作日对账，不承诺明日全退或违约金金额",
+      "expected_facts": [
+        "知识库只说明通常1个工作日对账，不承诺明日全退或违约金金额"
+      ],
+      "should_abstain": true,
+      "category": "payment",
+      "scenario_group": "payment",
+      "split": "test",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [],
+        "missing_information_requires_abstention": true
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-086",
+      "query": "物流异常单说12小时响应，承运商联系却说24小时，哪个是找到包裹的时间？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "工单类别与响应时效",
+          "evidence_quote": "普通咨询工单目标响应时间为 24 小时；物流、支付及退款异常工单目标响应时间为 12 小时。物流承运商核查会在 24 小时内联系承运商；工单响应目标不等于异常已经查清或退款到账。"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "延迟与无轨迹核查",
+          "evidence_quote": "运输中超过 5 天没有新轨迹，或超过预计送达时间仍未签收，可以创建物流异常工单。客服在 24 小时内联系承运商核查，并向用户说明已知轨迹和下一步核查；不能把预计送达日期当作赔付或退款承诺。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/tickets.md#工单类别与响应时效": 3,
+        "data/policies/v2/shipping.md#延迟与无轨迹核查": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "工单类别与响应时效",
+          "chunk_id": "78f2fa2f4eeda5d2"
+        },
+        {
+          "source": "data/policies/v2/shipping.md",
+          "section": "延迟与无轨迹核查",
+          "chunk_id": "6db3e32527e688b8"
+        }
+      ],
+      "expected_answer": "物流异常工单目标响应12小时；24小时内联系承运商核查；两者都不等于查清包裹的时间",
+      "expected_facts": [
+        "物流异常工单目标响应12小时",
+        "24小时内联系承运商核查",
+        "两者都不等于查清包裹的时间"
+      ],
+      "should_abstain": false,
+      "category": "ticket",
+      "scenario_group": "ticket",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "78f2fa2f4eeda5d2",
+          "6db3e32527e688b8"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-087",
+      "query": "同一工单我补了新照片，重新点提交能给我新单号并优先吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "补充证据与升级",
+          "evidence_quote": "同一问题已有工单时，应在原工单补充照片、物流单号、退款流水或故障描述，不靠重复建单提高优先级。对处理结果有异议可申请升级；涉及人身安全、威胁或大规模资金风险应立即转人工核查。"
+        },
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "重复提交与幂等",
+          "evidence_quote": "同一个幂等键只能创建一张工单，重复请求返回原工单编号。用户修改问题摘要或增加新证据时，应先判断是否属于已有问题并补充原工单；不能仅因再次点击提交就承诺生成新工单。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/tickets.md#补充证据与升级": 3,
+        "data/policies/v2/tickets.md#重复提交与幂等": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "补充证据与升级",
+          "chunk_id": "78b9b6dcdb95ef27"
+        },
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "重复提交与幂等",
+          "chunk_id": "daa98f59c31b2dd6"
+        }
+      ],
+      "expected_answer": "同一问题应补充原工单；同幂等键重复返回原工单编号；重复建单不能提高优先级",
+      "expected_facts": [
+        "同一问题应补充原工单",
+        "同幂等键重复返回原工单编号",
+        "重复建单不能提高优先级"
+      ],
+      "should_abstain": false,
+      "category": "ticket",
+      "scenario_group": "ticket",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "78b9b6dcdb95ef27",
+          "daa98f59c31b2dd6"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-088",
+      "query": "我只问了订单在哪，系统可以不问我就建售后工单吗？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "工单身份校验与确认",
+          "evidence_quote": "查询订单或为订单创建售后工单前，必须核验订单号和手机号后四位。创建工单属于写入操作，系统应向用户展示拟提交的类别与问题摘要并取得明确确认；仅询问政策或查询订单不等于同意创建工单。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "evidence_quote": "客服查询订单前必须验证订单号和手机号后四位，不得向未验证用户披露收货地址、完整手机号、支付账号等信息。客服不得索要密码、短信验证码或完整银行卡号。用户申请导出或删除账户信息时，需要通过专门的身份验证和隐私工单处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/tickets.md#工单身份校验与确认": 3,
+        "data/policies/v2/base-policy.md#账户与隐私": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "工单身份校验与确认",
+          "chunk_id": "6c0f9de8c62d4676"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "账户与隐私",
+          "chunk_id": "db18865611508ce0"
+        }
+      ],
+      "expected_answer": "查询订单先验证订单号和手机号后四位；仅查询不等于同意建单；创建写入工单须展示摘要并明确确认",
+      "expected_facts": [
+        "查询订单先验证订单号和手机号后四位",
+        "仅查询不等于同意建单",
+        "创建写入工单须展示摘要并明确确认"
+      ],
+      "should_abstain": false,
+      "category": "ticket",
+      "scenario_group": "ticket",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6c0f9de8c62d4676",
+          "db18865611508ce0"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-089",
+      "query": "客服处理结果不满意还涉及人身安全，继续重复建单还是马上升级？",
+      "relevant_documents": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "补充证据与升级",
+          "evidence_quote": "同一问题已有工单时，应在原工单补充照片、物流单号、退款流水或故障描述，不靠重复建单提高优先级。对处理结果有异议可申请升级；涉及人身安全、威胁或大规模资金风险应立即转人工核查。"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "投诉与服务时效",
+          "evidence_quote": "普通咨询工单目标响应时间为 24 小时，物流、支付和退款异常工单目标响应时间为 12 小时。用户对处理结果有异议时可以在原工单中补充证据并申请升级，不应通过重复创建相同工单提高优先级。涉及威胁、人身安全或大规模资金风险时应立即升级人工处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v2/tickets.md#补充证据与升级": 3,
+        "data/policies/v2/base-policy.md#投诉与服务时效": 2
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v2/tickets.md",
+          "section": "补充证据与升级",
+          "chunk_id": "78b9b6dcdb95ef27"
+        },
+        {
+          "source": "data/policies/v2/base-policy.md",
+          "section": "投诉与服务时效",
+          "chunk_id": "b19134fc1232ea2d"
+        }
+      ],
+      "expected_answer": "应在原工单补充证据并申请升级；涉及人身安全应立即转人工；不靠重复建单提高优先级",
+      "expected_facts": [
+        "应在原工单补充证据并申请升级",
+        "涉及人身安全应立即转人工",
+        "不靠重复建单提高优先级"
+      ],
+      "should_abstain": false,
+      "category": "ticket",
+      "scenario_group": "ticket",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "78b9b6dcdb95ef27",
+          "b19134fc1232ea2d"
+        ],
+        "missing_information_requires_abstention": false
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    },
+    {
+      "id": "rag-090",
+      "query": "投诉升级以后固定能赔我多少钱，按什么金额标准？",
+      "relevant_documents": [],
+      "relevance_scores": {},
+      "relevant_chunks": [],
+      "expected_answer": "知识库没有投诉升级后的固定补偿金额或计算标准，应明确无法确认",
+      "expected_facts": [
+        "知识库没有投诉升级后的固定补偿金额或计算标准，应明确无法确认"
+      ],
+      "should_abstain": true,
+      "category": "ticket",
+      "scenario_group": "ticket",
+      "split": "dev",
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [],
+        "missing_information_requires_abstention": true
+      },
+      "annotation_origin": "assistant_authored_against_policy_text; not_independently_human_reviewed"
+    }
+  ]
+}

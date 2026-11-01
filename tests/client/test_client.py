@@ -337,3 +337,8 @@ def test_info(agent_client):
     with pytest.raises(AgentClientError) as exc:
         agent_client.invoke("test")
     assert "No agent selected. Use update_agent() to select an agent." in str(exc.value)
+
+
+def test_sse_error_raises_client_error(agent_client):
+    with pytest.raises(AgentClientError, match="model call failed"):
+        agent_client._parse_stream_line('data: {"type": "error", "content": "model call failed"}')
