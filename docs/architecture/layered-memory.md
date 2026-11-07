@@ -2,7 +2,7 @@
 
 相关故障、修复依据和评测局限集中记录在[工程难点与解决记录](../learning/engineering-challenges.md)；逐题结果见[Memory 离线评测](../evaluation/memory-evaluation.md)。
 
-默认本地运行不启用 Redis 记忆；设置 `REDIS_URL` 后启动时连接 Redis 并创建独立 SQLite 长期记忆表。Docker Compose 内的 Redis 仅服务端可访问，使用 `redis://redis:6379/0`。`MEMORY_TTL_SECONDS` 默认 86400 秒，`MEMORY_SQLITE_PATH` 默认 `data/customer_memories.db`，容器中位于持久化 `/app/runtime/`。
+正常运行默认启用三层 Memory（`MEMORY_ENABLED=true`、`EPISODIC_MEMORY_ENABLED=true`）；本地 `REDIS_URL` 默认 `redis://127.0.0.1:6379/0`，启动时必须可用。服务创建独立 SQLite 长期记忆表、初始化独立 Chroma Collection 并预热 BGE，失败即阻止启动。Docker Compose 使用 `redis://redis:6379/0`、Redis AOF 命名卷、持久化 Chroma 与 SQLite 卷。`MEMORY_TTL_SECONDS` 默认 86400 秒，`MEMORY_SQLITE_PATH` 默认 `data/customer_memories.db`，容器中位于持久化 `/app/runtime/`。显式设 `MEMORY_ENABLED=false` 才关闭三层记忆；摘要替代旧历史的开关仍默认关闭。
 
 | 层 | 存储 | 内容与边界 |
 | --- | --- | --- |
@@ -47,6 +47,6 @@ Token 预算由 `CONTEXT_TOKEN_BUDGET`、`CONTEXT_MEMORY_BUDGET` 和 `CONTEXT_CO
 
 服务在**新会话**通过原有订单号和手机号后四位业务库校验取得 `customer_id` 后，才使用当前问题做 BGE 向量查询，并在 Chroma 端按客户过滤。结果先经过相似度阈值，再按语义相似度与时间近因性排序，最多选 `EPISODIC_TOP_K` 条，交给 Context Manager 的长期记忆预算筛选。可配置 `EPISODIC_SIMILARITY_THRESHOLD`、`EPISODIC_RECENCY_WEIGHT`。无验证身份时不读取跨会话记忆；Chroma 故障明确报错。SQLite 仍负责结构化长期偏好及售后摘要的增改、去重和删除，LangGraph SQLite Checkpoint 继续负责会话中断与恢复。
 
-调用链：业务身份校验 → SQLite / Chroma 记忆检索 → Context Manager（可选摘要替代）→ LangGraph Agent → 任务完成且无待审批中断 → Chroma 情景记忆写入。两项新功能均默认关闭；启用需单独设置开关。当前身份校验是订单持有信息校验，不能替代正式账户认证。
+调用链：业务身份校验 → Redis 会话/工作状态读取 → 已验证客户的 SQLite 画像与 Chroma 情景记忆检索 → Context Manager（可选摘要替代）→ LangGraph Agent → 任务完成且无待审批中断 → Redis、SQLite 与 Chroma 记忆写入。Redis/画像/情景记忆默认启用，`CONTEXT_COMPACTION_ENABLED` 仍默认关闭。`/ready` 检查 Redis 和 Chroma，可用性变化返回 503。当前身份校验是订单持有信息校验，不能替代正式账户认证。
 
-专项单元测试使用隔离 Chroma 与确定性测试 Embedding 验证写入、检索、更新、删除、用户过滤、近因性排序、预算内注入和故障；LangGraph 假模型测试直接检查模型可见消息中的摘要替代、默认路径与回退。另有[42 题真实 BGE 离线评测](../evaluation/memory-evaluation.md)。两种 Feature Flag 默认关闭；真实 Redis 集成和端到端 DeepSeek 任务完成率分别评估，不将离线结果当作线上性能。
+专项单元测试使用隔离 Chroma 与确定性测试 Embedding 验证写入、检索、更新、删除、用户过滤、近因性排序、预算内注入和故障；LangGraph 假模型测试直接检查模型可见消息中的摘要替代、默认路径与回退。另有[42 题真实 BGE 离线评测](../evaluation/memory-evaluation.md)。本轮默认运行接入不增加 DeepSeek 调用；离线检索指标不代表真实模型端到端任务完成率。

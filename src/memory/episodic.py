@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import logging
 import math
 import re
 from datetime import UTC, datetime
@@ -19,10 +20,10 @@ COLLECTION = "customer_support_episodes"
 _sensitive = re.compile(
     r"(?i)(?:sk-[\w-]{8,}|bearer\s+[\w.-]+|<think>|\bcot\b|"
     r"手机号|手机后四位|银行卡|信用卡|卡号|支付账户|付款方式|密码|密钥|api.?key|"
-    r"(?<![A-Za-z0-9])\d{4,}(?![A-Za-z0-9]))"
+    r"\b(?:ORD\d+|OL\d{6})\b|(?<![A-Za-z0-9])\d{4,}(?![A-Za-z0-9]))"
 )
 _product = re.compile(r"^[\u4e00-\u9fffA-Za-z\s]{1,30}$")
-_valuable = {"refund_check", "repair_query", "ticket_create"}
+_valuable = {"refund_check", "repair_query", "ticket_create", "support_event"}
 _actions = {"check_refund_eligibility", "search_policy", "create_support_ticket"}
 _event_labels = {
     "refund_check": "退款资格核验", "repair_query": "维修政策咨询",
@@ -38,11 +39,14 @@ class EpisodicMemoryUnavailable(MemoryUnavailable):
     """Chroma episodic memory operation failed."""
 
 
+logger = logging.getLogger(__name__)
+
+
 def completed_episode(values: dict[str, Any]) -> tuple[str, str] | None:
     """Extract only verified completed *steps*, not free-form model claims."""
     route = values.get("route") or {}
     intents = [str(value) for value in route.get("intents", [])]
-    event_type = next((intent for intent in intents if intent in _valuable), None)
+    event_type = next((intent for intent in intents if intent in _valuable - {"support_event"}), None)
     trace = values.get("task_trace") or []
     if not event_type or not isinstance(trace, list):
         return None
@@ -134,10 +138,12 @@ class EpisodicMemory:
                 }],
                 ids=[identifier],
             )
+            logger.info("Episodic Memory persisted event_type=%s memory_id=%s", event_type, identifier)
             return identifier
         except PermissionError:
             raise
         except Exception as exc:
+            logger.exception("Episodic Memory write failed")
             raise EpisodicMemoryUnavailable("Episodic Chroma write failed") from exc
 
     async def delete(self, *, customer_id: str, memory_id: str) -> None:
@@ -167,6 +173,7 @@ class EpisodicMemory:
                 query, k=max(k * 3, k), filter={"customer_id": customer_id},
             )
         except Exception as exc:
+            logger.exception("Episodic Memory search failed")
             raise EpisodicMemoryUnavailable("Episodic Chroma search failed") from exc
         current = now or datetime.now(UTC)
         results: list[dict[str, Any]] = []
@@ -195,4 +202,6 @@ class EpisodicMemory:
                 "similarity": round(similarity, 4),
                 "score": round(score, 4),
             })
-        return sorted(results, key=lambda item: item["score"], reverse=True)[:k]
+        selected = sorted(results, key=lambda item: item["score"], reverse=True)[:k]
+        logger.info("Episodic Memory retrieved hits=%d", len(selected))
+        return selected

@@ -36,6 +36,58 @@ def test_raw_tool_call_transcript_is_not_a_public_answer():
 
 
 @pytest.mark.parametrize(
+    "raw",
+    [
+        '<｜tool▁calls▁begin｜>{"name":"create_support_ticket","arguments":{}}',
+        '<|im_start|>assistant to=create_support_ticket {"phone_last4":"8821"}',
+        'DSML: {"tool_calls": [{"name": "create_support_ticket"}]}',
+    ],
+)
+def test_dsml_tool_protocol_is_not_a_public_answer(raw):
+    assert public_customer_message(AIMessage(content=raw)) is None
+
+
+def test_deepseek_customer_stream_hides_tool_protocol(test_client, mock_agent, monkeypatch):
+    monkeypatch.setattr(settings, "CUSTOMER_SUPPORT_MODE", "deepseek")
+    raw = '<｜tool▁calls▁begin｜>{"name":"create_support_ticket","phone_last4":"8821"}'
+
+    async def events(**kwargs):
+        yield "messages", (AIMessageChunk(content=raw), {"tags": []})
+        yield "updates", {"model": {"messages": [AIMessage(content=raw)]}}
+        yield "updates", {"tools": {"messages": [ToolMessage(content=raw, tool_call_id="t")]}}
+        yield "updates", {"model": {"messages": [AIMessage(content="请先确认是否需要创建工单。")]}}
+
+    mock_agent.astream = events
+    response = test_client.post("/stream", json={"message": "我需要售后帮助", "stream_tokens": True})
+    payload = _events(response)
+    messages = [item for item in payload if item["type"] == "message"]
+    tokens = [item["content"] for item in payload if item["type"] == "token"]
+    assert len(messages) == 1
+    assert messages[0]["content"]["content"] == "请先确认是否需要创建工单。"
+    assert "".join(tokens) == "请先确认是否需要创建工单。"
+    assert "phone_last4" not in response.text
+    assert "DSML" not in response.text
+    assert "tool▁calls" not in response.text
+
+
+def test_deepseek_tool_protocol_without_answer_returns_safe_error(
+    test_client, mock_agent, monkeypatch
+):
+    monkeypatch.setattr(settings, "CUSTOMER_SUPPORT_MODE", "deepseek")
+
+    async def events(**kwargs):
+        yield "updates", {"model": {"messages": [AIMessage(
+            content='<｜tool▁calls▁begin｜>{"name":"create_support_ticket"}'
+        )]}}
+
+    mock_agent.astream = events
+    response = test_client.post("/stream", json={"message": "售后咨询"})
+    payload = _events(response)
+    assert len(payload) == 1 and payload[0]["type"] == "error"
+    assert "create_support_ticket" not in response.text
+
+
+@pytest.mark.parametrize(
     "answer",
     [
         "订单 ORD1001 当前状态为运输中。",
@@ -121,8 +173,11 @@ def test_ollama_approval_prompt_hides_tool_arguments(test_client, mock_agent, mo
     assert "create_support_ticket" not in response.text
 
 
-def test_ollama_invoke_and_history_hide_internal_messages(test_client, mock_agent, monkeypatch):
-    monkeypatch.setattr(settings, "CUSTOMER_SUPPORT_MODE", "ollama")
+@pytest.mark.parametrize("mode", ["ollama", "deepseek"])
+def test_customer_invoke_and_history_hide_internal_messages(
+    test_client, mock_agent, monkeypatch, mode
+):
+    monkeypatch.setattr(settings, "CUSTOMER_SUPPORT_MODE", mode)
     raw = "内部思考手机号后四位 8821"
     mock_agent.ainvoke.return_value = [
         ("values", {"messages": [AIMessage(content=f"<think>{raw}</think>订单运输中")]})

@@ -190,6 +190,130 @@ def test_router_anchors_entities_and_rejects_invalid_plan():
         )
 
 
+def test_hypothetical_delay_is_policy_even_when_router_adds_business_actions():
+    route = validated_route(
+        Route(intents=[Intent.ORDER, Intent.POLICY, Intent.TICKET], conditional=True),
+        [HumanMessage(content="如果这个订单物流延迟，我应该怎么办？")],
+    )
+    assert route.intents == [Intent.POLICY]
+    assert route.conditional is False
+    assert missing_fields(route) == []
+    with pytest.raises(ValueError, match="unrequested"):
+        validate_plan(
+            Plan(
+                steps=[
+                    Step(id="p", action="search_policy"),
+                    Step(id="o", action="get_order_status"),
+                ]
+            ),
+            route,
+        )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "query",
+    [
+        "如果这个订单物流延迟，我应该怎么办？",
+        "如果订单 ORD1001 物流延迟，手机号后四位 8821，我应该怎么办？",
+    ],
+)
+async def test_hypothetical_delay_uses_policy_without_planner_or_order_lookup(query):
+    model = fake(
+        {"intents": ["order_query", "policy_query"], "entities": {}, "conditional": True},
+        [
+            tool_call("search_policy", query="物流延迟处理政策"),
+            AIMessage(content="请参考物流延迟处理政策"),
+        ],
+    )
+    result = await build_customer_support_graph(model, enable_router=True).ainvoke(
+        {"messages": [HumanMessage(content=query)]}
+    )
+    assert model.plan_calls == 0
+    assert result["route"]["intents"] == ["policy_query"]
+    assert [m.name for m in result["messages"] if isinstance(m, ToolMessage)] == ["search_policy"]
+
+
+@pytest.mark.asyncio
+async def test_actual_delivery_check_requests_identity_before_query():
+    model = fake(
+        {"intents": ["policy_query"], "entities": {}, "conditional": False},
+        [AIMessage(content="不应调用模型")],
+    )
+    result = await build_customer_support_graph(model, enable_router=True).ainvoke(
+        {"messages": [HumanMessage(content="检查这个订单物流是否延迟")]}
+    )
+    assert result["route"]["intents"] == ["order_query"]
+    assert "订单号" in result["messages"][-1].content
+    assert "手机号后四位" in result["messages"][-1].content
+    assert model.plan_calls == 0
+    assert not any(isinstance(m, ToolMessage) for m in result["messages"])
+
+
+@pytest.mark.asyncio
+async def test_actual_delivery_check_uses_order_tool(business_db):
+    model = fake(
+        {"intents": ["policy_query"], "entities": {}, "conditional": False},
+        [
+            tool_call("get_order_status", order_id="ORD1001", phone_last4="8821"),
+            AIMessage(content="已核查订单状态"),
+        ],
+    )
+    result = await build_customer_support_graph(model, enable_router=True).ainvoke(
+        {
+            "messages": [
+                HumanMessage(content="检查订单 ORD1001 物流是否延迟，手机号后四位 8821")
+            ]
+        }
+    )
+    assert result["route"]["intents"] == ["order_query"]
+    assert [m.name for m in result["messages"] if isinstance(m, ToolMessage)] == [
+        "get_order_status"
+    ]
+
+
+@pytest.mark.asyncio
+async def test_invalid_policy_plan_falls_back_to_read_only_policy():
+    model = fake(
+        {"intents": ["policy_query"], "entities": {}, "conditional": True},
+        [tool_call("search_policy", query="物流延迟政策"), AIMessage(content="政策答复")],
+        {"steps": [
+            {"id": "p", "action": "search_policy"},
+            {"id": "t", "action": "create_support_ticket"},
+        ]},
+    )
+    result = await build_customer_support_graph(model, enable_router=True).ainvoke(
+        {"messages": [HumanMessage(content="物流延迟怎么处理？")]}
+    )
+    assert model.plan_calls == 1
+    assert result["plan"]["steps"] == [{
+        "id": "s1", "action": "search_policy", "depends_on": [], "when": "always"
+    }]
+    assert [m.name for m in result["messages"] if isinstance(m, ToolMessage)] == ["search_policy"]
+
+
+@pytest.mark.asyncio
+async def test_invalid_multi_intent_plan_does_not_run_unrequested_action():
+    model = fake(
+        {"intents": ["policy_query", "order_query"], "entities": {}, "conditional": False},
+        [AIMessage(content="不应调用模型")],
+        {"steps": [
+            {"id": "p", "action": "search_policy"},
+            {"id": "o", "action": "get_order_status"},
+            {"id": "t", "action": "create_support_ticket"},
+        ]},
+    )
+    result = await build_customer_support_graph(model, enable_router=True).ainvoke(
+        {
+            "messages": [HumanMessage(content="查询订单 ORD1001，手机号后四位 8821，并解释物流政策")]
+        }
+    )
+    assert model.plan_calls == 1
+    assert result["plan"] == {}
+    assert "分别说明" in result["messages"][-1].content
+    assert not any(isinstance(m, ToolMessage) for m in result["messages"])
+
+
 @pytest.mark.asyncio
 async def test_complex_plan_calls_existing_tool_and_preserves_hitl(business_db):
     model = fake(

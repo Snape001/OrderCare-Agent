@@ -271,7 +271,7 @@ async def main() -> None:
         if len(messages) == 0:
             render_welcome()
             examples = (
-                "查询订单物流", "七天无理由退货", "商品质量问题如何处理", "创建售后工单",
+                "查询订单物流", "七天无理由退货", "商品质量问题如何处理", "查询订单 ORD1001，手机号后四位 8821",
             )
             first_row, second_row = st.columns(2), st.columns(2)
             for index, example in enumerate(examples):

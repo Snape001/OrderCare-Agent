@@ -6,8 +6,8 @@
 
 - **卡点**：多轮任务要记住当前订单与待办，跨会话还要找回该客户的售后事件；把全部旧消息塞给模型会增加 Token，且旧订单状态可能过时。
 - **定位**：LangGraph SQLite Checkpoint 负责消息和审批恢复，默认 Store 是进程内 `InMemoryStore`。它不提供按客户语义检索或结构化沟通偏好；订单真实状态保存在业务库。见[`state-and-memory.md`](../architecture/state-and-memory.md)及[`service.py`](../../src/service/service.py)。
-- **解决**：`src/memory/layers.py` 用带 TTL、按会话身份哈希的 Redis 键存短期和工作状态；SQLite `customer_profiles` 存结构化渠道偏好；`episodic.py` 在独立 Chroma Collection 用 BGE 存已完成事件。新会话先用订单号及手机号后四位查业务库，取得已验证 `customer_id` 才查询长期记忆。Context Manager 按相关性、近因性和预算注入；实时订单状态仍由工具重查。`EPISODIC_MEMORY_ENABLED` 默认关闭，业务校验不能等同正式账户认证。
-- **验证与边界**：[42 题 Memory 离线报告](../evaluation/memory-evaluation.md)使用真实 BGE、作者标注合成事件，Recall@4 1.0000、MRR 0.9138、跨会话 Recall 1.0000；但 Precision@4 仅 0.2759，5/29 个有答案问题 Top-1 排错。没有真实 DeepSeek 端到端任务完成率；不能声称线上默认启用或真实用户效果。
+- **解决**：`src/memory/layers.py` 用带 TTL、按会话身份哈希的 Redis 键存短期和工作状态；SQLite `customer_profiles` 存结构化渠道偏好；`episodic.py` 在独立 Chroma Collection 用 BGE 存已完成事件。新会话先用订单号及手机号后四位查业务库，取得已验证 `customer_id` 才查询长期记忆。Context Manager 按相关性、近因性和预算注入；实时订单状态仍由工具重查。本阶段初次评测时 `EPISODIC_MEMORY_ENABLED` 默认关闭，后来正常运行集成改为默认启用；业务校验不能等同正式账户认证。
+- **验证与边界**：[42 题 Memory 离线报告](../evaluation/memory-evaluation.md)使用真实 BGE、作者标注合成事件，Recall@4 1.0000、MRR 0.9138、跨会话 Recall 1.0000；但 Precision@4 仅 0.2759，5/29 个有答案问题 Top-1 排错。没有真实 DeepSeek 端到端任务完成率；当前默认启用是运行配置，不代表已测得真实用户效果。
 
 ## 2. 检索命中与模型真正收到记忆是两道关
 

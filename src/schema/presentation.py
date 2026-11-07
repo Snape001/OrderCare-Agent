@@ -2,6 +2,11 @@
 
 import re
 
+_internal_tool_protocol = re.compile(
+    r"(?im)(?:^\s*Tool Call\s*:|\bDSML\b|assistant\s+to\s*=|"
+    r"<[|｜][^>\n]{0,100}(?:tool|function)|\"tool_calls\"\s*:)"
+)
+
 
 class ThinkingFilter:
     """Buffer a response before release so split or orphan think tags cannot leak."""
@@ -44,6 +49,6 @@ def public_answer(content: str) -> str | None:
     filtered = ThinkingFilter()
     filtered.feed(content)
     answer = filtered.finish()
-    if not answer or re.search(r"(?im)^\s*Tool Call\s*:", answer):
+    if not answer or _internal_tool_protocol.search(answer):
         return None
     return answer

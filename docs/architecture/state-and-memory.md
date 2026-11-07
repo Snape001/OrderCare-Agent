@@ -21,4 +21,4 @@ Streamlit 保存公开 `thread_id` 与 `AgentClient`；客户端生成 `X-Sessio
 
 服务端在请求开始读取 Redis；新会话只有通过订单号与手机号后四位的业务库校验取得 `customer_id`，才读取该客户 SQLite/Chroma 长期信息。信息经 `RunnableConfig.metadata` 进入 `assemble_model_context`，在模型调用前选择历史、记忆和当前工具/RAG 证据。当前请求、审批和当前轮工具调用配对优先保留；历史订单状态仅作线索，实时订单事实须重查业务库。请求稳定完成后才写入安全的摘要/事件/明确偏好，不把待审批结果记成已完成。
 
-Redis 由 `REDIS_URL` 显式启用；`EPISODIC_MEMORY_ENABLED` 与 `CONTEXT_COMPACTION_ENABLED` 默认均为 `false`。压缩器以 Redis 原子游标防重复；候选组装器验证游标、预算和最近两轮，失败回退动态裁剪。摘要覆盖的旧消息只从**模型视图**移除，Checkpoint 仍完整保存。默认 Store `src/memory/sqlite.py:get_sqlite_store` 是进程内 `InMemoryStore`，与上述持久化层和业务订单 SQLite/MySQL 均不同。配置、故障处理、评测边界见[分层 Memory 架构](layered-memory.md)和[42 题离线报告](../evaluation/memory-evaluation.md)。
+正常运行默认启用 Redis 与情景记忆，启动会预热 BGE 并检查 Chroma；`CONTEXT_COMPACTION_ENABLED` 默认仍为 `false`。压缩器以 Redis 原子游标防重复；候选组装器验证游标、预算和最近两轮，失败回退动态裁剪。摘要覆盖的旧消息只从**模型视图**移除，Checkpoint 仍完整保存。默认 Store `src/memory/sqlite.py:get_sqlite_store` 是进程内 `InMemoryStore`，与上述持久化层和业务订单 SQLite/MySQL 均不同。配置、故障处理、评测边界见[分层 Memory 架构](layered-memory.md)和[42 题离线报告](../evaluation/memory-evaluation.md)。

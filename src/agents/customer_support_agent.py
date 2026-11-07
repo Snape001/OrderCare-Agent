@@ -39,6 +39,7 @@ from customer_support.routing import (
     Plan,
     Route,
     RoutedState,
+    allowed_actions,
     missing_fields,
     next_task,
     simple_plan,
@@ -269,15 +270,45 @@ def routing_middleware(model: BaseChatModel):
                     "jump_to": "end",
                 }
             if len(route.intents) > 1 or route.conditional:
+                permitted = allowed_actions(route)
                 proposed = await model.with_structured_output(
                     Plan, method="function_calling"
                 ).ainvoke(
                     [
                         SystemMessage(content=PLANNER_PROMPT),
-                        HumanMessage(content=query + "\n意图：" + ",".join(route.intents)),
+                        HumanMessage(
+                            content=query
+                            + "\nRouter："
+                            + route.model_dump_json()
+                            + "\nallowed_actions："
+                            + ",".join(sorted(permitted))
+                        ),
                     ]
                 )
-                plan = validate_plan(Plan.model_validate(proposed), route)
+                try:
+                    plan = validate_plan(Plan.model_validate(proposed), route)
+                except ValueError as exc:
+                    logger.warning(
+                        "Planner output rejected error_type=%s reason=%s",
+                        type(exc).__name__,
+                        exc,
+                    )
+                    trace_event("planner", status="rejected", error_type=type(exc).__name__)
+                    if permitted <= {"search_policy", "get_order_status"} and len(permitted) == 1:
+                        plan = simple_plan(route)
+                    else:
+                        trace_event("router", result=safe_route(route), missing_fields=[])
+                        return {
+                            "route": route.model_dump(mode="json"),
+                            "plan": {},
+                            "task_trace": [],
+                            "messages": [
+                                AIMessage(
+                                    content="暂时无法安全安排这些操作，请分别说明需要查询或办理的事项。"
+                                )
+                            ],
+                            "jump_to": "end",
+                        }
             else:
                 plan = simple_plan(route)
         except Exception as exc:

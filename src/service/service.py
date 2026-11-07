@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 import json
 import logging
@@ -38,7 +39,8 @@ from customer_support.errors import CustomerSupportModelError
 from customer_support.trace import TraceCollector, safe_args, safe_text, trace_scope
 from memory import initialize_database, initialize_store
 from memory.compaction import AutomaticCompactor, set_compactor
-from memory.episodic import EpisodicMemory, completed_episode
+from memory.episodic import EpisodicMemory, EpisodicMemoryUnavailable, completed_episode
+from memory.intent import requested_event
 from memory.layers import (
     LayeredMemory,
     MemoryUnavailable,
@@ -71,7 +73,12 @@ logger = logging.getLogger(__name__)
 
 
 def _private_customer_mode(agent_id: str) -> bool:
-    return agent_id == DEFAULT_AGENT and settings.CUSTOMER_SUPPORT_MODE == "ollama"
+    """Keep DeepSeek and Ollama customer tool traffic inside the graph."""
+    mode = settings.CUSTOMER_SUPPORT_MODE
+    return agent_id == DEFAULT_AGENT and (
+        mode in {"deepseek", "ollama"}
+        or (mode == "llm" and str(settings.DEFAULT_MODEL) in {"deepseek-chat", "ollama"})
+    )
 
 
 def _trace_model() -> str:
@@ -229,11 +236,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                         raise RuntimeError("Default agent failed to initialize") from None
             app.state.layered_memory = None
             app.state.episodic_memory = None
-            if settings.REDIS_URL:
+            if settings.MEMORY_ENABLED:
+                if not settings.REDIS_URL:
+                    raise RuntimeError("Memory is enabled but REDIS_URL is not configured")
                 memory = LayeredMemory(
                     settings.REDIS_URL, settings.MEMORY_SQLITE_PATH, settings.MEMORY_TTL_SECONDS
                 )
-                await memory.setup()
+                try:
+                    await memory.setup()
+                except Exception:
+                    await memory.close()
+                    raise
                 app.state.layered_memory = memory
                 set_compactor(
                     AutomaticCompactor(
@@ -242,19 +255,30 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                         settings.CONTEXT_COMPACTION_SUMMARY_BUDGET,
                     )
                 )
+            else:
+                logger.warning("Three-layer Memory is disabled by MEMORY_ENABLED=false")
             try:
-                if settings.EPISODIC_MEMORY_ENABLED:
-                    if app.state.layered_memory is None:
-                        raise RuntimeError("Episodic memory requires REDIS_URL for verified identity")
+                if settings.MEMORY_ENABLED and settings.EPISODIC_MEMORY_ENABLED:
                     from customer_support.rag import get_policy_knowledge_base
 
                     policy_kb = get_policy_knowledge_base()
-                    app.state.episodic_memory = EpisodicMemory(
-                        persist_directory=policy_kb.persist_directory,
-                        embedding=policy_kb.embedding,
-                        similarity_threshold=settings.EPISODIC_SIMILARITY_THRESHOLD,
-                        recency_weight=settings.EPISODIC_RECENCY_WEIGHT,
-                    )
+                    try:
+                        episodic = EpisodicMemory(
+                            persist_directory=policy_kb.persist_directory,
+                            embedding=policy_kb.embedding,
+                            similarity_threshold=settings.EPISODIC_SIMILARITY_THRESHOLD,
+                            recency_weight=settings.EPISODIC_RECENCY_WEIGHT,
+                        )
+                        # Fail at startup if BGE or the persistent collection is unusable.
+                        await asyncio.to_thread(policy_kb.embedding.embed_query, "售后服务")
+                        await asyncio.to_thread(episodic.store.get, include=[], limit=1)
+                    except Exception as error:
+                        logger.exception("Episodic Memory initialization failed")
+                        raise EpisodicMemoryUnavailable("Episodic Memory unavailable") from error
+                    app.state.episodic_memory = episodic
+                    logger.info("Three-layer Memory ready: Redis, SQLite profile, Chroma/BGE")
+                elif settings.MEMORY_ENABLED:
+                    logger.warning("Episodic Memory is disabled by EPISODIC_MEMORY_ENABLED=false")
                 yield
             finally:
                 set_compactor(None)
@@ -326,17 +350,15 @@ async def _record_memory(
         "verified": bool(session.get("customer_id")),
     }
     await memory.save_session(user_input.user_id, user_input.thread_id, session)
-    if stable_completion and session.get("customer_id") and intents:
-        note = "咨询类别：" + "、".join(intents)
-        if safe_product:
-            note += "；商品：" + safe_product
-        await memory.put(str(session["customer_id"]), "support_summary", note)
     if stable_completion and session.get("customer_id"):
         channel = explicit_profile_channel(user_input.message)
         if channel:
             await memory.upsert_profile(str(session["customer_id"]), channel)
     episodic: EpisodicMemory | None = getattr(app.state, "episodic_memory", None)
-    if stable_completion and episodic is not None and session.get("customer_id"):
+    if (
+        stable_completion and episodic is not None and session.get("customer_id")
+        and "ticket_create" in intents
+    ):
         episode = completed_episode(values)
         if episode:
             event_type, event_summary = episode
@@ -415,50 +437,97 @@ async def _handle_input(user_input: UserInput, agent: AgentGraph) -> tuple[dict[
         task for task in state.tasks if hasattr(task, "interrupts") and task.interrupts
     ]
 
-    input: Command | dict[str, Any]
-    if interrupted_tasks:
-        # assume user input is response to resume agent execution from interrupt
-        interrupt_value = interrupted_tasks[0].interrupts[0].value
-        input = Command(resume=_hitl_resume_value(user_input.message, interrupt_value))
-    else:
-        messages: list[AnyMessage] = []
-        memory: LayeredMemory | None = getattr(app.state, "layered_memory", None)
-        if memory is not None and user_input.user_id and user_input.thread_id:
-            session = await memory.session(user_input.user_id, user_input.thread_id)
+    memory: LayeredMemory | None = getattr(app.state, "layered_memory", None)
+    wants_event, _ = requested_event(user_input.message, [])
+    if (wants_event or explicit_profile_channel(user_input.message)) and memory is None:
+        raise MemoryUnavailable("Long-term Memory is not initialized")
+    if memory is not None and user_input.user_id and user_input.thread_id:
+        session = await memory.session(user_input.user_id, user_input.thread_id)
+        verified: str | None = None
+        if not interrupted_tasks:
             verified = verified_customer_id(user_input.message)
             if verified:
                 session["customer_id"] = verified
                 match = re.search(r"\b(?:ORD\d+|OL\d{6})\b", user_input.message, re.I)
                 if match:
                     session["current_order"] = match.group().upper()
-            elif session.get("customer_id"):
-                verified = str(session["customer_id"])
-            notes: list[dict[str, Any]] = []
-            episodic: EpisodicMemory | None = getattr(app.state, "episodic_memory", None)
-            if verified and episodic is not None and not (state.values or {}).get("messages"):
-                episodes = await episodic.search(
-                    customer_id=verified, query=user_input.message, k=settings.EPISODIC_TOP_K
-                )
-                notes.extend(episodes)
-            if verified:
-                notes.extend(await memory.select(verified, user_input.message))
-                profile_reader = getattr(memory, "profile_note", None)
-                profile = await profile_reader(verified) if profile_reader else None
-                if profile:
-                    # Structured profile supersedes older free-text preference notes.
-                    notes = [note for note in notes if note.get("kind") != "preference"]
-                    notes.insert(0, profile)
-            config["metadata"] = {
-                "memory_context": {
-                    "working": session.get("working") or {},
-                    "summary": str(session.get("summary") or "")[:200],
-                    "compaction": (session.get("compaction") or {}).get("summary") or {},
-                    "notes": notes,
-                }
+        if not verified and session.get("customer_id"):
+            verified = str(session["customer_id"])
+        wants_event, event_summary = requested_event(
+            user_input.message, list((state.values or {}).get("messages") or [])
+        )
+        preference = explicit_profile_channel(user_input.message)
+        memory_response: str | None = None
+        if not interrupted_tasks and (wants_event or preference):
+            if not verified:
+                memory_response = "请先提供订单号和手机号后四位完成身份验证，再保存长期记忆。"
+            elif wants_event:
+                if not event_summary:
+                    memory_response = "请说明需要记录的具体售后情况，不要提供手机号或支付信息。"
+                else:
+                    episodic_for_write = getattr(app.state, "episodic_memory", None)
+                    if episodic_for_write is None:
+                        raise EpisodicMemoryUnavailable("Episodic Memory is not initialized")
+                    try:
+                        memory_id = await episodic_for_write.upsert(
+                            customer_id=verified, event_type="support_event",
+                            summary=event_summary, source_session=user_input.thread_id,
+                        )
+                        read_back = await episodic_for_write.search(
+                            customer_id=verified, query=event_summary,
+                            k=settings.EPISODIC_TOP_K,
+                        )
+                    except ValueError:
+                        memory_response = "记录内容包含敏感信息或不符合长度要求，请简述售后问题。"
+                    else:
+                        if not any(hit["memory_id"] == memory_id for hit in read_back):
+                            logger.error("Episodic Memory write read-back failed")
+                            raise EpisodicMemoryUnavailable("Episodic Memory read-back failed")
+                        logger.info("Explicit support event saved to episodic Memory")
+                        memory_response = "已记录这次售后情况。"
+            elif preference is not None:
+                await memory.upsert_profile(verified, preference)
+                logger.info("Explicit customer profile preference saved")
+                if not any(
+                    word in user_input.message
+                    for word in ("查询", "查订单", "退款", "工单", "政策", "维修")
+                ):
+                    memory_response = "已保存你的沟通偏好。"
+        notes: list[dict[str, Any]] = []
+        episodic: EpisodicMemory | None = getattr(app.state, "episodic_memory", None)
+        if verified and episodic is not None and memory_response is None:
+            episodes = await episodic.search(
+                customer_id=verified, query=user_input.message, k=settings.EPISODIC_TOP_K
+            )
+            notes.extend(episodes)
+            logger.info("Episodic Memory attached to context hits=%d", len(episodes))
+        if verified:
+            notes.extend(await memory.select(verified, user_input.message))
+            profile_reader = getattr(memory, "profile_note", None)
+            profile = await profile_reader(verified) if profile_reader else None
+            if profile:
+                # Structured profile supersedes older free-text preference notes.
+                notes = [note for note in notes if note.get("kind") != "preference"]
+                notes.insert(0, profile)
+        config["metadata"] = {
+            "memory_context": {
+                "working": session.get("working") or {},
+                "summary": str(session.get("summary") or "")[:200],
+                "compaction": (session.get("compaction") or {}).get("summary") or {},
+                "notes": notes,
             }
-            await memory.save_session(user_input.user_id, user_input.thread_id, session)
-        messages.append(HumanMessage(content=user_input.message))
-        input = {"messages": messages}
+        }
+        if memory_response is not None:
+            config["metadata"]["memory_response"] = memory_response
+        await memory.save_session(user_input.user_id, user_input.thread_id, session)
+
+    input: Command | dict[str, Any]
+    if interrupted_tasks:
+        # The checkpoint resumes unchanged; Memory metadata remains available to the model.
+        interrupt_value = interrupted_tasks[0].interrupts[0].value
+        input = Command(resume=_hitl_resume_value(user_input.message, interrupt_value))
+    else:
+        input = {"messages": [HumanMessage(content=user_input.message)]}
 
     kwargs = {
         "input": input,
@@ -502,6 +571,11 @@ async def invoke(
     trace_status = "failed"
 
     try:
+        memory_response = (kwargs["config"].get("metadata") or {}).get("memory_response")
+        if memory_response:
+            trace_status = "completed"
+            collector.answer = safe_text(memory_response, 500)
+            return ChatMessage(type="ai", content=memory_response, run_id=str(run_id))
         with trace_scope(collector):
             response_events: list[tuple[str, Any]] = await agent.ainvoke(**kwargs, stream_mode=["updates", "values"])  # type: ignore # fmt: skip
         output = None
@@ -575,6 +649,20 @@ async def message_generator(
         yield "data: [DONE]\n\n"
         return
 
+    memory_response = (kwargs["config"].get("metadata") or {}).get("memory_response")
+    if memory_response:
+        memory_output = ChatMessage(type="ai", content=memory_response, run_id=str(run_id))
+        if user_input.user_id and public_thread:
+            collector = TraceCollector(question=safe_text(user_input.message, 140))
+            collector.answer = safe_text(memory_response, 500)
+            _save_customer_trace(
+                collector, identity=user_input.user_id, thread_id=public_thread,
+                trace_id=run_id, status="completed", started=perf_counter(),
+            )
+        yield f"data: {json.dumps({'type': 'message', 'content': memory_output.model_dump()})}\n\n"
+        yield "data: [DONE]\n\n"
+        return
+
     if _private_customer_mode(agent_id):
         # Keep model chunks and tool messages inside the graph. A completed AI
         # message is the first safe point to publish a customer-support answer.
@@ -602,10 +690,23 @@ async def message_generator(
                             if public is not None and public.type == "ai":
                                 final = public
             output = approval_message() if interrupted else final
-            trace_status = "approval_required" if interrupted else "completed"
-            if output is not None:
+            trace_status = "approval_required" if interrupted else "completed" if output else "failed"
+            if output is None:
+                yield f"data: {json.dumps({'type': 'error', 'content': '未收到可展示的客服答复，请重试。'})}\n\n"
+            else:
                 output.run_id = str(run_id)
                 collector.answer = safe_text(public_answer(output.content) or "", 500)
+                if (
+                    user_input.stream_tokens and not interrupted
+                    and (settings.CUSTOMER_SUPPORT_MODE == "deepseek" or (
+                        settings.CUSTOMER_SUPPORT_MODE == "llm"
+                        and str(settings.DEFAULT_MODEL) == "deepseek-chat"
+                    ))
+                ):
+                    # Only validated final text is replayed; unfinished chunks may contain DSML.
+                    for index in range(0, len(output.content), 24):
+                        part = output.content[index:index + 24]
+                        yield f"data: {json.dumps({'type': 'token', 'content': part})}\n\n"
                 yield f"data: {json.dumps({'type': 'message', 'content': output.model_dump()})}\n\n"
         except CustomerSupportModelError as error:
             yield f"data: {json.dumps({'type': 'error', 'content': str(error)})}\n\n"
@@ -897,19 +998,51 @@ async def health_check():
 
 
 @app.get("/ready")
-def readiness_check():
-    """Readiness probe that also verifies the configured business database."""
+async def readiness_check() -> dict[str, Any]:
+    """Verify the business database and every enabled Memory dependency."""
     import os
 
+    result: dict[str, Any]
     if os.getenv("BUSINESS_DATABASE_TYPE", "sqlite").lower() != "mysql":
-        return {"status": "ready", "business_database": "sqlite"}
-    try:
-        from customer_support.mysql_store import database_healthcheck
+        result = {"status": "ready", "business_database": "sqlite"}
+    else:
+        try:
+            from customer_support.mysql_store import database_healthcheck
 
-        return database_healthcheck()
+            result = database_healthcheck()
+        except Exception as error:
+            logger.error("Business database readiness check failed (%s)", type(error).__name__)
+            raise HTTPException(status_code=503, detail="Business database is not ready") from error
+    if not settings.MEMORY_ENABLED:
+        result["memory"] = {"status": "disabled"}
+        return result
+    memory: LayeredMemory | None = getattr(app.state, "layered_memory", None)
+    if memory is None:
+        raise HTTPException(status_code=503, detail="Redis/SQLite Memory is not initialized")
+    try:
+        await memory.redis.ping()
     except Exception as error:
-        logger.error("Business database readiness check failed (%s)", type(error).__name__)
-        raise HTTPException(status_code=503, detail="Business database is not ready") from error
+        logger.error("Redis Memory readiness failed (%s)", type(error).__name__)
+        raise HTTPException(status_code=503, detail="Redis Memory is unavailable") from error
+    try:
+        await memory.get_profile("__ordercare_readiness__")
+    except Exception as error:
+        logger.error("SQLite profile readiness failed (%s)", type(error).__name__)
+        raise HTTPException(status_code=503, detail="SQLite profile Memory is unavailable") from error
+    result["memory"] = {"redis": "ready", "profile": "ready"}
+    if settings.EPISODIC_MEMORY_ENABLED:
+        episodic: EpisodicMemory | None = getattr(app.state, "episodic_memory", None)
+        if episodic is None:
+            raise HTTPException(status_code=503, detail="Episodic Memory is not initialized")
+        try:
+            await asyncio.to_thread(episodic.store.get, include=[], limit=1)
+        except Exception as error:
+            logger.error("Episodic Memory readiness failed (%s)", type(error).__name__)
+            raise HTTPException(status_code=503, detail="Episodic Memory is unavailable") from error
+        result["memory"]["episodic"] = "ready"
+    else:
+        result["memory"]["episodic"] = "disabled"
+    return result
 
 
 @app.get("/database/tables", dependencies=[Depends(verify_database_admin)])

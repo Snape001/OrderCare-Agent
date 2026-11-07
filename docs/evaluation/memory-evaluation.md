@@ -1,5 +1,7 @@
 # Memory 系统功能审计与离线评测（2026-11-07）
 
+> 本报告保留评测当时的默认开关与实验结果。后续正常运行集成已将 Redis/SQLite/Chroma 三层 Memory 设为默认启用；摘要替代旧历史仍默认关闭。当前启动配置见[分层 Memory 架构](../architecture/layered-memory.md)。
+
 ## 审计结论与调用链
 
 | 能力 | 实际实现与边界 |

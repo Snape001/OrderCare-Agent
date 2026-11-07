@@ -386,7 +386,46 @@ def test_readiness_uses_sqlite_by_default(test_client, monkeypatch) -> None:
     assert response.json() == {
         "status": "ready",
         "business_database": "sqlite",
+        "memory": {"status": "disabled"},
     }
+
+
+def test_readiness_reports_enabled_memory_and_dependency_failure(test_client, monkeypatch) -> None:
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from service import service
+
+    ping = AsyncMock(return_value=True)
+    reads: list[bool] = []
+    monkeypatch.setattr(service.settings, "MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.settings, "EPISODIC_MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.app.state, "layered_memory", SimpleNamespace(
+        redis=SimpleNamespace(ping=ping), get_profile=AsyncMock(return_value=None)
+    ), raising=False)
+    monkeypatch.setattr(service.app.state, "episodic_memory", SimpleNamespace(
+        store=SimpleNamespace(get=lambda **kwargs: reads.append(True))
+    ), raising=False)
+
+    ready = test_client.get("/ready")
+    assert ready.status_code == 200
+    assert ready.json()["memory"] == {
+        "redis": "ready", "profile": "ready", "episodic": "ready"
+    }
+    assert reads == [True]
+    ping.side_effect = ConnectionError("Redis offline")
+    unavailable = test_client.get("/ready")
+    assert unavailable.status_code == 503
+    assert unavailable.json()["detail"] == "Redis Memory is unavailable"
+    ping.side_effect = None
+
+    def broken_get(**kwargs):
+        raise OSError("Chroma offline")
+
+    monkeypatch.setattr(service.app.state.episodic_memory.store, "get", broken_get)
+    unavailable = test_client.get("/ready")
+    assert unavailable.status_code == 503
+    assert unavailable.json()["detail"] == "Episodic Memory is unavailable"
 
 
 def test_readiness_checks_mysql(test_client, monkeypatch) -> None:
@@ -400,7 +439,7 @@ def test_readiness_checks_mysql(test_client, monkeypatch) -> None:
         response = test_client.get("/ready")
 
     assert response.status_code == 200
-    assert response.json() == result
+    assert response.json() == result | {"memory": {"status": "disabled"}}
 
 
 def test_read_only_database_browser_endpoints(test_client, monkeypatch) -> None:

@@ -12,6 +12,9 @@ Streamlit :8501
 FastAPI + LangGraph Agent :8080
   ├─ Qwen：理解问题、选择工具、生成回答
   ├─ BGE + Chroma：检索商城政策
+  ├─ Redis：带 TTL 的会话/工作记忆，AOF 卷持久化
+  ├─ Chroma 独立 Collection：已验证客户的售后情景记忆
+  ├─ SQLite：用户画像与售后摘要
   ├─ MySQL :3306：订单、支付、评价、工单
   └─ SQLite：保存 LangGraph 对话检查点
 ```
@@ -20,7 +23,8 @@ FastAPI + LangGraph Agent :8080
 页面可以选择表、分页查看数据，并可按 `OL` 演示订单号查询；不提供修改和删除能力。
 
 MySQL 保存业务数据，因为订单查询、关联支付、工单写入需要关系型数据库。
-SQLite 只保存单机 Agent 对话状态，减少 8GB 内存电脑同时运行的服务数量。
+SQLite 分别保存单机 Agent 对话检查点和用户画像，使用不同文件，减少 8GB 内存电脑同时运行的服务数量。
+正常运行还默认启用 Redis、独立 Chroma 情景记忆 Collection 和 SQLite 用户画像；这些 Memory 数据与业务 MySQL、LangGraph Checkpoint 分开。`/ready` 会核对 Redis、画像数据库与 Chroma，依赖故障时返回 503。Redis 使用 AOF 和命名卷；`docker compose down` 不删除卷。
 
 ## 一键启动
 

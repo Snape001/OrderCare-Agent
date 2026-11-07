@@ -136,7 +136,7 @@ def test_episode_extraction_requires_completed_verified_step():
 
 
 @pytest.mark.asyncio
-async def test_service_retrieval_requires_verified_customer_and_new_session(episodes, monkeypatch):
+async def test_service_retrieval_requires_verified_customer_on_every_turn(episodes, monkeypatch):
     sessions = {}
 
     async def session(owner, thread):
@@ -171,11 +171,14 @@ async def test_service_retrieval_requires_verified_customer_and_new_session(epis
     again, _ = await service._handle_input(
         UserInput(message="继续维修", thread_id="new-thread", user_id="owner"), agent
     )
-    assert again["config"]["metadata"]["memory_context"]["notes"] == []
+    assert any(
+        note["kind"] == "episode"
+        for note in again["config"]["metadata"]["memory_context"]["notes"]
+    )
 
 
 @pytest.mark.asyncio
-async def test_service_writes_only_after_complete_and_not_approval(episodes, monkeypatch):
+async def test_service_writes_only_confirmed_ticket_after_completion(episodes, monkeypatch):
     session_data = {"customer_id": "C001"}
     memory = SimpleNamespace(
         session=AsyncMock(return_value=session_data),
@@ -183,28 +186,34 @@ async def test_service_writes_only_after_complete_and_not_approval(episodes, mon
     )
     monkeypatch.setattr(service.app.state, "layered_memory", memory, raising=False)
     monkeypatch.setattr(service.app.state, "episodic_memory", episodes, raising=False)
-    values = {"route": {"intents": ["repair_query"], "entities": {}},
-              "task_trace": [{"action": "search_policy", "status": "done"}]}
+    values = {"route": {"intents": ["ticket_create"], "entities": {}},
+              "task_trace": [{"action": "create_support_ticket", "status": "done"}]}
     agent = SimpleNamespace(aget_state=AsyncMock(return_value=SimpleNamespace(
         values=values, tasks=[]
     )))
     user = UserInput(message="维修咨询", thread_id="t1", user_id="owner")
     await service._record_memory(agent, user, completed=False)
-    assert await episodes.search(customer_id="C001", query="维修") == []
+    assert await episodes.search(customer_id="C001", query="工单") == []
     memory.put.assert_not_awaited()
     agent.aget_state.return_value = SimpleNamespace(values=values, tasks=[
         SimpleNamespace(interrupts=[object()])
     ])
     await service._record_memory(agent, user, completed=True)
-    assert await episodes.search(customer_id="C001", query="维修") == []
+    assert await episodes.search(customer_id="C001", query="工单") == []
     memory.put.assert_not_awaited()
     agent.aget_state.return_value = SimpleNamespace(values={
-        **values, "task_trace": [{"action": "search_policy", "status": "pending"}]
+        **values, "task_trace": [{"action": "create_support_ticket", "status": "pending"}]
     }, tasks=[])
     await service._record_memory(agent, user, completed=True)
-    assert await episodes.search(customer_id="C001", query="维修") == []
+    assert await episodes.search(customer_id="C001", query="工单") == []
     memory.put.assert_not_awaited()
     agent.aget_state.return_value = SimpleNamespace(values=values, tasks=[])
     await service._record_memory(agent, user, completed=True)
-    assert len(await episodes.search(customer_id="C001", query="维修")) == 1
-    memory.put.assert_awaited_once()
+    assert len(await episodes.search(customer_id="C001", query="工单")) == 1
+    memory.put.assert_not_awaited()
+    agent.aget_state.return_value = SimpleNamespace(values={
+        "route": {"intents": ["repair_query"], "entities": {}},
+        "task_trace": [{"action": "search_policy", "status": "done"}],
+    }, tasks=[])
+    await service._record_memory(agent, user, completed=True)
+    assert len(await episodes.search(customer_id="C001", query="工单")) == 1

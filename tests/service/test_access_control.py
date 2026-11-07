@@ -10,12 +10,15 @@ from pydantic import SecretStr
 from agents.customer_support_agent import build_customer_support_graph
 from core import settings
 from customer_support import store
+from schema.models import OpenAIModelName
 from service import app, service
 from service.access import checkpoint_thread, session_identity
 
 
 @pytest.fixture
 def secured_client(monkeypatch, tmp_path):
+    monkeypatch.setattr(settings, "CUSTOMER_SUPPORT_MODE", "llm")
+    monkeypatch.setattr(settings, "DEFAULT_MODEL", OpenAIModelName.GPT_5_NANO)
     monkeypatch.setattr(settings, "AUTH_SECRET", None)
     monkeypatch.setattr(settings, "DATABASE_ADMIN_SECRET", SecretStr("admin-test-only"))
     monkeypatch.setattr(store, "DEFAULT_DB_PATH", tmp_path / "business.db")

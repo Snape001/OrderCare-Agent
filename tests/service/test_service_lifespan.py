@@ -1,10 +1,118 @@
 import logging
 from contextlib import asynccontextmanager
+from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
 from fastapi import FastAPI
 
 from schema import AgentInfo
+
+
+@pytest.mark.asyncio
+async def test_default_memory_starts_with_service_and_checks_dependencies(monkeypatch) -> None:
+    """A normal service lifespan initializes every enabled Memory layer without model API calls."""
+    from customer_support import rag
+    from memory.compaction import get_compactor
+    from service import service
+
+    @asynccontextmanager
+    async def component():
+        yield object()
+
+    memory = SimpleNamespace(
+        setup=AsyncMock(), close=AsyncMock(),
+        redis=SimpleNamespace(ping=AsyncMock(return_value=True)),
+    )
+    embed_calls: list[str] = []
+    collection_reads: list[bool] = []
+
+    class FakeEpisode:
+        def __init__(self, **kwargs):
+            self.store = SimpleNamespace(get=lambda **kwargs: collection_reads.append(True))
+
+    def embed_query(query: str) -> list[float]:
+        embed_calls.append(query)
+        return [0.1]
+
+    monkeypatch.setattr(service.settings, "MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.settings, "EPISODIC_MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.settings, "REDIS_URL", "redis://127.0.0.1:6379/15")
+    monkeypatch.setattr(service, "initialize_database", component)
+    monkeypatch.setattr(service, "initialize_store", component)
+    monkeypatch.setattr(service, "get_all_agent_info", lambda: [])
+    monkeypatch.setattr(service, "LayeredMemory", lambda *args: memory)
+    monkeypatch.setattr(service, "EpisodicMemory", FakeEpisode)
+    monkeypatch.setattr(rag, "get_policy_knowledge_base", lambda: SimpleNamespace(
+        persist_directory="unused", embedding=SimpleNamespace(embed_query=embed_query)
+    ))
+    test_app = FastAPI()
+    async with service.lifespan(test_app):
+        assert test_app.state.layered_memory is memory
+        assert test_app.state.episodic_memory is not None
+        assert get_compactor() is not None
+        assert embed_calls == ["售后服务"]
+        assert collection_reads == [True]
+    memory.setup.assert_awaited_once()
+    memory.close.assert_awaited_once()
+    assert get_compactor() is None
+
+
+@pytest.mark.asyncio
+async def test_enabled_memory_failure_aborts_startup(monkeypatch) -> None:
+    from service import service
+
+    @asynccontextmanager
+    async def component():
+        yield object()
+
+    memory = SimpleNamespace(
+        setup=AsyncMock(side_effect=RuntimeError("Redis offline")), close=AsyncMock()
+    )
+    monkeypatch.setattr(service.settings, "MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.settings, "REDIS_URL", "redis://127.0.0.1:6379/15")
+    monkeypatch.setattr(service, "initialize_database", component)
+    monkeypatch.setattr(service, "initialize_store", component)
+    monkeypatch.setattr(service, "get_all_agent_info", lambda: [])
+    monkeypatch.setattr(service, "LayeredMemory", lambda *args: memory)
+    with pytest.raises(RuntimeError, match="Redis offline"):
+        async with service.lifespan(FastAPI()):
+            pytest.fail("Memory failure must stop startup")
+    memory.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_episodic_startup_failure_is_explicit_and_closes_redis(monkeypatch) -> None:
+    from customer_support import rag
+    from memory.episodic import EpisodicMemoryUnavailable
+    from service import service
+
+    @asynccontextmanager
+    async def component():
+        yield object()
+
+    memory = SimpleNamespace(setup=AsyncMock(), close=AsyncMock())
+    monkeypatch.setattr(service.settings, "MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.settings, "EPISODIC_MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.settings, "REDIS_URL", "redis://127.0.0.1:6379/15")
+    monkeypatch.setattr(service, "initialize_database", component)
+    monkeypatch.setattr(service, "initialize_store", component)
+    monkeypatch.setattr(service, "get_all_agent_info", lambda: [])
+    monkeypatch.setattr(service, "LayeredMemory", lambda *args: memory)
+    monkeypatch.setattr(rag, "get_policy_knowledge_base", lambda: SimpleNamespace(
+        persist_directory="unused", embedding=SimpleNamespace(embed_query=lambda query: [0.1])
+    ))
+
+    def broken_get(**kwargs):
+        raise OSError("Chroma offline")
+
+    monkeypatch.setattr(service, "EpisodicMemory", lambda **kwargs: SimpleNamespace(
+        store=SimpleNamespace(get=broken_get)
+    ))
+    with pytest.raises(EpisodicMemoryUnavailable, match="Episodic Memory unavailable"):
+        async with service.lifespan(FastAPI()):
+            pytest.fail("Chroma failure must stop startup")
+    memory.close.assert_awaited_once()
 
 
 @pytest.mark.asyncio

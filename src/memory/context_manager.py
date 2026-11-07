@@ -135,6 +135,8 @@ class ContextManager:
             (note for note in notes if isinstance(note, dict) and note.get("value")),
             key=lambda note: (
                 note.get("kind") == "preference",
+                note.get("kind") == "episode",
+                float(note.get("score", 0.0)),
                 sum(term in str(note["value"]).lower() for term in terms),
                 str(note.get("updated_at", "")),
             ),
@@ -142,7 +144,7 @@ class ContextManager:
         )
         for note in ranked:
             if (
-                note.get("kind") != "preference"
+                note.get("kind") not in {"preference", "episode"}
                 and terms
                 and not any(term in str(note["value"]).lower() for term in terms)
             ):

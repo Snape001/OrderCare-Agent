@@ -185,3 +185,7 @@ async def test_new_session_reads_long_term_and_resume_keeps_checkpoint(layered, 
         UserInput(message="确认", thread_id="t", user_id="owner"), agent
     )
     assert "approve" in str(kwargs["input"])
+    assert any(
+        note["value"] == "偏好文字客服"
+        for note in kwargs["config"]["metadata"]["memory_context"]["notes"]
+    )

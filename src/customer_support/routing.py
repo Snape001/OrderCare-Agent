@@ -66,15 +66,20 @@ class RoutedState(AgentState):
 
 
 ROUTER_PROMPT = (
-    "识别   客服用户本轮意图，输出符合JSON schema的短结果。可有多个意图。"
+    "识别客服用户本轮意图，输出符合JSON schema的短结果。可有多个意图。"
     "policy_query是政策，repair_query是维修政策，order_query查具体订单，refund_check查具体退款资格，"
     "ticket_create仅当用户明确要求创建工单或人工办理时使用。"
+    "‘如果物流延迟怎么办’是假设性政策咨询，只标policy_query，conditional=false；"
+    "不得因此查询订单、判断退款或创建工单。"
+    "‘检查这个订单是否延迟’才标order_query，缺少订单号/手机号后四位应追问。"
+    "is_delivery_late是订单查询的返回字段，不是独立工具。"
     "抽取明确给出的订单号、手机号后四位、商品名和问题描述；没有则null。"
-    "有‘如果能退/不能退则维修’等条件时conditional=true。不要编造实体。"
+    "只有多个业务动作存在‘能退/不能退则维修’等执行依赖时conditional=true。不要编造实体。"
 )
 PLANNER_PROMPT = (
-    "将多个客服意图排成最多6个顺序任务。只能用现有动作：get_order_status、"
-    "check_refund_eligibility、search_policy、create_support_ticket、summarize。"
+    "将Router确认的多个意图排成最多6个顺序任务。输入列有allowed_actions；"
+    "只能规划其中的业务动作，summarize可选。假设性政策条件不是执行条件，"
+    "不得据此添加订单查询、退款或工单。"
     "depends_on引用此前id；when只能是always/refund_eligible/refund_ineligible。"
     "只有用户明确请求工单才规划create_support_ticket；不得规划实际退款执行（系统无退款写工具）。"
     "条件维修只在refund_ineligible时search_policy；能退款时只说明资格及待确认流程。"
@@ -99,8 +104,32 @@ def validated_route(route: Route, messages: list[Any]) -> Route:
         value = getattr(route.entities, field)
         if value and re.sub(r"\s+", "", value) not in re.sub(r"\s+", "", text):
             setattr(route.entities, field, None)
-    if Intent.TICKET in route.intents and not any(
-        word in text for word in ("工单", "人工处理", "客服处理", "帮我办理", "创建售后")
+    current = str(next((m.content for m in reversed(messages) if isinstance(m, HumanMessage)), ""))
+    delay = "物流" in current and any(word in current for word in ("延迟", "晚到", "迟到"))
+    hypothetical = any(word in current for word in ("如果", "假如", "万一", "要是"))
+    advice = any(word in current for word in ("怎么办", "怎么处理", "如何处理", "有什么办法"))
+    actual_check = any(
+        word in current for word in ("检查", "查询", "查一下", "查查", "是否延迟", "有没有延迟")
+    )
+    explicit_action = any(
+        word in current
+        for word in (
+            "退款资格", "帮我退款", "申请退款", "创建工单", "新建工单",
+            "提交工单", "创建售后", "转人工",
+        )
+    )
+    if delay and hypothetical and advice and not actual_check and not explicit_action:
+        route.intents = [Intent.POLICY]
+        route.conditional = False
+    elif delay and actual_check:
+        if not advice and not explicit_action:
+            route.intents = [Intent.ORDER]
+            route.conditional = False
+        elif Intent.ORDER not in route.intents:
+            route.intents.append(Intent.ORDER)
+    if Intent.TICKET in route.intents and not re.search(
+        r"(?:创建|新建|提交|开|建).{0,8}工单|创建售后|(?:转|找)人工|人工处理|客服处理|帮我办理",
+        current,
     ):
         route.intents.remove(Intent.TICKET)
     if not route.intents:
@@ -122,8 +151,8 @@ def missing_fields(route: Route) -> list[str]:
     return []
 
 
-def validate_plan(plan: Plan, route: Route) -> Plan:
-    seen: set[str] = set()
+def allowed_actions(route: Route) -> set[str]:
+    """Return only business actions authorized by the validated route."""
     allowed = {
         Intent.ORDER: "get_order_status",
         Intent.REFUND: "check_refund_eligibility",
@@ -131,7 +160,12 @@ def validate_plan(plan: Plan, route: Route) -> Plan:
         Intent.REPAIR: "search_policy",
         Intent.TICKET: "create_support_ticket",
     }
-    actions = {allowed[i] for i in route.intents if i in allowed}
+    return {allowed[i] for i in route.intents if i in allowed}
+
+
+def validate_plan(plan: Plan, route: Route) -> Plan:
+    seen: set[str] = set()
+    actions = allowed_actions(route)
     if not actions.issubset({s.action for s in plan.steps}):
         raise ValueError("Plan omits a requested intent")
     for step in plan.steps:

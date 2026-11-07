@@ -2,7 +2,7 @@
 
 ## 定位与技术栈
 
-电商客服演示系统：政策问答、订单/物流查询、退款资格判断、确认后创建工单。入口是 Streamlit + FastAPI；Agent 使用 LangChain `create_agent` / LangGraph，真实模型可选 Ollama、Qwen、DeepSeek 或通用 LLM Provider；调用失败明确报错，不自动降级。结构化 Router 按意图分流，复杂请求才进入顺序 Planner；四个业务工具经本地 STDIO MCP 调用。政策检索使用 BGE 中文 Embedding、Chroma 和词法召回。业务库本地默认 SQLite，Docker Compose 可切 MySQL；会话 Checkpoint 默认独立的 SQLite。可选分层 Memory 使用 Redis、独立 Chroma Collection 和 SQLite 用户画像；配置在 `src/core/settings.py` 与环境变量中。
+电商客服演示系统：政策问答、订单/物流查询、退款资格判断、确认后创建工单。入口是 Streamlit + FastAPI；Agent 使用 LangChain `create_agent` / LangGraph，真实模型可选 Ollama、Qwen、DeepSeek 或通用 LLM Provider；调用失败明确报错，不自动降级。结构化 Router 按意图分流，复杂请求才进入顺序 Planner；四个业务工具经本地 STDIO MCP 调用。政策检索使用 BGE 中文 Embedding、Chroma 和词法召回。业务库本地默认 SQLite，Docker Compose 可切 MySQL；会话 Checkpoint 默认独立的 SQLite。正常运行自动启用的分层 Memory 使用 Redis、独立 Chroma Collection 和 SQLite 用户画像；配置在 `src/core/settings.py` 与环境变量中。
 
 ## 目录地图
 
@@ -28,7 +28,7 @@
 - 真实客服的图由 `create_agent` 生成，内部工具循环不是项目手写的显式 `StateGraph` 边。
 - 当前 Ollama 客服 SSE 在图完成后只发布最终安全答复或人工确认提示，故 UI 等待期间可能没有 token；`src/streamlit_app.py` 显示计时。
 - `CustomerSupportAgent.load()` 支持 `deepseek` 和 `llm`，复用通用模型工厂；所选模型必须支持工具调用，客服入口拒绝 fake。
-- 本地 SQLite Checkpoint 持久化会话消息与中断；框架默认 Store 仍是进程内 `InMemoryStore`。Redis 工作记忆在设置 `REDIS_URL` 后启用，情景记忆与摘要替代历史分别受 `EPISODIC_MEMORY_ENABLED`、`CONTEXT_COMPACTION_ENABLED` 控制，后两项默认关闭。
+- 本地 SQLite Checkpoint 持久化会话消息与中断；框架默认 Store 仍是进程内 `InMemoryStore`。正常客服运行要求 Redis 并默认启用 Chroma 情景记忆；只有摘要替代历史的 `CONTEXT_COMPACTION_ENABLED` 默认关闭。
 - Router/Planner 只实现有限顺序和退款资格条件分支；不能据此声称通用任务规划。情景记忆 42 题是作者标注的合成离线评测，真实 Agent 端到端任务完成率仍未测。
 - 服务端和 STDIO MCP 子进程各有 Python 进程；BGE 在单进程复用，但没有跨进程共享模型实例。
 

@@ -13,7 +13,7 @@
 | 退款资格判断 | `check_refund_eligibility` 执行业务规则 | 结合签收时间与商品状态，缺少必要信息时转人工 |
 | 人工工单 | `create_support_ticket` 写入业务库 | 写入前暂停审批，明确确认后恢复；幂等键避免相同请求重复建单 |
 | 多轮对话 | LangGraph Checkpoint 保存消息和中断状态 | 服务端结合会话凭证、Agent ID 和 thread ID 隔离会话 |
-| 分层 Memory（可选） | Redis 工作状态与 TTL、Chroma+BGE 历史事件、SQLite 结构化用户画像 | 跨会话读取须先验证订单身份；摘要替代历史默认关闭 |
+| 分层 Memory | Redis 工作状态与 TTL、Chroma+BGE 历史事件、SQLite 结构化用户画像 | 正常启动自动启用；跨会话读取须先验证订单身份；摘要替代历史默认关闭 |
 | 交互与部署 | Streamlit 聊天、FastAPI API、SSE、Docker Compose | 提供健康检查、只读数据库浏览入口与验证脚本 |
 
 ### Streamlit 客服工作台
@@ -47,9 +47,9 @@ Qwen 模式对意图和必需参数均明确的请求使用确定性工具路由
 
 `HumanInTheLoopMiddleware` 在创建工单工具执行前中断。服务端持久化检查点，下一轮将明确确认转换为 `Command(resume=...)` 的批准决策，其他答复按拒绝处理。工具执行时再次校验订单信息，并根据订单、类别、摘要生成幂等键。
 
-会话 Checkpoint 与业务订单库分开：前者保存消息和审批状态，后者保存订单与工单。框架默认 Store 仍是进程内存；下述分层 Memory 是另一个显式启用的持久化机制。
+会话 Checkpoint 与业务订单库分开：前者保存消息和审批状态，后者保存订单与工单。框架默认 Store 仍是进程内存；下述三层 Memory 在正常客服服务启动时自动初始化。
 
-可选的 [分层 Memory](docs/architecture/layered-memory.md) 在 Redis 保存带 TTL 的会话摘要、当前订单标识和任务进度；在独立 Chroma Collection 用同进程复用的 BGE Embedding 检索已完成的售后事件；在 SQLite `customer_profiles` 保存结构化沟通偏好，原 `customer_memories` 表保存简短售后备注。跨会话读取必须通过业务订单身份校验取得 `customer_id`，不能把历史订单状态当作实时事实。它不替换 LangGraph SQLite Checkpoint；配置 `REDIS_URL` 启用 Redis，`EPISODIC_MEMORY_ENABLED` 单独控制情景记忆，默认均不启用。
+正常启动自动启用的 [分层 Memory](docs/architecture/layered-memory.md) 在 Redis 保存带 TTL 的会话摘要、当前订单标识和任务进度；在独立 Chroma Collection 用同进程复用的 BGE Embedding 检索已完成的售后事件；在 SQLite `customer_profiles` 保存结构化沟通偏好，原 `customer_memories` 表保存简短售后备注。跨会话读取必须通过业务订单身份校验取得 `customer_id`，不能把历史订单状态当作实时事实。它不替换 LangGraph SQLite Checkpoint。`MEMORY_ENABLED=true` 和 `EPISODIC_MEMORY_ENABLED=true` 是默认运行配置；Redis 或 Chroma/BGE 初始化失败会阻止服务就绪。只有显式设置 `MEMORY_ENABLED=false` 才关闭三层 Memory。
 
 Context Manager 在模型调用前按任务组装系统规则、工作状态、相关记忆、最近对话和本轮工具证据，并按可配置 Token Budget 淘汰低价值历史。它只改变模型输入视图，不裁剪 Checkpoint；当前请求、审批状态和本轮工具调用配对优先保留。配置与边界见上方架构文档。
 
@@ -110,7 +110,7 @@ flowchart TD
 
 ### 方式一：Ollama 本地模型
 
-需要 Git、Python 3.12、uv 和已运行的 Ollama。Windows 可用 `winget install --id astral-sh.uv -e` 安装 uv，安装后重新打开终端。
+需要 Git、Python 3.12、uv、已运行的 Ollama，以及 Redis。Windows 可用 `winget install --id astral-sh.uv -e` 安装 uv，安装后重新打开终端。`start_demo.cmd` 会连接已有 Redis；若本机未运行 Redis 且 Docker Desktop 可用，会自动执行 `docker compose up -d redis`。两者都不可用时会明确报错，不会静默关闭 Memory。
 
 ```powershell
 git clone https://github.com/Snape001/OrderCare-Agent.git
@@ -122,7 +122,7 @@ if (!(Test-Path .env)) { Copy-Item .env.ollama.example .env }
 .\scripts\start_demo.cmd
 ```
 
-初始化脚本检查配置、安装锁定依赖、准备样例订单和 RAG 索引并运行客服测试。首次需联网下载依赖和中文 Embedding 模型。本地模式仍运行真实 LLM，需要足够的内存和推理资源。已有 `.env` 不会自动覆盖；停止服务执行 `.\scripts\stop_demo.cmd`。
+初始化脚本检查配置、安装锁定依赖、准备样例订单，并通过 `scripts/build_rag_index.py` 预热中文 Embedding、构建当前政策索引；不运行 RAG 评测或自动化测试。首次需联网下载依赖和中文 Embedding 模型。本地模式仍运行真实 LLM，需要足够的内存和推理资源。已有 `.env` 不会自动覆盖；旧 `.env` 未列 Memory 键时采用代码默认值。停止服务执行 `.\scripts\stop_demo.cmd`；通过启动脚本拉起的 Redis 容器可用 `docker compose stop redis` 单独停止。
 
 手动启动（项目根目录，PowerShell）：
 
@@ -131,7 +131,8 @@ uv python install 3.12
 uv sync --frozen --python 3.12
 $env:PYTHONPATH = "src"
 uv run python -c "from customer_support.store import initialize_database; initialize_database()"
-uv run python scripts/evaluate_rag.py
+uv run python scripts/build_rag_index.py
+docker compose up -d redis  # 或先运行本机 Redis；仅首次/未运行时需要
 uv run python src/run_service.py
 ```
 
@@ -148,6 +149,14 @@ Linux/macOS 使用相同 `uv` 命令，首次复制配置用 `cp .env.ollama.exa
 | 聊天界面 | http://127.0.0.1:8501 |
 | API 文档 | http://127.0.0.1:8080/docs |
 | 存活 / 就绪检查 | http://127.0.0.1:8080/health / http://127.0.0.1:8080/ready |
+
+验证三层 Memory 已进入正常服务启动链：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8080/ready
+```
+
+正常结果包含 `memory.redis=ready`、`memory.profile=ready`、`memory.episodic=ready`。Redis、SQLite 画像或 Chroma 失联时 `/ready` 返回 503；显式关闭 Memory 时返回 `memory.status=disabled`。新会话须再次提供有效订单号和手机号后四位，才能读取该客户的跨会话画像与售后事件；同一会话由服务端凭证隔离。Memory 无需额外初始化脚本。
 
 ### 方式二：DeepSeek、Qwen 与其他 API Provider
 
@@ -190,7 +199,7 @@ docker compose ps
 .\scripts\verify_docker.cmd
 ```
 
-Compose 编排 MySQL、数据迁移任务、Agent API、聊天界面和只读数据库浏览器（http://127.0.0.1:8081）。业务数据写入 MySQL，Checkpoint 使用独立 SQLite；健康检查和迁移完成条件控制启动顺序。日常停止使用 `docker compose down` 保留数据卷。
+Compose 编排 MySQL、持久化 Redis、数据迁移任务、Agent API、聊天界面和只读数据库浏览器（http://127.0.0.1:8081）。业务数据写入 MySQL，Checkpoint 与用户画像使用独立 SQLite，情景记忆使用持久化 Chroma Collection；Redis 的 AOF 和命名卷支持容器重启后的 TTL 内记忆恢复。`/ready` 验证 Redis 与 Chroma。健康检查和迁移完成条件控制启动顺序。日常停止使用 `docker compose down` 保留数据卷。
 
 原始数据、导入数据库、向量索引、模型缓存和本地密钥均不随 Git 提交。Olist 演示后四位由匿名 ID 派生，不是真实手机号；缺少拆封状态的订单不会被模型擅自判定可退款。更多内容见 [部署说明](docs/deployment/docker-mysql.md)。
 
@@ -218,6 +227,8 @@ uv run python scripts/evaluate_rag.py
 ```
 
 `.\scripts\run_tests.cmd` 运行单元测试。运行中服务的 HTTP 验证需显式执行 `uv run python scripts/demo_check.py`，会调用真实模型并可能创建演示工单。测试替身仅存在于测试路径，不提供运行时模拟客服。
+
+建索引只读取当前 `data/policies/` 并按源文指纹复用或重建 Chroma 索引；离线评测由 `scripts/evaluate_rag.py` 独立运行。旧评测数据集绑定冻结政策 SHA256，若与当前政策文件不一致，评测会按原完整性校验失败；这不会阻断 `setup_demo.cmd` 或正常服务启动，也不会修改历史 Ground Truth。
 
 新增 [RAG Evaluation Framework](docs/evaluation/rag-evaluation.md)：40条按政策原文标注的问题，固定开发/留出集，默认无需LLM API，评估Recall@K、MRR@K、nDCG@K、标注上下文相关度和检索拒答。可选Ollama或已配置Provider进行回答生成与逐事实Judge，生成指标不与检索指标混用。
 
@@ -256,7 +267,7 @@ docker/                            # 容器构建文件
 
 ## 当前边界与后续方向
 
-当前是可运行的实习演示项目：手机号后四位仅用于演示校验，会话凭证不等同于账户登录；框架默认 Store 为进程内存，Redis/情景记忆须单独启用，SQLite Checkpoint 面向单机。Router/Planner 只支持有限的顺序任务和条件分支，尚无通用规划引擎、多 Agent 协作或真实退款支付。STDIO MCP 与 FastAPI 分属进程，BGE 实例并不跨进程共享。部署到公网前需补充正式身份认证、权限模型和运行治理。
+当前是可运行的实习演示项目：手机号后四位仅用于演示校验，会话凭证不等同于账户登录；框架默认 Store 为进程内存，但正常客服链路中的 Redis/SQLite/Chroma 三层 Memory 默认启用，SQLite Checkpoint 面向单机。Router/Planner 只支持有限的顺序任务和条件分支，尚无通用规划引擎、多 Agent 协作或真实退款支付。STDIO MCP 与 FastAPI 分属进程，BGE 实例并不跨进程共享。部署到公网前需补充正式身份认证、权限模型和运行治理。
 
 后续可围绕 Memory 独立复核与真实模型端到端评测、情景记忆否定条件排序、生成答案证据一致性、结构化错误处理和并发性能开展迭代。
 

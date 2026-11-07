@@ -196,6 +196,9 @@ class CompactedContextAssembler:
             (note for note in note_source if isinstance(note, dict)
              and isinstance(note.get("value"), str)),
             key=lambda note: (
+                note.get("kind") == "preference",
+                note.get("kind") == "episode",
+                float(note.get("score", 0.0)),
                 sum(term in note["value"].lower() for term in terms),
                 str(note.get("updated_at", "")),
             ), reverse=True,
@@ -203,7 +206,9 @@ class CompactedContextAssembler:
         long_spent = 0
         for note in notes:
             value = str(note["value"])
-            if terms and not any(term in value.lower() for term in terms):
+            if note.get("kind") not in {"preference", "episode"} and terms and not any(
+                term in value.lower() for term in terms
+            ):
                 continue
             if value in assembled_text:
                 continue

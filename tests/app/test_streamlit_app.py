@@ -445,6 +445,30 @@ def test_customer_support_stream_hides_internal_messages(mock_agent_client):
     assert not app.exception
 
 
+def test_customer_support_ui_hides_dsml_tool_content(mock_agent_client):
+    mock_agent_client.info.agents.append(
+        AgentInfo(key="customer-support", description="Customer support")
+    )
+    mock_agent_client.info.default_agent = "customer-support"
+    mock_agent_client.agent = "customer-support"
+    app = AppTest.from_file(str(APP_PATH)).run()
+    raw = '<｜tool▁calls▁begin｜>{"name":"create_support_ticket","phone_last4":"8821"}'
+
+    async def messages() -> AsyncGenerator[ChatMessage | str, None]:
+        yield raw
+        yield ChatMessage(type="ai", content=raw)
+        yield ChatMessage(type="ai", content="已为你查询售后政策。")
+
+    mock_agent_client.astream = Mock(return_value=messages())
+    app.chat_input[0].set_value("售后政策").run()
+
+    assert app.chat_message[1].markdown[0].value == "已为你查询售后政策。"
+    visible = " ".join(markdown.value for markdown in app.markdown)
+    assert "phone_last4" not in visible
+    assert "tool▁calls" not in visible
+    assert not app.exception
+
+
 def test_customer_support_approval_prompt_survives_ui_filter(mock_agent_client):
     mock_agent_client.info.agents.append(
         AgentInfo(key="customer-support", description="Customer support")

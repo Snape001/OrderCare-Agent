@@ -11,6 +11,8 @@
 
 已有 `.env` 请直接编辑，不要覆盖其中的密钥。移除旧的 `DEFAULT_MODEL=fake` 和 `USE_FAKE_MODEL=true` 设置。运行模式只选择真实模型，连接失败不会返回模拟答复。
 
+三层 Memory 默认启用，需要 Redis。`start_demo.cmd` 会连接已有 Redis；本地没有 Redis 且 Docker Desktop 可用时，会自动启动 Compose 的 Redis 服务。两者都不可用时会明确报错。旧 `.env` 未写 Memory 键时仍采用默认启用值；上下文摘要替代策略继续默认关闭。
+
 ## 2. 安装和启动
 
 Windows 安装 Python 3.12、uv 后，在项目目录运行：
@@ -20,7 +22,7 @@ Windows 安装 Python 3.12、uv 后，在项目目录运行：
 .\scripts\start_demo.cmd
 ```
 
-首次需要下载依赖和中文 Embedding 模型。聊天页面为 http://127.0.0.1:8501；API 文档为 http://127.0.0.1:8080/docs。
+`setup_demo.cmd` 只安装依赖、初始化样例订单、预热 BGE 并构建当前政策 RAG 索引；它不运行离线评测或自动化测试。首次需要下载依赖和中文 Embedding 模型。聊天页面为 http://127.0.0.1:8501；API 文档为 http://127.0.0.1:8080/docs。检查 http://127.0.0.1:8080/ready 应看到 Redis、画像和情景记忆均为 `ready`。
 
 ## 3. 验证业务链路
 
@@ -41,6 +43,8 @@ uv run python scripts/evaluate_agent.py
 ```
 
 单元测试使用测试替身，不调用云端模型；确定性 Agent 评测检查路由和业务规则，不代表真实模型准确率。真实 HTTP 检查需显式运行 `uv run python scripts/demo_check.py`，可能产生 API 费用并创建演示工单。
+
+`scripts/evaluate_rag.py` 是独立的冻结数据集评测命令；当前政策文件与其冻结 SHA256 不一致时会按原校验报错，不影响启动。仅重建当前政策索引可单独运行 `uv run python scripts/build_rag_index.py`。
 
 ## 4. 停止与排错
 

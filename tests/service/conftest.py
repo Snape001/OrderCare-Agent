@@ -4,12 +4,16 @@ import pytest
 from fastapi.testclient import TestClient
 from langchain_core.messages import AIMessage
 
+from core import settings
+from schema.models import OpenAIModelName
 from service import app
 
 
 @pytest.fixture
-def test_client():
-    """Fixture to create a FastAPI test client."""
+def test_client(monkeypatch):
+    """Exercise generic service streaming unless a test selects a real provider mode."""
+    monkeypatch.setattr(settings, "CUSTOMER_SUPPORT_MODE", "llm")
+    monkeypatch.setattr(settings, "DEFAULT_MODEL", OpenAIModelName.GPT_5_NANO)
     return TestClient(app, headers={"X-Session-Token": "a" * 64})
 
 
