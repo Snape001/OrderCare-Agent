@@ -6,9 +6,12 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+from customer_support.policy import POLICY_PATH
 from evaluation.experiments import expand_query
 from evaluation.llm import Answer, JudgeResult, LLMEvaluator, make_model, parse_json, score_judgment
 from evaluation.rag import evaluate, load_dataset, retrieval_metrics
+
+FROZEN_POLICY = Path("data/evaluation/rag/three-way-comparison-v1/frozen-policy-v1.md")
 
 
 def hit(section):
@@ -90,7 +93,7 @@ def test_empty_dataset_rejected():
 
 
 def test_frozen_dataset_is_source_validated():
-    dataset = load_dataset(Path("data/evaluation/rag/dataset-v1.json"))
+    dataset = load_dataset(Path("data/evaluation/rag/dataset-v1.json"), FROZEN_POLICY, source_path=POLICY_PATH)
     assert len(dataset["cases"]) == 40
     assert sum(c["should_abstain"] for c in dataset["cases"]) == 10
     assert sum(c["split"] == "dev" for c in dataset["cases"]) == 20
@@ -100,7 +103,7 @@ def test_frozen_dataset_is_source_validated():
     "change", ["checksum", "section", "grade", "quote", "abstain", "duplicate"]
 )
 def test_invalid_labels_fail_closed(tmp_path, change):
-    data = load_dataset(Path("data/evaluation/rag/dataset-v1.json"))
+    data = load_dataset(Path("data/evaluation/rag/dataset-v1.json"), FROZEN_POLICY, source_path=POLICY_PATH)
     c = data["cases"][0]
     if change == "checksum":
         data["policy_sha256"] = "wrong"
@@ -117,7 +120,7 @@ def test_invalid_labels_fail_closed(tmp_path, change):
     path = tmp_path / "invalid.json"
     path.write_text(json.dumps(data), encoding="utf-8")
     with pytest.raises(ValueError):
-        load_dataset(path)
+        load_dataset(path, FROZEN_POLICY, source_path=POLICY_PATH)
 
 
 def test_expansion_preserves_question_and_noop():

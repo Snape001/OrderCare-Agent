@@ -1,4 +1,14 @@
 services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "volatile-ttl"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
   mysql:
     image: mysql:8.4.10
     ports:
@@ -105,11 +115,16 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-support_dev_password}
       DATABASE_TYPE: sqlite
       SQLITE_DB_PATH: /app/runtime/checkpoints.db
+      REDIS_URL: redis://redis:6379/0
+      MEMORY_TTL_SECONDS: ${MEMORY_TTL_SECONDS:-86400}
+      MEMORY_SQLITE_PATH: /app/runtime/customer_memories.db
     volumes:
       - agent_runtime:/app/runtime
       - rag_chroma:/app/data/chroma
       - embedding_models:/app/data/models
     depends_on:
+      redis:
+        condition: service_healthy
       mysql:
         condition: service_healthy
       mysql_loader:

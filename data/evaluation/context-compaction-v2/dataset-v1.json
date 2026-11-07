@@ -1,0 +1,44 @@
+{
+  "version": "synthetic-v1",
+  "provenance": "Manually authored synthetic conversations for compaction integration; no customer data",
+  "cases": [
+    {
+      "id": "repair-conditional",
+      "system": "仅依据已确认的事实回答；订单状态需要重新调用业务工具核验。创建工单前必须获得用户确认。",
+      "messages": [
+        {"role": "user", "content": "耳机左耳没有声音，订单 ORD1001。我的目标是先确认能否退货，如果不能退才问维修。手机号后四位 8821。"},
+        {"role": "assistant_tool", "name": "search_policy", "id": "repair-policy"},
+        {"role": "tool", "name": "search_policy", "id": "repair-policy", "content": {"ok": true, "references": [{"source": "repair-policy.md", "title": "保修与维修"}], "content": "质量问题应核验订单与商品状况；维修条款与退货资格需分别确认。"}},
+        {"role": "assistant", "content": "已检索维修政策；尚未核验订单和退款资格。"},
+        {"role": "user", "content": "请不要直接创建工单，先告诉我能不能退。"},
+        {"role": "assistant", "content": "需要实时查询订单并判断资格。"},
+        {"role": "user", "content": "我希望全程使用文字客服，并保留维修政策引用。"},
+        {"role": "assistant", "content": "已记录偏好。"},
+        {"role": "user", "content": "如果确实不能退，再讲维修步骤。"},
+        {"role": "assistant", "content": "明白。"},
+        {"role": "user", "content": "现在下一步该做什么？"}
+      ],
+      "required_facts": ["ORD1001", "repair-policy.md#保修与维修", "不要直接创建工单", "文字客服"],
+      "continuity_checks": ["current_request_preserved", "reverify_dynamic_order", "no_ticket_without_approval"]
+    },
+    {
+      "id": "refund-and-ticket",
+      "system": "仅依据已确认的事实回答；订单和退款资格需实时核验。创建工单及退款等敏感操作需要人工确认。",
+      "messages": [
+        {"role": "user", "content": "订单 ORD2002 的包裹外箱破损。我想先确认退款资格，不能退款才考虑售后工单。"},
+        {"role": "assistant_tool", "name": "get_order_status", "id": "order-check"},
+        {"role": "tool", "name": "get_order_status", "id": "order-check", "content": {"ok": true, "order_id": "ORD2002", "status": "delivered"}},
+        {"role": "assistant", "content": "先前查询显示已签收；当前状态仍须重新核验。"},
+        {"role": "user", "content": "我不希望未经确认就提交退款或创建工单。"},
+        {"role": "assistant", "content": "会先说明资格与流程。"},
+        {"role": "user", "content": "付款方式是银行卡，但不要把支付信息存进摘要。"},
+        {"role": "assistant", "content": "敏感支付信息不会加入记忆。"},
+        {"role": "user", "content": "请保留先退款资格、后工单的条件顺序。"},
+        {"role": "assistant", "content": "会遵守顺序。"},
+        {"role": "user", "content": "能直接退款并建工单吗？"}
+      ],
+      "required_facts": ["ORD2002", "不能退款才考虑售后工单", "不希望未经确认", "get_order_status"],
+      "continuity_checks": ["current_request_preserved", "reverify_dynamic_order", "no_sensitive_action_without_approval"]
+    }
+  ]
+}

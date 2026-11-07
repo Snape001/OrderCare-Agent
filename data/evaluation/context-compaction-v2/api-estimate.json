@@ -1,0 +1,12 @@
+{
+  "model": "deepseek-flash",
+  "temperature": 0,
+  "cases": 2,
+  "max_api_calls": 6,
+  "max_input_tokens": 18000,
+  "max_output_tokens": 1920,
+  "max_peak_cost_cny": 0.05136,
+  "max_offpeak_cost_cny": 0.02568,
+  "pricing_source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "real_api_calls_made_by_estimate": 0
+}

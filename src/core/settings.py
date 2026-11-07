@@ -80,6 +80,25 @@ class Settings(BaseSettings):
 
     AUTH_SECRET: SecretStr | None = None
     DATABASE_ADMIN_SECRET: SecretStr | None = None
+    REDIS_URL: str | None = None
+    MEMORY_TTL_SECONDS: int = 86400
+    MEMORY_SQLITE_PATH: str = "data/customer_memories.db"
+    CONTEXT_TOKEN_BUDGET: int = 4096
+    CONTEXT_SYSTEM_BUDGET: int = 1024
+    CONTEXT_HISTORY_BUDGET: int = 1200
+    CONTEXT_MEMORY_BUDGET: int = 640
+    CONTEXT_RAG_BUDGET: int = 768
+    CONTEXT_TOOLS_BUDGET: int = 720
+    CONTEXT_COMPACTION_THRESHOLD: float = 0.8
+    CONTEXT_COMPACTION_SUMMARY_BUDGET: int = 384
+    CONTEXT_COMPACTION_ENABLED: bool = False
+    CONTEXT_HISTORY_SUMMARY_BUDGET: int = Field(default=320, gt=0)
+    CONTEXT_LONG_TERM_BUDGET: int = Field(default=120, gt=0)
+    CONTEXT_RECENT_TURNS: int = Field(default=2, gt=0)
+    EPISODIC_MEMORY_ENABLED: bool = False
+    EPISODIC_TOP_K: int = Field(default=4, gt=0)
+    EPISODIC_SIMILARITY_THRESHOLD: float = Field(default=0.55, ge=0, le=1)
+    EPISODIC_RECENCY_WEIGHT: float = Field(default=0.15, ge=0, le=1)
 
     OPENAI_API_KEY: SecretStr | None = None
     DEEPSEEK_API_KEY: SecretStr | None = None

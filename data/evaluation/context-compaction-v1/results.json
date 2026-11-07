@@ -1,0 +1,16 @@
+{
+  "dataset": "synthetic-offline-v1",
+  "questions": 4,
+  "raw_estimated_tokens": 1103,
+  "assembled_estimated_tokens": 566,
+  "token_saving_rate": 0.4869,
+  "critical_fact_retention_rate": 1.0,
+  "task_continuity": true,
+  "facts": {
+    "order_id": true,
+    "citation": true,
+    "preference": true
+  },
+  "triggered": true,
+  "api_calls": 0
+}

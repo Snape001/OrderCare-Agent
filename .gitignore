@@ -196,6 +196,7 @@ data/*.db
 data/chroma/
 data/evaluation/rag/three-way-comparison-v1/chroma-index/
 data/evaluation/rag/three-way-comparison-v2/chroma-index/
+data/evaluation/memory/results-v1/_work/
 .pytest-tmp/
 data/models/
 data/logs/

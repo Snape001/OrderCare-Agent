@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from customer_support.policy import format_policy_hits, load_policy_sections
+from customer_support.policy import POLICY_PATH, format_policy_hits, load_policy_sections
 from customer_support.prompts import SYSTEM_PROMPT
 from evaluation.generation import (
     EvidenceJudge,
@@ -19,9 +19,11 @@ from evaluation.generation import (
 )
 from evaluation.rag import load_dataset
 
+FROZEN_POLICY = Path("data/evaluation/rag/three-way-comparison-v1/frozen-policy-v1.md")
+
 
 def example():
-    case = load_dataset(Path("data/evaluation/rag/dataset-v1.json"))["cases"][1]
+    case = load_dataset(Path("data/evaluation/rag/dataset-v1.json"), FROZEN_POLICY, source_path=POLICY_PATH)["cases"][1]
     doc = case["relevant_documents"][0]
     hit = {
         "title": doc["section"],
@@ -126,7 +128,7 @@ def test_refusal_requires_visible_quote():
 
 
 def test_no_answer_refusal_and_missing_evidence():
-    case = load_dataset(Path("data/evaluation/rag/dataset-v1.json"))["cases"][30]
+    case = load_dataset(Path("data/evaluation/rag/dataset-v1.json"), FROZEN_POLICY, source_path=POLICY_PATH)["cases"][30]
     answer = "没有退货运费承担规则，需要人工核实。"
     verdict = EvidenceJudge(
         facts_correct=[True],
@@ -180,6 +182,7 @@ def test_no_current_policy_section_is_fragmented():
 
 def test_judge_must_be_explicit_and_errors_keep_raw_output():
     runner = GenerationRunner.__new__(GenerationRunner)
+    runner.policy_path = POLICY_PATH
     runner.judge_enabled = False
     with pytest.raises(ValueError, match="explicit"):
         runner.judge({}, {})
@@ -235,6 +238,7 @@ def test_summary_reports_nulls_coverage_and_split():
 
 def test_configured_judge_receives_json_schema():
     runner = GenerationRunner.__new__(GenerationRunner)
+    runner.policy_path = POLICY_PATH
     runner.model_info = {"provider": "configured"}
     runner.judge_enabled = True
     runner.judge_model = object()

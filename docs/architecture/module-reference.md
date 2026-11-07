@@ -6,11 +6,15 @@
 | 2 | `src/client/client.py` | `AgentClient.astream/ainvoke/get_history` 发送 HTTP、解析 SSE、附带会话令牌 |
 | 3 | `src/service/service.py` | `lifespan` 加载图；`stream → message_generator → _handle_input` 是请求主链；`invoke/history` 是非流式和历史入口 |
 | 4 | `src/agents/agents.py` | `DEFAULT_AGENT`、`agents` 注册表、`load_agent/get_agent` 懒加载边界 |
-| 5 | `src/agents/customer_support_agent.py` | `CustomerSupportAgent.load` 选 Provider；`build_customer_support_graph` 注册工具、中间件、HITL 并构建真实 Agent |
-| 7 | `src/customer_support/tools.py` | 四个 `@tool` 的 schema 和对业务函数的委托；工单调用前再校验身份 |
-| 8 | `src/customer_support/store.py` | SQLite 演示业务库、订单/退款/工单逻辑与 MySQL/Olist 分派；MySQL 细节见 `mysql_store.py` |
-| 9 | `src/customer_support/policy.py`、`src/customer_support/rag.py` | 政策读取、切片、BGE、Chroma、词法/向量融合与拒答 |
-| 10 | `src/memory/__init__.py`、`src/memory/sqlite.py` | Checkpoint/Store 选择与默认 SQLite saver；会话隔离补看 `src/service/access.py` |
+| 5 | `src/agents/customer_support_agent.py` | `CustomerSupportAgent.load` 选 Provider；Router/Planner、模型上下文组装、HITL 与真实 Agent 构图 |
+| 6 | `src/customer_support/routing.py` | 意图/实体和计划的 Pydantic 结构、缺参检查、允许动作校验、顺序/条件执行规则 |
+| 7 | `src/customer_support/mcp_client.py`、`mcp_server.py`、`mcp_approval.py` | STDIO 工具发现与适配、四工具服务封装、工单审批凭证校验 |
+| 8 | `src/customer_support/tools.py`、`store.py` | 四个业务函数的 schema、订单/退款/工单与 SQLite/MySQL 数据访问；MCP Server 委托这些函数 |
+| 9 | `src/customer_support/policy.py`、`rag.py` | 政策读取、切片、BGE、Chroma、词法/向量融合与拒答 |
+| 10 | `src/memory/__init__.py`、`sqlite.py` | Checkpoint/Store 选择与默认 SQLite saver；会话隔离补看 `src/service/access.py` |
+| 11 | `src/memory/layers.py` | Redis 短期/工作状态与 TTL、SQLite 售后备注及结构化用户画像、身份验证辅助 |
+| 12 | `src/memory/episodic.py` | 已完成事件提取、独立 Chroma Collection、按客户过滤的 BGE 语义检索 |
+| 13 | `src/memory/context_manager.py`、`compaction.py`、`context_compaction_candidate.py` | 分项 Token Budget、Redis 增量摘要/游标、可选摘要替代与回退 |
 
 按这个顺序先追“请求从哪里进入、哪里恢复 State、哪里选工具”，再读 RAG 和数据库实现。`src/core/settings.py`、`src/core/llm.py` 分别是配置和通用模型工厂；真实客服的 Ollama/Qwen 构造当前在 `customer_support_agent.py`，不要只看通用工厂。`src/service/presentation.py` 和 `src/schema/presentation.py` 决定 Ollama 客服的对外可见内容。
 
@@ -20,7 +24,9 @@
 |---|---|
 | 自动化回归 | `tests/`；`scripts/run_tests.ps1` / `scripts/run_tests.cmd`；Docker 用例需 `--run-docker` 与容器环境 |
 | 规则/业务离线评测 | `scripts/evaluate_agent.py`，输入 `data/evaluation/agent_routing_cases.json`，输出 `agent_report.json` |
-| RAG 评测 | `scripts/evaluate_rag.py`，用冻结40题计算 Recall/MRR/nDCG/拒答/延迟；可选生成Judge，输出 `data/evaluation/rag/runs/` |
+| RAG 评测 | `scripts/evaluate_rag.py` 与三方案实验脚本；冻结 40 题及扩展 90 题的逐题结果见 `data/evaluation/rag/` 和 `docs/evaluation/rag-three-way-comparison.md` |
+| Memory 评测 | `scripts/evaluate_memory.py`，42 条作者标注合成题，真实 BGE + 隔离 Chroma 的逐题输出和边界见 `docs/evaluation/memory-evaluation.md` |
+| 压缩专项验证 | `scripts/evaluate_compaction*.py`、`scripts/verify_compaction_redis_restart.py`；压力预算、Redis 兼容服务和有限 DeepSeek 摘要实验见 `docs/evaluation/context-compaction-phase4.md` |
 | 真实 Ollama 工具验证 | `scripts/verify_ollama_agent.py`，需本机模型；与常规 pytest 分开 |
 | 本地启动 | `scripts/setup_demo.*`、`scripts/start_demo.*`，配置示例 `.env.example`、`.env.deepseek.example`、`.env.ollama.example`、`.env.qwen.example` |
 | Docker | `compose.yaml`、`docker/Dockerfile.*`、`scripts/migrate_sqlite_to_mysql.py`：MySQL → 一次性导入 → FastAPI/Streamlit/只读浏览器 |

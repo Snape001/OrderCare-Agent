@@ -1,0 +1,49 @@
+{
+  "review_type": "Single evaluator manual semantic check against manually authored synthetic dataset",
+  "independent_blinded_review": false,
+  "scope": "Only the six saved DeepSeek calls; no additional model judge or API request",
+  "definitions": {
+    "semantic_fact_retention": "A required fact is present in the second incremental summary, including a faithful paraphrase or equivalent source notation",
+    "material_hallucination": "The summary or answer asserts a new business fact, eligibility decision, completed action, or policy condition unsupported by the synthetic history",
+    "answer_continuity": "The final answer preserves the task order and approval constraints and treats dynamic order/refund facts as needing revalidation"
+  },
+  "cases": [
+    {
+      "id": "repair-conditional",
+      "semantic_fact_checks": {
+        "ORD1001": true,
+        "repair-policy.md#保修与维修": true,
+        "不要直接创建工单": true,
+        "文字客服": true
+      },
+      "semantic_fact_retention": "4/4",
+      "incremental_summary_preserved_prior_facts": true,
+      "material_hallucination_observed": false,
+      "answer_continuity": true,
+      "reason": "Second summary retains order, policy source in 《》 notation, no-ticket constraint and text support preference. Final answer asks for fresh order and refund checks and places repair after a negative refund decision.",
+      "limitation": "The policy excerpt does not contain concrete repair steps; the answer proposes consulting the policy later and does not establish those steps."
+    },
+    {
+      "id": "refund-and-ticket",
+      "semantic_fact_checks": {
+        "ORD2002": true,
+        "不能退款才考虑售后工单": true,
+        "不希望未经确认": true,
+        "get_order_status": true
+      },
+      "semantic_fact_retention": "4/4",
+      "incremental_summary_preserved_prior_facts": true,
+      "material_hallucination_observed": false,
+      "answer_continuity": true,
+      "reason": "Second summary retains order, conditional ticket branch, approval constraint and the tool's historical delivered status while requiring a fresh check. Final answer declines immediate refund and ticket creation.",
+      "sensitive_payment_detail_in_output": false
+    }
+  ],
+  "aggregate": {
+    "semantic_fact_retention": "8/8",
+    "answer_continuity": "2/2 synthetic continuation answers",
+    "material_hallucination_cases": "0/2 observed",
+    "generalization_claim": false,
+    "production_end_to_end_completion_measured": false
+  }
+}

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 import time
 from pathlib import Path
 from typing import Any
@@ -91,17 +90,15 @@ def save_json(path: Path, data: dict[str, Any]) -> None:
 
 
 def frozen_policy(path: Path, expected_sha: str) -> None:
-    """Materialize the Git policy snapshot with the original Windows line endings."""
+    """Copy the committed v1 snapshot only after its original checksum matches."""
     if path.exists():
         if digest(path) != expected_sha:
             raise ValueError("Saved frozen policy checksum mismatch")
         return
-    raw = subprocess.run(
-        ["git", "show", "HEAD:data/policies/customer_service_policy.md"],
-        check=True,
-        capture_output=True,
-    ).stdout
-    candidate = raw.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    source = Path("data/evaluation/rag/three-way-comparison-v1/frozen-policy-v1.md")
+    candidate = source.read_bytes()
+    if digest(source) != expected_sha:
+        raise ValueError("Committed frozen policy checksum mismatch")
     path.write_bytes(candidate)
     if digest(path) != expected_sha:
         path.unlink()

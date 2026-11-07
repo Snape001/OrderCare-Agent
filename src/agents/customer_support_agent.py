@@ -23,6 +23,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
+from langgraph.config import get_config
 from langgraph.graph.state import CompiledStateGraph
 
 from agents.lazy_agent import LazyLoadingAgent
@@ -47,6 +48,9 @@ from customer_support.routing import (
 )
 from customer_support.tools import CUSTOMER_SUPPORT_TOOLS
 from customer_support.trace import safe_args, safe_route, safe_tool_result, trace_event
+from memory.compaction import get_compactor
+from memory.context_compaction_candidate import CandidateBudget, CompactedContextAssembler
+from memory.context_manager import ContextManager, TokenBudget, count_tokens
 from schema.models import DeepseekModelName, FakeModelName, OllamaModelName
 
 logger = logging.getLogger(__name__)
@@ -157,19 +161,33 @@ async def log_model_call(request, handler):
         response = await handler(request)
     except Exception as exc:
         logger.exception("Customer support model call failed error_type=%s", type(exc).__name__)
-        trace_event("llm", status="failed", error_type=type(exc).__name__, duration_ms=round((perf_counter() - started) * 1000, 1))
+        trace_event(
+            "llm",
+            status="failed",
+            error_type=type(exc).__name__,
+            duration_ms=round((perf_counter() - started) * 1000, 1),
+        )
         raise CustomerSupportModelError() from exc
     messages = getattr(response, "result", [])
     if not isinstance(messages, list):
         messages = [messages]
     usage = next(
-        (getattr(message, "usage_metadata", None) for message in reversed(messages)
-         if getattr(message, "usage_metadata", None)),
+        (
+            getattr(message, "usage_metadata", None)
+            for message in reversed(messages)
+            if getattr(message, "usage_metadata", None)
+        ),
         None,
     )
     trace_event(
-        "llm", status="completed", duration_ms=round((perf_counter() - started) * 1000, 1),
-        tokens={key: usage[key] for key in ("input_tokens", "output_tokens", "total_tokens") if usage and key in usage},
+        "llm",
+        status="completed",
+        duration_ms=round((perf_counter() - started) * 1000, 1),
+        tokens={
+            key: usage[key]
+            for key in ("input_tokens", "output_tokens", "total_tokens")
+            if usage and key in usage
+        },
     )
     logger.info(
         "Customer support model call completed duration_ms=%.1f", (perf_counter() - started) * 1000
@@ -184,12 +202,24 @@ async def log_tool_call(request, handler):
     try:
         response = await handler(request)
     except Exception as exc:
-        logger.exception("Customer support tool failed name=%s error_type=%s", name, type(exc).__name__)
-        trace_event("tool", name=name, arguments=safe_args(request.tool_call.get("args", {})), status="failed", error_type=type(exc).__name__, duration_ms=round((perf_counter() - started) * 1000, 1))
+        logger.exception(
+            "Customer support tool failed name=%s error_type=%s", name, type(exc).__name__
+        )
+        trace_event(
+            "tool",
+            name=name,
+            arguments=safe_args(request.tool_call.get("args", {})),
+            status="failed",
+            error_type=type(exc).__name__,
+            duration_ms=round((perf_counter() - started) * 1000, 1),
+        )
         raise
     trace_event(
-        "tool", name=name, arguments=safe_args(request.tool_call.get("args", {})),
-        status="completed", result=safe_tool_result(name, response),
+        "tool",
+        name=name,
+        arguments=safe_args(request.tool_call.get("args", {})),
+        status="completed",
+        result=safe_tool_result(name, response),
         duration_ms=round((perf_counter() - started) * 1000, 1),
     )
     logger.info(
@@ -254,7 +284,11 @@ def routing_middleware(model: BaseChatModel):
             logger.exception("Customer support routing failed error_type=%s", type(exc).__name__)
             raise CustomerSupportModelError() from exc
         trace_event("router", result=safe_route(route), missing_fields=[])
-        trace_event("planner", steps=plan.model_dump(mode="json")["steps"], invoked=len(route.intents) > 1 or route.conditional)
+        trace_event(
+            "planner",
+            steps=plan.model_dump(mode="json")["steps"],
+            invoked=len(route.intents) > 1 or route.conditional,
+        )
         return {
             "route": route.model_dump(mode="json"),
             "plan": plan.model_dump(mode="json"),
@@ -298,6 +332,79 @@ def routing_middleware(model: BaseChatModel):
     return [route_request, record_tasks, execute_planned_step]
 
 
+@wrap_model_call
+async def assemble_model_context(request, handler):
+    """Limit the model view; the checkpoint keeps the full message history."""
+    budget = TokenBudget(
+        total=settings.CONTEXT_TOKEN_BUDGET,
+        system=settings.CONTEXT_SYSTEM_BUDGET,
+        history=settings.CONTEXT_HISTORY_BUDGET,
+        memory=settings.CONTEXT_MEMORY_BUDGET,
+        rag=settings.CONTEXT_RAG_BUDGET,
+        tools=settings.CONTEXT_TOOLS_BUDGET,
+    )
+    config = get_config()
+    metadata = config.get("metadata") or {}
+    memory = dict(metadata.get("memory_context") or {})
+    compactor = get_compactor()
+    scoped = config.get("configurable") or {}
+    if compactor and scoped.get("user_id") and scoped.get("thread_id"):
+        summary, _ = await compactor.maybe_compact(
+            owner=str(scoped["user_id"]),
+            thread=str(scoped["thread_id"]),
+            messages=request.messages,
+            system=request.system_message,
+            total_budget=budget.total,
+            model=request.model,
+        )
+        if summary:
+            memory["compaction"] = summary
+    if settings.CONTEXT_COMPACTION_ENABLED:
+        record = None
+        if compactor and scoped.get("user_id") and scoped.get("thread_id"):
+            session = await compactor.store.session(str(scoped["user_id"]), str(scoped["thread_id"]))
+            record = session.get("compaction")
+        view = CompactedContextAssembler(
+            budget,
+            CandidateBudget(
+                summary=settings.CONTEXT_HISTORY_SUMMARY_BUDGET,
+                long_term=settings.CONTEXT_LONG_TERM_BUDGET,
+                recent_turns=settings.CONTEXT_RECENT_TURNS,
+            ),
+        ).assemble(
+            messages=request.messages,
+            system=request.system_message,
+            state=request.state or {},
+            memory=memory,
+            compaction_record=record,
+            model=request.model,
+        )
+        messages, system_message = view.messages, view.system
+        before = count_tokens(
+            request.messages + ([request.system_message] if request.system_message else []),
+            request.model,
+        )
+        after = count_tokens(messages + ([system_message] if system_message else []), request.model)
+        available = int(view.metrics.get("summary_facts_available", 0))
+        selected = int(view.metrics.get("summary_facts_selected", 0))
+        injection_rate = selected / available if available else 0.0
+        logger.info(
+            "Context replacement before_tokens=%d after_tokens=%d "
+            "summary_injected=%s summary_fact_injection_rate=%.3f reason=%s",
+            before, after, view.metrics.get("summary_injected"), injection_rate,
+            view.metrics.get("reason"),
+        )
+    else:
+        messages, system_message = ContextManager(budget).assemble(
+            messages=request.messages,
+            system=request.system_message,
+            state=request.state or {},
+            memory=memory,
+            model=request.model,
+        )
+    return await handler(request.override(messages=messages, system_message=system_message))
+
+
 def build_customer_support_graph(
     model: BaseChatModel,
     *,
@@ -314,6 +421,7 @@ def build_customer_support_graph(
         middleware=[
             log_agent_start,
             *(routing_middleware(model) if enable_router else []),
+            assemble_model_context,
             log_model_call,
             *([deterministic_tool_routing] if force_routing else []),
             HumanInTheLoopMiddleware(

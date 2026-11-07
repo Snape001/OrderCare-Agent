@@ -2,7 +2,7 @@
 
 面向电商售后场景的智能客服 Agent，使用 **LangChain / LangGraph + Function Calling + RAG + Human-in-the-Loop**，完成「查政策 → 查订单 → 判断退款资格 → 用户确认 → 创建工单」业务闭环。
 
-本项目作为 Agent 开发实习作品，重点展示模型与业务工具的协作、检索质量评测、可恢复的人工审批，以及从聊天界面到数据库的工程实现。商城政策与工单流程用于演示；退款工具只判断资格，不执行支付退款。
+本项目重点展示模型与业务工具的协作、检索质量评测、可恢复的人工审批，以及从聊天界面到数据库的工程实现。商城政策与工单流程用于演示；退款工具只判断资格，不执行支付退款。
 
 ## 核心功能
 
@@ -13,6 +13,7 @@
 | 退款资格判断 | `check_refund_eligibility` 执行业务规则 | 结合签收时间与商品状态，缺少必要信息时转人工 |
 | 人工工单 | `create_support_ticket` 写入业务库 | 写入前暂停审批，明确确认后恢复；幂等键避免相同请求重复建单 |
 | 多轮对话 | LangGraph Checkpoint 保存消息和中断状态 | 服务端结合会话凭证、Agent ID 和 thread ID 隔离会话 |
+| 分层 Memory（可选） | Redis 工作状态与 TTL、Chroma+BGE 历史事件、SQLite 结构化用户画像 | 跨会话读取须先验证订单身份；摘要替代历史默认关闭 |
 | 交互与部署 | Streamlit 聊天、FastAPI API、SSE、Docker Compose | 提供健康检查、只读数据库浏览入口与验证脚本 |
 
 ### Streamlit 客服工作台
@@ -31,6 +32,10 @@
 
 Qwen 模式对意图和必需参数均明确的请求使用确定性工具路由；模糊请求交给模型。Ollama、DeepSeek 和通用 LLM 模式由模型自主选择工具。运行时只使用真实模型：配置错误直接报错，调用失败向客户端返回明确错误，不自动切换 Provider。测试中注入的假模型仅用于隔离外部服务。
 
+客服图还用当前 Provider 的结构化输出执行 Router：识别普通对话、政策、订单、退款资格、维修和工单等意图，并从用户原文校验实体。单意图生成简单任务；多意图或条件请求才进入 Planner，输出至多六步的顺序、依赖和退款条件分支。生产校验限制可规划动作，防止模型自行增加工单等敏感操作；每一步只开放当前所需工具。详见 [Router / Planner 架构](docs/architecture/router-planner.md)。这不是通用 DAG 引擎，真实模型任务完成率尚无充分基准。
+
+四个业务工具通过本地 Python MCP SDK 的 STDIO Server 暴露，由 `langchain-mcp-adapters` 发现并交给客服图。MCP 层委托原业务函数，工单仍由图内人工审批中断和 Server 端内部签名共同保护；连接失败不绕过 MCP。协议、参数 Schema 与验证见 [MCP 业务工具](docs/mcp-business-tools.md)。
+
 ### 2. 政策 RAG 与证据引用
 
 - 按 Markdown 二级标题解析政策，默认按 220 字符切片、重叠 40 字符，保留标题、来源和切片 ID。
@@ -42,7 +47,13 @@ Qwen 模式对意图和必需参数均明确的请求使用确定性工具路由
 
 `HumanInTheLoopMiddleware` 在创建工单工具执行前中断。服务端持久化检查点，下一轮将明确确认转换为 `Command(resume=...)` 的批准决策，其他答复按拒绝处理。工具执行时再次校验订单信息，并根据订单、类别、摘要生成幂等键。
 
-会话 Checkpoint 与业务订单库分开：前者保存消息和审批状态，后者保存订单与工单。默认长期 Store 是进程内存，不是持久化用户记忆系统。
+会话 Checkpoint 与业务订单库分开：前者保存消息和审批状态，后者保存订单与工单。框架默认 Store 仍是进程内存；下述分层 Memory 是另一个显式启用的持久化机制。
+
+可选的 [分层 Memory](docs/architecture/layered-memory.md) 在 Redis 保存带 TTL 的会话摘要、当前订单标识和任务进度；在独立 Chroma Collection 用同进程复用的 BGE Embedding 检索已完成的售后事件；在 SQLite `customer_profiles` 保存结构化沟通偏好，原 `customer_memories` 表保存简短售后备注。跨会话读取必须通过业务订单身份校验取得 `customer_id`，不能把历史订单状态当作实时事实。它不替换 LangGraph SQLite Checkpoint；配置 `REDIS_URL` 启用 Redis，`EPISODIC_MEMORY_ENABLED` 单独控制情景记忆，默认均不启用。
+
+Context Manager 在模型调用前按任务组装系统规则、工作状态、相关记忆、最近对话和本轮工具证据，并按可配置 Token Budget 淘汰低价值历史。它只改变模型输入视图，不裁剪 Checkpoint；当前请求、审批状态和本轮工具调用配对优先保留。配置与边界见上方架构文档。
+
+当原始上下文达到预算阈值时，[Automatic Context Compaction](docs/architecture/layered-memory.md#automatic-context-compaction) 从较早轮次增量摘录结构化事实，用原子游标存入带 TTL 的 Redis 键。设置 `CONTEXT_COMPACTION_ENABLED=true` 后，摘要才在模型视图中**替代**游标覆盖的旧消息；最近两轮、工具调用配对和审批状态保留，预算或游标异常时回退动态裁剪。默认关闭该替代策略。摘录式压缩不调用模型；曾对固定合成样本单独做有限的 DeepSeek 摘要实验，不属于当前线上摘要器。具体边界见 [Memory 评测](docs/evaluation/memory-evaluation.md)。
 
 ### 4. 可观测性与评测
 
@@ -55,7 +66,9 @@ Qwen 模式对意图和必需参数均明确的请求使用确定性工具路由
 | 语言与依赖 | Python 3.12–3.14、uv、`uv.lock` | 环境隔离与锁定依赖；推荐 Python 3.12 |
 | Agent 编排 | LangChain、LangGraph | Tool Calling、中间件、检查点与中断恢复 |
 | 模型 | Qwen、DeepSeek、Ollama、其他已配置的 LLM Provider | 云端与本地真实模型；不提供模拟客服运行入口 |
-| 检索 | FastEmbed、BGE 中文 Embedding、Chroma | 政策向量化、持久化与混合召回 |
+| 检索与情景记忆 | FastEmbed、BGE 中文 Embedding、Chroma | 政策向量化与混合召回；独立 Collection 保存客户历史事件 |
+| 分层记忆 | Redis、SQLite、LangGraph Checkpoint | 带 TTL 的短期工作状态、结构化画像、完整图状态与审批恢复，各自职责分离 |
+| 工具协议 | Python MCP SDK、langchain-mcp-adapters | 本地 STDIO 发现和调用四个原有业务工具 |
 | 服务与界面 | FastAPI、Pydantic、Uvicorn、HTTPX、Streamlit | 输入校验、HTTP/SSE、聊天界面 |
 | 数据 | SQLite、MySQL、PyMySQL | 本地演示、关系型业务数据及工单存储 |
 | 工程 | Docker Compose、pytest、Ruff | 部署编排、回归测试、代码检查 |
@@ -70,7 +83,12 @@ flowchart TD
     Client --> API[FastAPI 鉴权与会话隔离]
     API --> Agent[LangGraph 客服 Agent]
     API <--> CP[(会话 Checkpoint)]
+    API <--> Redis[(Redis 会话/工作记忆 TTL)]
+    API <--> Profile[(SQLite 用户画像/售后备注)]
+    API <--> Episode[(Chroma 情景记忆)]
     Agent <--> LLM[Qwen / DeepSeek / Ollama / LLM]
+    Agent --> Router[结构化 Router / 条件 Planner]
+    Agent --> Context[Context Manager / Token Budget / 可选压缩]
     Agent --> MCP[本地 MCP Client / STDIO Server]
     MCP --> Tools[业务工具]
     Tools --> RAG[政策混合检索]
@@ -207,6 +225,8 @@ uv run python scripts/evaluate_rag.py
 
 第二轮实验保留原有 40 题与历史结果，另建立 90 题数据集及独立的 [三方案逐题结果和报告](data/evaluation/rag/three-way-comparison-v2/optimization-report.md)。Direct、Hybrid、Rewrite + Hybrid 在相同知识库上完成 90 题检索和生成；报告分别列出开发集、留出集、Judge 有效样本数与不可评分项。实验方案不会自动替换线上默认检索。
 
+[Memory 最终评测](docs/evaluation/memory-evaluation.md)以 42 条作者标注的**合成题**比较“仅当前请求”和完整 Memory，用真实本地 BGE 检索：B 的 Recall@4 为 1.0000、MRR 为 0.9138，但 Precision@4 为 0.2759，5/29 道正例 Top-1 排错。两条强制触发压缩的短对话从 1038 降至 703 个**估算** Token；它不是默认线上阈值下的节省率。数据未独立人工复核，真实 Agent Task Completion Rate 未测，不把事实保留率当作完成率。本轮完整回归为 366 passed、5 skipped；详情、逐题结果和失败案例见报告。
+
 ## 项目结构与源码导航
 
 ```text
@@ -215,7 +235,7 @@ src/
   customer_support/                 # 工具、RAG、政策、SQLite/MySQL 数据访问
   service/                          # API、会话隔离、输出展示过滤
   client/                           # HTTP / SSE 客户端
-  memory/                           # Checkpoint / Store 适配
+  memory/                           # Checkpoint、Redis/SQLite/Chroma Memory、上下文预算与压缩
   core/                             # 配置与通用模型工厂
   schema/                           # 请求、响应与消息模型
   streamlit_app.py                  # Streamlit 工作台入口
@@ -230,15 +250,15 @@ docker/                            # 容器构建文件
 ```
 
 - [项目总览](docs/architecture/project-overview.md) · [Agent 执行链](docs/architecture/agent-execution-flow.md)
-- [状态与记忆](docs/architecture/state-and-memory.md) · [RAG 架构](docs/architecture/rag-architecture.md)
+- [状态与记忆](docs/architecture/state-and-memory.md) · [分层 Memory](docs/architecture/layered-memory.md) · [RAG 架构](docs/architecture/rag-architecture.md)
 - [模块索引](docs/architecture/module-reference.md) · [入门操作](START_HERE.md)
-- [政策意图误路由复盘](docs/learning/bug-001-order-policy-routing.md) · [Qwen 事件处理复盘](docs/learning/bug-002-qwen-agent-event-handling.md)
+- [开发难点与解决记录](docs/learning/engineering-challenges.md) · [政策意图误路由复盘](docs/learning/bug-001-order-policy-routing.md) · [Qwen 事件处理复盘](docs/learning/bug-002-qwen-agent-event-handling.md)
 
 ## 当前边界与后续方向
 
-当前是可运行的实习演示项目：手机号后四位仅用于演示校验，会话凭证不等同于账户登录；默认长期记忆为进程内存，SQLite Checkpoint 面向单机。Router/Planner 只支持有限的顺序任务和条件分支，尚无通用规划引擎、多 Agent 协作或真实退款支付。部署到公网前需补充正式身份认证、权限模型和运行治理。
+当前是可运行的实习演示项目：手机号后四位仅用于演示校验，会话凭证不等同于账户登录；框架默认 Store 为进程内存，Redis/情景记忆须单独启用，SQLite Checkpoint 面向单机。Router/Planner 只支持有限的顺序任务和条件分支，尚无通用规划引擎、多 Agent 协作或真实退款支付。STDIO MCP 与 FastAPI 分属进程，BGE 实例并不跨进程共享。部署到公网前需补充正式身份认证、权限模型和运行治理。
 
-后续可围绕独立测试集与真实模型端到端评测、检索重排、生成答案证据一致性、结构化错误处理、持久化长期记忆与并发性能开展迭代。
+后续可围绕 Memory 独立复核与真实模型端到端评测、情景记忆否定条件排序、生成答案证据一致性、结构化错误处理和并发性能开展迭代。
 
 DeepSeek 通过现有 `ChatOpenAI` 使用官方兼容接口；可在 `.env` 中设置 `LLM_PROVIDER=deepseek` 或 `LLM_PROVIDER=ollama`。DeepSeek 的 `DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL`、`DEEPSEEK_TEMPERATURE`、`DEEPSEEK_MAX_TOKENS`、`DEEPSEEK_TIMEOUT` 可分别配置；API Key 只放本地被 Git 忽略的 `.env`。不设置 `LLM_PROVIDER` 时继续使用 `CUSTOMER_SUPPORT_MODE`。详见 [Provider 配置](docs/deepseek-provider.md)。
 

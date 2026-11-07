@@ -1,6 +1,7 @@
 import inspect
 import json
 import logging
+import re
 import secrets
 import warnings
 from collections.abc import AsyncGenerator
@@ -14,7 +15,13 @@ from fastapi.responses import StreamingResponse
 from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from langchain_core._api import LangChainBetaWarning
-from langchain_core.messages import AIMessage, AIMessageChunk, AnyMessage, HumanMessage, ToolMessage
+from langchain_core.messages import (
+    AIMessage,
+    AIMessageChunk,
+    AnyMessage,
+    HumanMessage,
+    ToolMessage,
+)
 from langchain_core.runnables import RunnableConfig
 from langfuse import Langfuse  # type: ignore[import-untyped]
 from langfuse.langchain import (
@@ -30,6 +37,14 @@ from customer_support.confirmation import is_explicit_approval
 from customer_support.errors import CustomerSupportModelError
 from customer_support.trace import TraceCollector, safe_args, safe_text, trace_scope
 from memory import initialize_database, initialize_store
+from memory.compaction import AutomaticCompactor, set_compactor
+from memory.episodic import EpisodicMemory, completed_episode
+from memory.layers import (
+    LayeredMemory,
+    MemoryUnavailable,
+    explicit_profile_channel,
+    verified_customer_id,
+)
 from schema import (
     ChatHistory,
     ChatHistoryInput,
@@ -71,17 +86,27 @@ def _trace_model() -> str:
 
 
 def _save_customer_trace(
-    collector: TraceCollector, *, identity: str, thread_id: str,
-    trace_id: UUID, status: str, started: float,
+    collector: TraceCollector,
+    *,
+    identity: str,
+    thread_id: str,
+    trace_id: UUID,
+    status: str,
+    started: float,
 ) -> None:
     try:
         save_trace(
-            trace_id=str(trace_id), owner=identity, thread_id=thread_id,
-            agent_id=DEFAULT_AGENT, status=status,
+            trace_id=str(trace_id),
+            owner=identity,
+            thread_id=thread_id,
+            agent_id=DEFAULT_AGENT,
+            status=status,
             duration_ms=(perf_counter() - started) * 1000,
-            provider=settings.CUSTOMER_SUPPORT_MODE, model=_trace_model(),
+            provider=settings.CUSTOMER_SUPPORT_MODE,
+            model=_trace_model(),
             events=collector.events,
-            question=collector.question, answer=collector.answer,
+            question=collector.question,
+            answer=collector.answer,
         )
     except Exception as exc:
         logger.error("Customer trace storage failed error_type=%s", type(exc).__name__)
@@ -202,7 +227,39 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                     app.state.unavailable_agents.add(a.key)
                     if a.key == DEFAULT_AGENT:
                         raise RuntimeError("Default agent failed to initialize") from None
-            yield
+            app.state.layered_memory = None
+            app.state.episodic_memory = None
+            if settings.REDIS_URL:
+                memory = LayeredMemory(
+                    settings.REDIS_URL, settings.MEMORY_SQLITE_PATH, settings.MEMORY_TTL_SECONDS
+                )
+                await memory.setup()
+                app.state.layered_memory = memory
+                set_compactor(
+                    AutomaticCompactor(
+                        memory,
+                        settings.CONTEXT_COMPACTION_THRESHOLD,
+                        settings.CONTEXT_COMPACTION_SUMMARY_BUDGET,
+                    )
+                )
+            try:
+                if settings.EPISODIC_MEMORY_ENABLED:
+                    if app.state.layered_memory is None:
+                        raise RuntimeError("Episodic memory requires REDIS_URL for verified identity")
+                    from customer_support.rag import get_policy_knowledge_base
+
+                    policy_kb = get_policy_knowledge_base()
+                    app.state.episodic_memory = EpisodicMemory(
+                        persist_directory=policy_kb.persist_directory,
+                        embedding=policy_kb.embedding,
+                        similarity_threshold=settings.EPISODIC_SIMILARITY_THRESHOLD,
+                        recency_weight=settings.EPISODIC_RECENCY_WEIGHT,
+                    )
+                yield
+            finally:
+                set_compactor(None)
+                if app.state.layered_memory is not None:
+                    await app.state.layered_memory.close()
     except Exception:
         logger.error("Database/store/agent initialization failed")
         raise
@@ -232,6 +289,63 @@ def scope_input[InputT: UserInput](user_input: InputT, identity: str, agent_id: 
             "user_id": identity,
         }
     )
+
+
+async def _record_memory(
+    agent: AgentGraph, user_input: UserInput, *, completed: bool = False
+) -> None:
+    memory: LayeredMemory | None = getattr(app.state, "layered_memory", None)
+    if memory is None or not user_input.user_id or not user_input.thread_id:
+        return
+    session = await memory.session(user_input.user_id, user_input.thread_id)
+    state = await agent.aget_state(config={"configurable": {"thread_id": user_input.thread_id}})
+    values = state.values or {}
+    interrupted = any(getattr(task, "interrupts", None) for task in state.tasks)
+    trace = values.get("task_trace") or []
+    stable_completion = completed and not interrupted and not any(
+        isinstance(step, dict) and step.get("status") in {"pending", "blocked", "failed"}
+        for step in trace
+    )
+    route = values.get("route") or {}
+    intents = [str(intent) for intent in route.get("intents", [])][:6]
+    entities = route.get("entities") or {}
+    product = str(entities.get("product_name") or "")
+    # Only allowlisted business categories and a short product label are retained.
+    safe_product = product if re.fullmatch(r"[\u4e00-\u9fffA-Za-z\s]{1,30}", product) else ""
+    session["summary"] = (
+        "上次咨询：" + "、".join(intents) + ("；商品：" + safe_product if safe_product else "")
+    )
+    session["working"] = {
+        "intents": intents,
+        "current_order": session.get("current_order"),
+        "task_progress": [
+            {key: step[key] for key in ("action", "status") if key in step}
+            for step in trace[:6]
+            if isinstance(step, dict)
+        ],
+        "verified": bool(session.get("customer_id")),
+    }
+    await memory.save_session(user_input.user_id, user_input.thread_id, session)
+    if stable_completion and session.get("customer_id") and intents:
+        note = "咨询类别：" + "、".join(intents)
+        if safe_product:
+            note += "；商品：" + safe_product
+        await memory.put(str(session["customer_id"]), "support_summary", note)
+    if stable_completion and session.get("customer_id"):
+        channel = explicit_profile_channel(user_input.message)
+        if channel:
+            await memory.upsert_profile(str(session["customer_id"]), channel)
+    episodic: EpisodicMemory | None = getattr(app.state, "episodic_memory", None)
+    if stable_completion and episodic is not None and session.get("customer_id"):
+        episode = completed_episode(values)
+        if episode:
+            event_type, event_summary = episode
+            await episodic.upsert(
+                customer_id=str(session["customer_id"]),
+                event_type=event_type,
+                summary=event_summary,
+                source_session=user_input.thread_id,
+            )
 
 
 @router.get("/info")
@@ -307,7 +421,44 @@ async def _handle_input(user_input: UserInput, agent: AgentGraph) -> tuple[dict[
         interrupt_value = interrupted_tasks[0].interrupts[0].value
         input = Command(resume=_hitl_resume_value(user_input.message, interrupt_value))
     else:
-        input = {"messages": [HumanMessage(content=user_input.message)]}
+        messages: list[AnyMessage] = []
+        memory: LayeredMemory | None = getattr(app.state, "layered_memory", None)
+        if memory is not None and user_input.user_id and user_input.thread_id:
+            session = await memory.session(user_input.user_id, user_input.thread_id)
+            verified = verified_customer_id(user_input.message)
+            if verified:
+                session["customer_id"] = verified
+                match = re.search(r"\b(?:ORD\d+|OL\d{6})\b", user_input.message, re.I)
+                if match:
+                    session["current_order"] = match.group().upper()
+            elif session.get("customer_id"):
+                verified = str(session["customer_id"])
+            notes: list[dict[str, Any]] = []
+            episodic: EpisodicMemory | None = getattr(app.state, "episodic_memory", None)
+            if verified and episodic is not None and not (state.values or {}).get("messages"):
+                episodes = await episodic.search(
+                    customer_id=verified, query=user_input.message, k=settings.EPISODIC_TOP_K
+                )
+                notes.extend(episodes)
+            if verified:
+                notes.extend(await memory.select(verified, user_input.message))
+                profile_reader = getattr(memory, "profile_note", None)
+                profile = await profile_reader(verified) if profile_reader else None
+                if profile:
+                    # Structured profile supersedes older free-text preference notes.
+                    notes = [note for note in notes if note.get("kind") != "preference"]
+                    notes.insert(0, profile)
+            config["metadata"] = {
+                "memory_context": {
+                    "working": session.get("working") or {},
+                    "summary": str(session.get("summary") or "")[:200],
+                    "compaction": (session.get("compaction") or {}).get("summary") or {},
+                    "notes": notes,
+                }
+            }
+            await memory.save_session(user_input.user_id, user_input.thread_id, session)
+        messages.append(HumanMessage(content=user_input.message))
+        input = {"messages": messages}
 
     kwargs = {
         "input": input,
@@ -339,8 +490,13 @@ async def invoke(
     # in that case.
     agent: AgentGraph = available_agent(agent_id)
     public_thread = user_input.thread_id or str(uuid4())
-    user_input = scope_input(user_input.model_copy(update={"thread_id": public_thread}), identity, agent_id)
-    kwargs, run_id = await _handle_input(user_input, agent)
+    user_input = scope_input(
+        user_input.model_copy(update={"thread_id": public_thread}), identity, agent_id
+    )
+    try:
+        kwargs, run_id = await _handle_input(user_input, agent)
+    except MemoryUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     collector = TraceCollector(question=safe_text(user_input.message, 140))
     started = perf_counter()
     trace_status = "failed"
@@ -378,23 +534,33 @@ async def invoke(
             collector.answer = safe_text(answer, 500)
         if trace_status != "approval_required":
             trace_status = "completed"
+        if agent_id == DEFAULT_AGENT:
+            await _record_memory(agent, user_input, completed=trace_status == "completed")
         return output
     except CustomerSupportModelError as e:
         raise HTTPException(status_code=502, detail=str(e)) from e
+    except MemoryUnavailable as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
     except Exception as e:
         logger.error("Agent invocation failed (%s)", type(e).__name__)
         raise HTTPException(status_code=500, detail="Unexpected error")
     finally:
         if agent_id == DEFAULT_AGENT:
             _save_customer_trace(
-                collector, identity=identity, thread_id=public_thread,
-                trace_id=run_id, status=trace_status, started=started,
+                collector,
+                identity=identity,
+                thread_id=public_thread,
+                trace_id=run_id,
+                status=trace_status,
+                started=started,
             )
 
 
 async def message_generator(
-    user_input: StreamInput, agent_id: str = DEFAULT_AGENT,
-    *, public_thread: str | None = None,
+    user_input: StreamInput,
+    agent_id: str = DEFAULT_AGENT,
+    *,
+    public_thread: str | None = None,
 ) -> AsyncGenerator[str, None]:
     """
     Generate a stream of messages from the agent.
@@ -402,7 +568,12 @@ async def message_generator(
     This is the workhorse method for the /stream endpoint.
     """
     agent: AgentGraph = available_agent(agent_id)
-    kwargs, run_id = await _handle_input(user_input, agent)
+    try:
+        kwargs, run_id = await _handle_input(user_input, agent)
+    except MemoryUnavailable as error:
+        yield f"data: {json.dumps({'type': 'error', 'content': str(error)})}\n\n"
+        yield "data: [DONE]\n\n"
+        return
 
     if _private_customer_mode(agent_id):
         # Keep model chunks and tool messages inside the graph. A completed AI
@@ -438,14 +609,24 @@ async def message_generator(
                 yield f"data: {json.dumps({'type': 'message', 'content': output.model_dump()})}\n\n"
         except CustomerSupportModelError as error:
             yield f"data: {json.dumps({'type': 'error', 'content': str(error)})}\n\n"
+        except MemoryUnavailable as error:
+            yield f"data: {json.dumps({'type': 'error', 'content': str(error)})}\n\n"
         except Exception as error:
             logger.error("Customer support stream failed (%s)", type(error).__name__)
             yield f"data: {json.dumps({'type': 'error', 'content': 'Internal server error'})}\n\n"
         finally:
+            try:
+                await _record_memory(agent, user_input, completed=trace_status == "completed")
+            except MemoryUnavailable as error:
+                yield f"data: {json.dumps({'type': 'error', 'content': str(error)})}\n\n"
             if user_input.user_id and public_thread:
                 _save_customer_trace(
-                    collector, identity=user_input.user_id, thread_id=public_thread,
-                    trace_id=run_id, status=trace_status, started=started,
+                    collector,
+                    identity=user_input.user_id,
+                    thread_id=public_thread,
+                    trace_id=run_id,
+                    status=trace_status,
+                    started=started,
                 )
             yield "data: [DONE]\n\n"
         return
@@ -563,14 +744,25 @@ async def message_generator(
             trace_status = "completed"
     except CustomerSupportModelError as e:
         yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
+    except MemoryUnavailable as e:
+        yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
     except Exception as e:
         logger.exception("Message generation failed (%s)", type(e).__name__)
         yield f"data: {json.dumps({'type': 'error', 'content': 'Internal server error'})}\n\n"
     finally:
+        if agent_id == DEFAULT_AGENT:
+            try:
+                await _record_memory(agent, user_input, completed=trace_status == "completed")
+            except MemoryUnavailable as error:
+                yield f"data: {json.dumps({'type': 'error', 'content': str(error)})}\n\n"
         if agent_id == DEFAULT_AGENT and user_input.user_id and public_thread:
             _save_customer_trace(
-                collector, identity=user_input.user_id, thread_id=public_thread,
-                trace_id=run_id, status=trace_status, started=started,
+                collector,
+                identity=user_input.user_id,
+                thread_id=public_thread,
+                trace_id=run_id,
+                status=trace_status,
+                started=started,
             )
         yield "data: [DONE]\n\n"
 
@@ -620,7 +812,9 @@ async def stream(
     """
     available_agent(agent_id)
     public_thread = user_input.thread_id or str(uuid4())
-    scoped = scope_input(user_input.model_copy(update={"thread_id": public_thread}), identity, agent_id)
+    scoped = scope_input(
+        user_input.model_copy(update={"thread_id": public_thread}), identity, agent_id
+    )
     # Validate reserved configuration before sending HTTP 200 for the SSE stream.
     if any(
         key in {"thread_id", "user_id", "model", "checkpoint_id", "checkpoint_ns", "checkpoint_map"}

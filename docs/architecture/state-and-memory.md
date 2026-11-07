@@ -1,20 +1,24 @@
-# State、Checkpoint 与会话记忆
+# State、Checkpoint 与分层 Memory
 
-## 两种客服 State
+## 客服图的 State
 
-真实模式：`src/agents/customer_support_agent.py:build_customer_support_graph` 调用 `create_agent`，沿用其消息状态，核心是 `messages` 列表；每轮新增 `HumanMessage`、可能的 `AIMessage.tool_calls` / `ToolMessage`、最终 `AIMessage`。它没有项目自定义的 `current_order_id`、`active_task` 字段。模型可以读到同一会话的历史文本，但是否从旧对话提取订单号取决于模型与提示词，不能保证自动复用。
+`src/agents/customer_support_agent.py:build_customer_support_graph` 基于 LangChain `create_agent` 构图，沿用 LangGraph 的 `messages` 累加状态；Router 中间件还写入结构化 `route`、`plan` 和 `task_trace`。模型的工具调用是 `AIMessage.tool_calls`，执行结果是配对的 `ToolMessage`。Router 使用当前 Provider 的结构化输出；单意图生成简单计划，多意图或条件请求才调用 Planner。审批恢复时不重新路由。它是框架生成的 Agent 图和中间件，不是仓库手写的通用 DAG 引擎。详见[执行链](agent-execution-flow.md)与[Router / Planner](router-planner.md)。
 
+## Checkpoint、会话隔离与审批
 
-## 保存、恢复与隔离
+`src/service/service.py:lifespan` 为图绑定 SQLite saver（默认 `DATABASE_TYPE=sqlite`，`src/memory/sqlite.py:get_sqlite_saver`）；它保存完整消息、图状态和工单审批中断。`_handle_input` 先检查同一内部 `thread_id` 的待恢复中断：有中断则使用 `Command(resume=...)`，否则提交本轮 `HumanMessage`。`/history` 从 Checkpoint 读取消息。
 
-`src/service/service.py:lifespan` 用 `src/memory/__init__.py:initialize_database` 创建 saver 并绑定图。默认 `DATABASE_TYPE=sqlite`，`src/memory/sqlite.py:get_sqlite_saver` 使用 `settings.SQLITE_DB_PATH`（默认 `checkpoints.db`）；Postgres/Mongo 也有可配置适配，但当前默认部署并未使用。每次调用 `_handle_input` 先 `agent.aget_state` 检查同一内部 `thread_id` 的中断，正常轮次输入本轮 `HumanMessage`；执行时图从 Checkpoint 取回状态，图步骤由 saver 持久化。`/history` 读取状态快照的 `messages`。
+Streamlit 保存公开 `thread_id` 与 `AgentClient`；客户端生成 `X-Session-Token`。服务端 `src/service/access.py:checkpoint_thread` 将会话身份、Agent ID 和公开 thread ID 组合为内部 key，并覆盖客户端提供的 `user_id`。仅知道公开 thread ID 不足以读取他人的会话。这个令牌隔离不是正式账号登录；客户端令牌丢失后，旧公开 thread ID 未必可恢复。
 
-Streamlit 在 `st.session_state` 中保存 UI 消息、公开 `thread_id` 和 `AgentClient`。`AgentClient` 生成随机 `X-Session-Token`；`src/service/access.py:session_identity` 校验并哈希该令牌，`checkpoint_thread(identity, agent_id, public_thread_id)` 派生内部 key。服务端还把请求中的 `user_id` 覆盖为令牌身份。因此只知道 URL 中的 `thread_id` 无法读取其他会话。`New Chat` 生成新 `thread_id`。如果刷新后客户端会话令牌变了，原公开 ID 也未必能恢复旧会话；这不是登录系统。
+## 分层 Memory 与业务事实
 
-## 长期 Store 与业务数据库的区别
+| 层 | 实现 | 用途和边界 |
+| --- | --- | --- |
+| 短期/工作记忆 | `src/memory/layers.py`，Redis | 带 TTL 的会话摘要、当前订单标识、已验证客户和任务状态摘要；不替换 Checkpoint |
+| 情景记忆 | `src/memory/episodic.py`，BGE + 独立 Chroma Collection | 已完成售后事件的向量化、按已验证 `customer_id` 过滤的跨会话 Top-K 检索 |
+| 用户画像/备注 | `src/memory/layers.py`，SQLite `customer_profiles` / `customer_memories` | 结构化沟通渠道偏好和简短售后类别备注；支持读取、增改、去重和删除 |
+| 模型输入视图 | `src/memory/context_manager.py`、`context_compaction_candidate.py` | 按任务相关性、近因性及分项 Token 预算组装；可选摘要替代旧历史，不改 Checkpoint |
 
-默认 `src/memory/sqlite.py:get_sqlite_store` 返回进程内 `InMemoryStore`，重启后不持久；它与 SQLite **Checkpoint** 不同。业务订单和工单走 `src/customer_support/store.py` 的本地 SQLite，若 `BUSINESS_DATABASE_TYPE=mysql` 则走 `mysql_store.py`；这两个业务存储也不是对话记忆。Docker Compose 设置业务 MySQL、Checkpoint SQLite。政策 Markdown/Chroma 是知识库，同样不是会话记忆。
+服务端在请求开始读取 Redis；新会话只有通过订单号与手机号后四位的业务库校验取得 `customer_id`，才读取该客户 SQLite/Chroma 长期信息。信息经 `RunnableConfig.metadata` 进入 `assemble_model_context`，在模型调用前选择历史、记忆和当前工具/RAG 证据。当前请求、审批和当前轮工具调用配对优先保留；历史订单状态仅作线索，实时订单事实须重查业务库。请求稳定完成后才写入安全的摘要/事件/明确偏好，不把待审批结果记成已完成。
 
-## 人工确认与局限
-
-真实图在 `create_support_ticket` 前经 `HumanInTheLoopMiddleware` 暂停，Checkpoint 保存中断；下一轮 `_handle_input` 读取 `state.tasks[].interrupts` 并构造 `Command(resume=...)`。当前缺少“已验证的当前订单”跨任务槽位及生命周期规则；这正解释“前文给过订单号，下一轮想退款又被追问”的可能行为，不能把已有 Checkpoint 等同于完整业务记忆。
+Redis 由 `REDIS_URL` 显式启用；`EPISODIC_MEMORY_ENABLED` 与 `CONTEXT_COMPACTION_ENABLED` 默认均为 `false`。压缩器以 Redis 原子游标防重复；候选组装器验证游标、预算和最近两轮，失败回退动态裁剪。摘要覆盖的旧消息只从**模型视图**移除，Checkpoint 仍完整保存。默认 Store `src/memory/sqlite.py:get_sqlite_store` 是进程内 `InMemoryStore`，与上述持久化层和业务订单 SQLite/MySQL 均不同。配置、故障处理、评测边界见[分层 Memory 架构](layered-memory.md)和[42 题离线报告](../evaluation/memory-evaluation.md)。

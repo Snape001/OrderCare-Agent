@@ -1,0 +1,137 @@
+{
+  "dataset": "data/evaluation/context-compaction-v2/dataset-v1.json",
+  "dataset_version": "synthetic-v1",
+  "token_method": "conservative character estimator, no model tokenizer",
+  "context_budget": {
+    "total": 900,
+    "system": 220,
+    "history": 250,
+    "memory": 400,
+    "rag": 250,
+    "tools": 250
+  },
+  "compactor_total_budget_for_trigger": 350,
+  "compactor_summary_budget": 1200,
+  "note": "Stress configuration forces compaction on short synthetic dialogue; production defaults are 4096 total, 384 summary and 80% threshold",
+  "cases": [
+    {
+      "id": "repair-conditional",
+      "raw_estimated_tokens": 560,
+      "context_manager_only_estimated_tokens": 301,
+      "context_manager_plus_compaction_estimated_tokens": 301,
+      "context_manager_saving_rate": 0.4625,
+      "compaction_incremental_token_delta": 0,
+      "compacted_history_saved_estimated_tokens": 0,
+      "fact_checks": {
+        "ORD1001": true,
+        "repair-policy.md#保修与维修": true,
+        "不要直接创建工单": true,
+        "文字客服": true
+      },
+      "fact_retention_rate": 1.0,
+      "model_visible_fact_checks": {
+        "ORD1001": false,
+        "repair-policy.md#保修与维修": false,
+        "不要直接创建工单": true,
+        "文字客服": true
+      },
+      "model_visible_fact_retention_rate": 0.5,
+      "summary_injected": false,
+      "current_request_preserved": true,
+      "system_rules_preserved": true,
+      "compaction_elapsed_ms": 0.645,
+      "summary": {
+        "goals": [
+          "耳机左耳没有声音，订单 ORD1001。我的目标是先确认能否退货，如果不能退才问维修。[已脱敏]。",
+          "请不要直接创建工单，先告诉我能不能退。",
+          "我希望全程使用文字客服，并保留维修政策引用。"
+        ],
+        "constraints": [
+          "耳机左耳没有声音，订单 ORD1001。我的目标是先确认能否退货，如果不能退才问维修。[已脱敏]。",
+          "请不要直接创建工单，先告诉我能不能退。"
+        ],
+        "preferences": [
+          "我希望全程使用文字客服，并保留维修政策引用。"
+        ],
+        "decisions": [
+          "耳机左耳没有声音，订单 ORD1001。我的目标是先确认能否退货，如果不能退才问维修。[已脱敏]。"
+        ],
+        "completed_steps": [
+          "search_policy: {\"ok\": true}"
+        ],
+        "open_issues": [],
+        "entities": [
+          "ORD1001"
+        ],
+        "citations": [
+          "repair-policy.md#保修与维修"
+        ]
+      },
+      "api_calls": 0
+    },
+    {
+      "id": "refund-and-ticket",
+      "raw_estimated_tokens": 478,
+      "context_manager_only_estimated_tokens": 317,
+      "context_manager_plus_compaction_estimated_tokens": 697,
+      "context_manager_saving_rate": 0.3368,
+      "compaction_incremental_token_delta": -380,
+      "compacted_history_saved_estimated_tokens": 0,
+      "fact_checks": {
+        "ORD2002": true,
+        "不能退款才考虑售后工单": true,
+        "不希望未经确认": true,
+        "get_order_status": true
+      },
+      "fact_retention_rate": 1.0,
+      "model_visible_fact_checks": {
+        "ORD2002": true,
+        "不能退款才考虑售后工单": true,
+        "不希望未经确认": true,
+        "get_order_status": true
+      },
+      "model_visible_fact_retention_rate": 1.0,
+      "summary_injected": true,
+      "current_request_preserved": true,
+      "system_rules_preserved": true,
+      "compaction_elapsed_ms": 0.107,
+      "summary": {
+        "goals": [
+          "订单 ORD2002 的包裹外箱破损。我想先确认退款资格，不能退款才考虑售后工单。",
+          "我不希望未经确认就提交退款或创建工单。"
+        ],
+        "constraints": [],
+        "preferences": [
+          "我不希望未经确认就提交退款或创建工单。"
+        ],
+        "decisions": [
+          "订单 ORD2002 的包裹外箱破损。我想先确认退款资格，不能退款才考虑售后工单。",
+          "我不希望未经确认就提交退款或创建工单。"
+        ],
+        "completed_steps": [
+          "get_order_status: {\"ok\": true}"
+        ],
+        "open_issues": [],
+        "entities": [
+          "ORD2002"
+        ],
+        "citations": []
+      },
+      "api_calls": 0
+    }
+  ],
+  "totals": {
+    "raw_estimated_tokens": 1038,
+    "context_manager_only_estimated_tokens": 618,
+    "context_manager_plus_compaction_estimated_tokens": 998,
+    "compaction_incremental_token_delta": -380,
+    "compacted_history_saved_estimated_tokens": 0,
+    "context_manager_saving_rate": 0.4046,
+    "compaction_incremental_saving_rate_vs_context_only": -0.6149,
+    "critical_fact_retention_rate": 1.0,
+    "model_visible_fact_retention_rate": 0.75,
+    "current_request_and_rules_preserved": true,
+    "api_calls": 0,
+    "api_cost_cny": 0
+  }
+}

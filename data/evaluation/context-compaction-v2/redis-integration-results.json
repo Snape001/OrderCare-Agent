@@ -1,0 +1,41 @@
+{
+  "environment": {
+    "platform": "Windows",
+    "server": "Memurai Developer 4.1.2 (Redis-compatible, reports Redis 7.2.5)",
+    "endpoint": "127.0.0.1:16379 isolated test instance",
+    "persistence": "AOF enabled for service restart verification",
+    "production_redis_used": false
+  },
+  "tests": {
+    "command": "ORDERCARE_TEST_REDIS_URL=redis://127.0.0.1:16379/0 uv run pytest -q tests/service/test_compaction_redis_integration.py",
+    "passed": 3,
+    "failed": 0,
+    "checks": [
+      "summary persistence across fresh LayeredMemory client",
+      "cursor and summary survive actual server stop and restart with AOF",
+      "Lua compare-and-set rejects stale cursor",
+      "six concurrent compression attempts yield one successful write",
+      "duplicate compression does not advance cursor",
+      "separate owner cannot read another owner's summary",
+      "Redis write interruption raises MemoryUnavailable and later retry succeeds",
+      "synthetic phone last four digits are redacted",
+      "oversized user content skips compression without cursor advance",
+      "compaction key has positive TTL"
+    ]
+  },
+  "restart_check": {
+    "write": "stored=true",
+    "after_service_restart": "persisted=true, cursor_unchanged=true",
+    "cleanup": "deleted=true",
+    "final_isolated_service_state": "stopped; 127.0.0.1:16379 closed"
+  },
+  "discovered_issue": {
+    "description": "Redis Lua cjson converts empty JSON arrays to empty objects",
+    "fix": "LayeredMemory.session normalizes empty compaction summary fields back to arrays",
+    "regression_test": "test_persistence_restart_cursor_and_isolation"
+  },
+  "additional_fixes_from_synthetic_review": [
+    "Payment-related free text is omitted from persisted compaction summaries",
+    "New cursors bind the message position and fingerprint so repeated identical messages cannot skip unseen history; old fingerprint-only cursors choose the earliest match"
+  ]
+}

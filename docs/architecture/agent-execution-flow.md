@@ -7,40 +7,46 @@ flowchart TD
     U[Streamlit chat_input] --> C[AgentClient.astream POST /customer-support/stream]
     C --> A[FastAPI stream: 鉴权与 scope_input]
     A --> H[message_generator / _handle_input]
-    H --> I{Checkpoint 中有待恢复中断?}
+    H --> MM[Redis 短期状态读取，已验证新会话读长期记忆]
+    MM --> I{Checkpoint 中有待恢复中断?}
     I -- 是 --> R[Command resume: 批准或拒绝]
     I -- 否 --> M[HumanMessage 写入本轮输入]
-    R --> G[LangGraph Agent]
-    M --> G
-    G --> L[模型决策]
+    R -->|拒绝| F[最终 AIMessage]
+    M --> RP[Router，复杂请求才调用 Planner]
+    RP --> CM[Context Manager: Token Budget 与可选摘要替代]
+    CM --> L[模型决策]
     L --> D{tool_calls?}
-    D -- 是 --> T[工具节点: 参数校验与业务访问]
-    T --> TM[ToolMessage 加入 messages]
-    TM --> L
-    D -- 否 --> F[最终 AIMessage]
-    T --> HITL{创建工单?}
+    D -- 是 --> HITL{工单写操作?}
+    HITL -- 否 --> T[工具节点: STDIO MCP Client / Server 与业务校验]
     HITL -- 是 --> X[HumanInTheLoopMiddleware 中断]
     X --> S[确认提示 SSE]
-    F --> S2[完成的答复 SSE]
+    R -->|批准后恢复| T
+    T --> TM[ToolMessage 加入 messages]
+    TM --> CM
+    D -- 否 --> F[最终 AIMessage]
+    F --> W[稳定完成后写 Redis / SQLite; 可选写情景记忆]
+    W --> S2[完成的答复 SSE]
     S --> UI[Streamlit 展示]
     S2 --> UI
 ```
 
 ## 入口和初始化
 
-1. `src/run_service.py` 用 Uvicorn 启动 `service:app`。`src/service/service.py:lifespan` 建立 Checkpoint/Store，遍历 `src/agents/agents.py:load_agent`，将 saver/store 绑定到每张图；默认客服加载失败会阻止启动。`CustomerSupportAgent.load()` 根据 `CUSTOMER_SUPPORT_MODE` 显式选择 Ollama、Qwen、DeepSeek 或通用 LLM Provider；配置错误和连接失败均不降级。
+1. `src/run_service.py` 用 Uvicorn 启动 `service:app`。`src/service/service.py:lifespan` 建立 Checkpoint/Store 和已启用的 Memory，遍历 `src/agents/agents.py:load_agent`，将 saver/store 绑定到图；默认客服加载失败会阻止启动。`CustomerSupportAgent.load()` 根据配置选择 Ollama、Qwen、DeepSeek 或通用 LLM Provider；配置错误和连接失败均不降级。
 2. `src/streamlit_app.py:main` 维护 UI `thread_id` 和客户端会话令牌；`AgentClient.astream` 将消息、模型、`thread_id` 发往 FastAPI。客户端只传本轮文本，历史由服务端 Checkpoint 恢复。
 3. `src/service/service.py:stream` 经 bearer 和 `session_identity` 检查后，`scope_input` 将公开 `thread_id` 与会话凭证、Agent ID 哈希组合成内部 Checkpoint key；请求参数本身不能授予访问他人会话的权限。
 
 ## 图内循环
 
-`message_generator` 调用 `_handle_input`：先用 `agent.aget_state` 查看中断；若有待审批任务，使用 `Command(resume=...)`，否则构造 `{"messages": [HumanMessage(...)]}`。图的 `messages` 使用 LangGraph 消息累加语义，历史由相同内部 `thread_id` 的 Checkpoint 读回。
+`message_generator` 调用 `_handle_input`：先用 `agent.aget_state` 查看中断；若有待审批任务，使用 `Command(resume=...)`，否则构造 `{"messages": [HumanMessage(...)]}`。图的 `messages` 使用 LangGraph 消息累加语义，历史由相同内部 `thread_id` 的 Checkpoint 读回。服务端读 Redis 的会话工作状态；新会话仅在业务订单身份验证后读取按 `customer_id` 隔离的 SQLite 画像及 Chroma 情景记忆。待审批恢复不重新执行 Router。Redis 故障明确报错。
 
-真实客服图在 `src/agents/customer_support_agent.py:build_customer_support_graph` 调用 LangChain `create_agent(model, tools, middleware, system_prompt)`。该工厂内部编译模型节点、工具节点及“有工具调用则执行工具并回到模型，否则结束”的条件路由；仓库没有为真实客服手写节点/边。注册工具是 `search_policy`、`get_order_status`、`check_refund_eligibility`、`create_support_ticket`（`src/customer_support/tools.py`）。模型生成结构化 `tool_calls`；工具执行结果形成 `ToolMessage`，再交回模型形成最终 `AIMessage`。Qwen 模式的 `deterministic_tool_routing` 仅在意图和参数明确时限制可选工具；Ollama 构图时 `force_routing=False`，由模型自行选工具。工具参数与实际业务结果不能仅凭模型答复判断。
+真实客服图在 `src/agents/customer_support_agent.py:build_customer_support_graph` 调用 LangChain `create_agent(model, tools, middleware, system_prompt)`。该工厂内部编译模型节点、工具节点及“有工具调用则执行工具并回到模型，否则结束”的条件路由；仓库没有为真实客服手写节点/边。Router 中间件用当前模型结构化输出识别意图、实体和缺参，单意图生成简单计划，多意图/条件请求才调用 Planner，并用 `validate_plan` 限制用户未要求的动作；执行中间件按步骤限制工具。加载的四个工具来自 `src/customer_support/mcp_client.py:load_business_mcp_tools`，经本地 STDIO Server 委托 `src/customer_support/tools.py` 现有业务函数。模型生成结构化 `tool_calls`；工具执行结果形成 `ToolMessage`，再交回模型形成最终 `AIMessage`。直接业务工具实现仍可用于隔离测试，生产默认客服走 MCP；工具参数与实际业务结果不能仅凭模型答复判断。
 
 用 `FakeToolModel` 实际编译本图并调用 `get_graph()`，观察到节点 `__start__ → log_agent_start.before_agent → model → HumanInTheLoopMiddleware.after_model`。该中间件节点有条件边通往 `tools`、`model` 或 `log_agent_end.after_agent → __end__`；`tools` 有返回 `model` 的条件边。`log_model_call`、`deterministic_tool_routing`、`log_tool_call` 是包裹调用的 middleware，不会全部单独显示为图节点。条件分支来自框架的 `create_agent`，不是本项目额外实现的路由函数。
 
-`HumanInTheLoopMiddleware` 在 `create_support_ticket` 写入前中断；下一轮 `_handle_input` 根据 `src/service/service.py:_hitl_resume_value` 将明确确认映射为批准，其他答复拒绝。工具层还校验订单与手机号后四位，工单层有幂等键。图在没有待调用工具、模型给出最终答复时结束；审批中断会暂停而非执行写入。
+`assemble_model_context` 在每次模型调用前通过 `ContextManager` 选择任务状态、最近 Checkpoint 消息、相关记忆及当前工具/RAG 证据，并按分项 Token 预算组装；可选压缩策略用游标摘要替代旧历史，异常时回退到原有动态裁剪，仅改变模型视图。请求稳定完成后才提取可保存的售后事件和明确偏好。详见[分层 Memory](layered-memory.md)。
+
+`HumanInTheLoopMiddleware` 在 `create_support_ticket` 写入前中断；下一轮 `_handle_input` 根据 `src/service/service.py:_hitl_resume_value` 将明确确认映射为批准，其他答复拒绝。MCP 工单调用另带审批凭证校验，工具层还校验订单与手机号后四位，工单层有幂等键。图在没有待调用工具、模型给出最终答复时结束；审批中断会暂停而非执行写入。
 
 ## 输出、异常与超时
 

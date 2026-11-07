@@ -1,0 +1,129 @@
+{
+  "dataset": "data/evaluation/context-compaction-v2/dataset-v1.json",
+  "candidate_code": "src/memory/context_compaction_candidate.py",
+  "online_agent_changed": false,
+  "config": {
+    "context_budget": {
+      "total": 900,
+      "system": 220,
+      "history": 250,
+      "memory": 400,
+      "rag": 250,
+      "tools": 250
+    },
+    "summary_budget": 320,
+    "recent_turns": 2,
+    "forced_trigger_total_budget": 350
+  },
+  "cases": [
+    {
+      "id": "repair-conditional",
+      "raw_estimated_tokens": 560,
+      "dynamic_only_estimated_tokens": 301,
+      "replacement_estimated_tokens": 382,
+      "token_reduction_vs_raw": 0.3179,
+      "token_delta_vs_dynamic_only": 81,
+      "fact_checks": {
+        "raw": {
+          "ORD1001": true,
+          "repair-policy.md#保修与维修": true,
+          "不要直接创建工单": true,
+          "文字客服": true
+        },
+        "dynamic_only": {
+          "ORD1001": false,
+          "repair-policy.md#保修与维修": false,
+          "不要直接创建工单": true,
+          "文字客服": true
+        },
+        "replacement": {
+          "ORD1001": true,
+          "repair-policy.md#保修与维修": true,
+          "不要直接创建工单": true,
+          "文字客服": true
+        }
+      },
+      "candidate_metrics": {
+        "cursor_valid": true,
+        "summary_injected": true,
+        "covered_messages": 8,
+        "summary_facts_available": 10,
+        "summary_facts_selected": 6,
+        "source_duplicate_facts": 4,
+        "post_assembly_duplicate_facts": 0,
+        "recent_turns_preserved": true,
+        "estimated_tokens": 382,
+        "budget_overrun": false,
+        "reason": "ok"
+      },
+      "current_request_preserved": true,
+      "system_rules_preserved": true,
+      "context_budget_exceeded": false
+    },
+    {
+      "id": "refund-and-ticket",
+      "raw_estimated_tokens": 478,
+      "dynamic_only_estimated_tokens": 317,
+      "replacement_estimated_tokens": 321,
+      "token_reduction_vs_raw": 0.3285,
+      "token_delta_vs_dynamic_only": 4,
+      "fact_checks": {
+        "raw": {
+          "ORD2002": true,
+          "不能退款才考虑售后工单": true,
+          "不希望未经确认": true,
+          "get_order_status": true
+        },
+        "dynamic_only": {
+          "ORD2002": false,
+          "不能退款才考虑售后工单": false,
+          "不希望未经确认": true,
+          "get_order_status": false
+        },
+        "replacement": {
+          "ORD2002": true,
+          "不能退款才考虑售后工单": true,
+          "不希望未经确认": true,
+          "get_order_status": true
+        }
+      },
+      "candidate_metrics": {
+        "cursor_valid": true,
+        "summary_injected": true,
+        "covered_messages": 8,
+        "summary_facts_available": 7,
+        "summary_facts_selected": 4,
+        "source_duplicate_facts": 3,
+        "post_assembly_duplicate_facts": 0,
+        "recent_turns_preserved": true,
+        "estimated_tokens": 321,
+        "budget_overrun": false,
+        "reason": "ok"
+      },
+      "current_request_preserved": true,
+      "system_rules_preserved": true,
+      "context_budget_exceeded": false
+    }
+  ],
+  "totals": {
+    "raw_estimated_tokens": 1038,
+    "dynamic_only_estimated_tokens": 618,
+    "replacement_estimated_tokens": 703,
+    "token_delta_vs_dynamic_only": 85,
+    "summary_injection_rate": 1.0,
+    "token_reduction_vs_raw": 0.3227,
+    "context_budget_overrun_rate": 0.0,
+    "fact_retention": {
+      "raw": "8/8",
+      "dynamic_only": "3/8",
+      "replacement": "8/8"
+    },
+    "source_duplicate_fact_rate": 0.4118,
+    "post_assembly_duplicate_fact_rate": 0.0,
+    "api_calls": 0
+  },
+  "limitations": [
+    "Strict string-based fact checks; no LLM Judge or new DeepSeek calls",
+    "Short synthetic dialogues forced to compact; production default threshold does not trigger"
+  ]
+}

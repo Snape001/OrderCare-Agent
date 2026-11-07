@@ -1,0 +1,347 @@
+{
+  "budget": {
+    "model": "deepseek-flash",
+    "temperature": 0,
+    "cases": 2,
+    "max_api_calls": 6,
+    "max_input_tokens": 18000,
+    "max_output_tokens": 1920,
+    "max_peak_cost_cny": 0.05136,
+    "max_offpeak_cost_cny": 0.02568,
+    "pricing_source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "real_api_calls_made_by_estimate": 0
+  },
+  "actual_usage": {
+    "api_calls": 6,
+    "input_tokens": 1729,
+    "output_tokens": 738,
+    "peak_price_estimate_cny": 0.009362,
+    "note": "Estimate from total usage; cache discount not applied"
+  },
+  "results": [
+    {
+      "id": "repair-conditional",
+      "calls": [
+        {
+          "step": 1,
+          "raw_output": "{\"goals\":[\"确认订单 ORD1001 的耳机左耳无声问题能否退货\",\"若不能退货，再询问维修\"],\"constraints\":[\"不要直接创建工单\",\"先告知能否退货\"],\"decisions\":[],\"completed_steps\":[\"已检索维修政策（repair-policy.md《保修与维修》）\"],\"open_issues\":[\"尚未核验订单 ORD1001\",\"尚未确认退货资格\",\"尚未确认维修条款\"],\"entities\":[\"订单 ORD1001\",\"耳机左耳无声\"],\"citations\":[\"repair-policy.md《保修与维修》：质量问题应核验订单与商品状况；维修条款与退货资格需分别确认\"]}",
+          "usage_metadata": {
+            "input_tokens": 289,
+            "output_tokens": 146,
+            "total_tokens": 435,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "response_metadata": {
+            "model_name": "deepseek-flash",
+            "finish_reason": "stop",
+            "token_usage": {
+              "completion_tokens": 146,
+              "prompt_tokens": 289,
+              "total_tokens": 435,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 289
+            }
+          },
+          "elapsed_ms": 1271.8,
+          "parsed": {
+            "goals": [
+              "确认订单 ORD1001 的耳机左耳无声问题能否退货",
+              "若不能退货，再询问维修"
+            ],
+            "constraints": [
+              "不要直接创建工单",
+              "先告知能否退货"
+            ],
+            "decisions": [],
+            "completed_steps": [
+              "已检索维修政策（repair-policy.md《保修与维修》）"
+            ],
+            "open_issues": [
+              "尚未核验订单 ORD1001",
+              "尚未确认退货资格",
+              "尚未确认维修条款"
+            ],
+            "entities": [
+              "订单 ORD1001",
+              "耳机左耳无声"
+            ],
+            "citations": [
+              "repair-policy.md《保修与维修》：质量问题应核验订单与商品状况；维修条款与退货资格需分别确认"
+            ]
+          }
+        },
+        {
+          "step": 2,
+          "raw_output": "{\"goals\": [\"确认订单 ORD1001 的耳机左耳无声问题能否退货\", \"若不能退货，再询问维修\"], \"constraints\": [\"不要直接创建工单\", \"先告知能否退货\", \"全程使用文字客服\", \"保留维修政策引用\", \"若确实不能退，再讲维修步骤\"], \"decisions\": [], \"completed_steps\": [\"已检索维修政策（repair-policy.md《保修与维修》）\", \"已记录用户偏好：全程文字客服并保留维修政策引用\"], \"open_issues\": [\"尚未核验订单 ORD1001\", \"尚未确认退货资格\", \"尚未确认维修条款\"], \"entities\": [\"订单 ORD1001\", \"耳机左耳无声\"], \"citations\": [\"repair-policy.md《保修与维修》：质量问题应核验订单与商品状况；维修条款与退货资格需分别确认\"]}",
+          "usage_metadata": {
+            "input_tokens": 359,
+            "output_tokens": 189,
+            "total_tokens": 548,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "response_metadata": {
+            "model_name": "deepseek-flash",
+            "finish_reason": "stop",
+            "token_usage": {
+              "completion_tokens": 189,
+              "prompt_tokens": 359,
+              "total_tokens": 548,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 359
+            }
+          },
+          "elapsed_ms": 1333.066,
+          "parsed": {
+            "goals": [
+              "确认订单 ORD1001 的耳机左耳无声问题能否退货",
+              "若不能退货，再询问维修"
+            ],
+            "constraints": [
+              "不要直接创建工单",
+              "先告知能否退货",
+              "全程使用文字客服",
+              "保留维修政策引用",
+              "若确实不能退，再讲维修步骤"
+            ],
+            "decisions": [],
+            "completed_steps": [
+              "已检索维修政策（repair-policy.md《保修与维修》）",
+              "已记录用户偏好：全程文字客服并保留维修政策引用"
+            ],
+            "open_issues": [
+              "尚未核验订单 ORD1001",
+              "尚未确认退货资格",
+              "尚未确认维修条款"
+            ],
+            "entities": [
+              "订单 ORD1001",
+              "耳机左耳无声"
+            ],
+            "citations": [
+              "repair-policy.md《保修与维修》：质量问题应核验订单与商品状况；维修条款与退货资格需分别确认"
+            ]
+          }
+        },
+        {
+          "step": 3,
+          "raw_output": "{\"answer\": \"先重新核验订单 ORD1001 的状态与商品状况，确认退货资格；在未确认前不要创建工单，也不要直接讲维修步骤。若确认不能退货，再引用 repair-policy.md《保修与维修》说明维修条款与步骤。\"}",
+          "usage_metadata": {
+            "input_tokens": 263,
+            "output_tokens": 61,
+            "total_tokens": 324,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "response_metadata": {
+            "model_name": "deepseek-flash",
+            "finish_reason": "stop",
+            "token_usage": {
+              "completion_tokens": 61,
+              "prompt_tokens": 263,
+              "total_tokens": 324,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 263
+            }
+          },
+          "elapsed_ms": 855.958,
+          "parsed": {
+            "answer": "先重新核验订单 ORD1001 的状态与商品状况，确认退货资格；在未确认前不要创建工单，也不要直接讲维修步骤。若确认不能退货，再引用 repair-policy.md《保修与维修》说明维修条款与步骤。"
+          }
+        }
+      ],
+      "lexical_fact_checks": {
+        "ORD1001": true,
+        "repair-policy.md#保修与维修": false,
+        "不要直接创建工单": true,
+        "文字客服": true
+      },
+      "semantic_fact_retention_rate": null,
+      "hallucination_rate": null,
+      "task_continuity": null,
+      "human_review_required": true
+    },
+    {
+      "id": "refund-and-ticket",
+      "calls": [
+        {
+          "step": 1,
+          "raw_output": "{\"goals\":[\"确认订单 ORD2002 的包裹外箱破损是否具备退款资格\",\"仅在不能退款时才考虑售后工单\"],\"constraints\":[\"未经确认不得提交退款\",\"未经确认不得创建工单\"],\"decisions\":[],\"completed_steps\":[\"已查询订单 ORD2002 状态，工具返回 delivered（已签收）\"],\"open_issues\":[\"退款资格尚未确认\",\"订单当前状态仍需重新核验\",\"外箱破损情况尚未处理\"],\"entities\":[\"ORD2002\"],\"citations\":[\"get_order_status: ORD2002 status=delivered\"]}",
+          "usage_metadata": {
+            "input_tokens": 255,
+            "output_tokens": 132,
+            "total_tokens": 387,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "response_metadata": {
+            "model_name": "deepseek-flash",
+            "finish_reason": "stop",
+            "token_usage": {
+              "completion_tokens": 132,
+              "prompt_tokens": 255,
+              "total_tokens": 387,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 255
+            }
+          },
+          "elapsed_ms": 1567.53,
+          "parsed": {
+            "goals": [
+              "确认订单 ORD2002 的包裹外箱破损是否具备退款资格",
+              "仅在不能退款时才考虑售后工单"
+            ],
+            "constraints": [
+              "未经确认不得提交退款",
+              "未经确认不得创建工单"
+            ],
+            "decisions": [],
+            "completed_steps": [
+              "已查询订单 ORD2002 状态，工具返回 delivered（已签收）"
+            ],
+            "open_issues": [
+              "退款资格尚未确认",
+              "订单当前状态仍需重新核验",
+              "外箱破损情况尚未处理"
+            ],
+            "entities": [
+              "ORD2002"
+            ],
+            "citations": [
+              "get_order_status: ORD2002 status=delivered"
+            ]
+          }
+        },
+        {
+          "step": 2,
+          "raw_output": "{\"goals\": [\"确认订单 ORD2002 的包裹外箱破损是否具备退款资格\", \"仅在不能退款时才考虑售后工单\"], \"constraints\": [\"未经确认不得提交退款\", \"未经确认不得创建工单\", \"保留先退款资格、后工单的条件顺序\", \"敏感支付信息不加入记忆\"], \"decisions\": [], \"completed_steps\": [\"已查询订单 ORD2002 状态，工具返回 delivered（已签收）\"], \"open_issues\": [\"退款资格尚未确认\", \"订单当前状态仍需重新核验\", \"外箱破损情况尚未处理\"], \"entities\": [\"ORD2002\"], \"citations\": [\"get_order_status: ORD2002 status=delivered\"]}",
+          "usage_metadata": {
+            "input_tokens": 327,
+            "output_tokens": 156,
+            "total_tokens": 483,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "response_metadata": {
+            "model_name": "deepseek-flash",
+            "finish_reason": "stop",
+            "token_usage": {
+              "completion_tokens": 156,
+              "prompt_tokens": 327,
+              "total_tokens": 483,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 327
+            }
+          },
+          "elapsed_ms": 1176.28,
+          "parsed": {
+            "goals": [
+              "确认订单 ORD2002 的包裹外箱破损是否具备退款资格",
+              "仅在不能退款时才考虑售后工单"
+            ],
+            "constraints": [
+              "未经确认不得提交退款",
+              "未经确认不得创建工单",
+              "保留先退款资格、后工单的条件顺序",
+              "敏感支付信息不加入记忆"
+            ],
+            "decisions": [],
+            "completed_steps": [
+              "已查询订单 ORD2002 状态，工具返回 delivered（已签收）"
+            ],
+            "open_issues": [
+              "退款资格尚未确认",
+              "订单当前状态仍需重新核验",
+              "外箱破损情况尚未处理"
+            ],
+            "entities": [
+              "ORD2002"
+            ],
+            "citations": [
+              "get_order_status: ORD2002 status=delivered"
+            ]
+          }
+        },
+        {
+          "step": 3,
+          "raw_output": "{\"answer\":\"不能直接退款或建工单。退款资格尚未实时核验，且创建工单和退款均需人工确认；请先重新查询 ORD2002 状态并确认退款资格，仅在不能退款时才考虑售后工单。\"}",
+          "usage_metadata": {
+            "input_tokens": 236,
+            "output_tokens": 54,
+            "total_tokens": 290,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "response_metadata": {
+            "model_name": "deepseek-flash",
+            "finish_reason": "stop",
+            "token_usage": {
+              "completion_tokens": 54,
+              "prompt_tokens": 236,
+              "total_tokens": 290,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 0
+              },
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 236
+            }
+          },
+          "elapsed_ms": 967.249,
+          "parsed": {
+            "answer": "不能直接退款或建工单。退款资格尚未实时核验，且创建工单和退款均需人工确认；请先重新查询 ORD2002 状态并确认退款资格，仅在不能退款时才考虑售后工单。"
+          }
+        }
+      ],
+      "lexical_fact_checks": {
+        "ORD2002": true,
+        "不能退款才考虑售后工单": false,
+        "不希望未经确认": false,
+        "get_order_status": true
+      },
+      "semantic_fact_retention_rate": null,
+      "hallucination_rate": null,
+      "task_continuity": null,
+      "human_review_required": true
+    }
+  ]
+}

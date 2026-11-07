@@ -1,0 +1,2741 @@
+{
+  "dataset": "data/evaluation/memory/dataset-v1.json",
+  "dataset_sha256": "9acd5c9acab9dfc603633347837e8bd68ed6f75639b1e201bfcd10b5c96aac92",
+  "annotation_status": "作者依据下列合成事件手工标注，尚未经过独立人工复核；无真实客户数据",
+  "configuration": {
+    "as_of": "2026-11-07T00:00:00+00:00",
+    "top_k": 4,
+    "embedding": "BAAI/bge-small-zh-v1.5",
+    "embedding_dimensions": 512,
+    "similarity_threshold": 0.55,
+    "recency_weight": 0.15,
+    "context_budget": {
+      "total": 4096,
+      "system": 1024,
+      "history": 1200,
+      "memory": 640,
+      "rag": 768,
+      "tools": 720
+    },
+    "compaction_summary_budget": 320,
+    "compaction_forced_trigger_budget": 350,
+    "api_calls": 0,
+    "redis_mode": "isolated in-process adapter; production LayeredMemory API"
+  },
+  "case_count": 42,
+  "positive_retrieval_count": 29,
+  "metrics": {
+    "A": {
+      "memory_recall_at_k": 0.0,
+      "memory_precision_at_k": 0.0,
+      "mrr": 0.0,
+      "cross_session_recall": 0.0,
+      "profile_accuracy": 0.0,
+      "fact_retention": 0.0,
+      "user_isolation": 1.0,
+      "task_completion_rate": null
+    },
+    "B": {
+      "memory_recall_at_k": 1.0,
+      "memory_precision_at_k": 0.2759,
+      "mrr": 0.9138,
+      "cross_session_recall": 1.0,
+      "profile_accuracy": 1.0,
+      "fact_retention": 1.0,
+      "user_isolation": 1.0,
+      "task_completion_rate": null
+    },
+    "context_token_reduction_vs_full_history": 0.3227,
+    "long_context_raw_tokens": 1038,
+    "long_context_compacted_tokens": 703,
+    "avg_case_latency_ms_B": 14.361
+  },
+  "failures": [
+    {
+      "id": "c23",
+      "category": "cross_session",
+      "missing_memory_ids": [],
+      "not_injected": [
+        "m07"
+      ],
+      "status": "ok"
+    },
+    {
+      "id": "f37",
+      "category": "retrieval_failure",
+      "missing_memory_ids": [
+        "m01"
+      ],
+      "not_injected": [
+        "m01"
+      ],
+      "status": "chroma_failed_closed"
+    },
+    {
+      "id": "f38",
+      "category": "retrieval_failure",
+      "missing_memory_ids": [],
+      "not_injected": [],
+      "status": "redis_failed_closed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "r01",
+      "category": "history_lookup",
+      "query": "之前耳机维修政策查过吗",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m01"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1226
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m01",
+          "m03",
+          "m13",
+          "m02"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1521,
+        "injected_memory_ids": [
+          "m01",
+          "m03",
+          "m13",
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m01",
+            "similarity": 0.8007,
+            "score": 0.7535,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m03",
+            "similarity": 0.6574,
+            "score": 0.6858,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          },
+          {
+            "id": "m13",
+            "similarity": 0.6766,
+            "score": 0.6543,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6463,
+            "score": 0.6455,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 15.39,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r02",
+      "category": "history_lookup",
+      "query": "我以前问过耳机退款资格吗",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m02"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1227
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m02",
+          "m05",
+          "m12",
+          "m08"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1523,
+        "injected_memory_ids": [
+          "m02",
+          "m05",
+          "m12",
+          "m08"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m02",
+            "similarity": 0.7922,
+            "score": 0.7695,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.6695,
+            "score": 0.7033,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.6557,
+            "score": 0.6954,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.6618,
+            "score": 0.6827,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          }
+        ]
+      },
+      "elapsed_ms": 11.9,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r03",
+      "category": "history_lookup",
+      "query": "耳机售后工单以前提交过吗",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m03"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1227
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m03",
+          "m14",
+          "m01",
+          "m02"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1522,
+        "injected_memory_ids": [
+          "m03",
+          "m14",
+          "m01",
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m03",
+            "similarity": 0.77,
+            "score": 0.7814,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          },
+          {
+            "id": "m14",
+            "similarity": 0.6399,
+            "score": 0.6906,
+            "source_session": "old-14",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：手机"
+          },
+          {
+            "id": "m01",
+            "similarity": 0.7228,
+            "score": 0.6873,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6765,
+            "score": 0.6712,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 12.68,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r04",
+      "category": "history_lookup",
+      "query": "咖啡机维修那次咨询",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m04"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m04",
+          "m05",
+          "m13",
+          "m06"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1391,
+        "injected_memory_ids": [
+          "m04",
+          "m05"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m04",
+            "similarity": 0.8003,
+            "score": 0.712,
+            "source_session": "old-04",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：咖啡机"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.6391,
+            "score": 0.6775,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m13",
+            "similarity": 0.667,
+            "score": 0.6461,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          },
+          {
+            "id": "m06",
+            "similarity": 0.6302,
+            "score": 0.6432,
+            "source_session": "old-06",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：台灯"
+          }
+        ]
+      },
+      "elapsed_ms": 13.26,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r05",
+      "category": "history_lookup",
+      "query": "咖啡机退款资格之前核验过吗",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m05"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1229
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m05",
+          "m12",
+          "m08",
+          "m02"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1525,
+        "injected_memory_ids": [
+          "m05",
+          "m12",
+          "m08",
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m05",
+            "similarity": 0.8434,
+            "score": 0.8511,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.7104,
+            "score": 0.7418,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.698,
+            "score": 0.7134,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.7204,
+            "score": 0.7086,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 15.59,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r06",
+      "category": "history_lookup",
+      "query": "台灯维修政策的旧咨询",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m06"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1225
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m06",
+          "m07",
+          "m11",
+          "m13"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1520,
+        "injected_memory_ids": [
+          "m06",
+          "m07",
+          "m11",
+          "m13"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m06",
+            "similarity": 0.8013,
+            "score": 0.7885,
+            "source_session": "old-06",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：台灯"
+          },
+          {
+            "id": "m07",
+            "similarity": 0.6488,
+            "score": 0.6934,
+            "source_session": "old-07",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：台灯"
+          },
+          {
+            "id": "m11",
+            "similarity": 0.5963,
+            "score": 0.6174,
+            "source_session": "old-11",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：键盘"
+          },
+          {
+            "id": "m13",
+            "similarity": 0.6035,
+            "score": 0.5922,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 15.8,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r07",
+      "category": "history_lookup",
+      "query": "台灯工单创建的记录",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m07"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m07"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1324,
+        "injected_memory_ids": [
+          "m07"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m07",
+            "similarity": 0.6934,
+            "score": 0.7313,
+            "source_session": "old-07",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：台灯"
+          }
+        ]
+      },
+      "elapsed_ms": 13.92,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r08",
+      "category": "history_lookup",
+      "query": "衣服退款资格核验历史",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m08"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1225
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m08",
+          "m12",
+          "m05",
+          "m02"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1521,
+        "injected_memory_ids": [
+          "m08",
+          "m12",
+          "m05",
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m08",
+            "similarity": 0.8272,
+            "score": 0.8232,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.7298,
+            "score": 0.7583,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.6907,
+            "score": 0.7213,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.7003,
+            "score": 0.6914,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 17.1,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r09",
+      "category": "history_lookup",
+      "query": "吸尘器以前问过维修吗",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m09"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1225
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m10",
+          "m09",
+          "m06",
+          "m13"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 0.5
+        },
+        "profile": "text",
+        "context_tokens": 1392,
+        "injected_memory_ids": [
+          "m10",
+          "m09"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m10",
+            "similarity": 0.6758,
+            "score": 0.7187,
+            "source_session": "old-10",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：吸尘器"
+          },
+          {
+            "id": "m09",
+            "similarity": 0.7572,
+            "score": 0.6988,
+            "source_session": "old-09",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：吸尘器"
+          },
+          {
+            "id": "m06",
+            "similarity": 0.563,
+            "score": 0.586,
+            "source_session": "old-06",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：台灯"
+          },
+          {
+            "id": "m13",
+            "similarity": 0.5725,
+            "score": 0.5658,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 13.5,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r10",
+      "category": "history_lookup",
+      "query": "吸尘器售后工单记录",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m10"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m10",
+          "m09",
+          "m14",
+          "m03"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1521,
+        "injected_memory_ids": [
+          "m10",
+          "m09",
+          "m14",
+          "m03"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m10",
+            "similarity": 0.7614,
+            "score": 0.7915,
+            "source_session": "old-10",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：吸尘器"
+          },
+          {
+            "id": "m09",
+            "similarity": 0.7331,
+            "score": 0.6783,
+            "source_session": "old-09",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：吸尘器"
+          },
+          {
+            "id": "m14",
+            "similarity": 0.5653,
+            "score": 0.6272,
+            "source_session": "old-14",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：手机"
+          },
+          {
+            "id": "m03",
+            "similarity": 0.5785,
+            "score": 0.6187,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 14.32,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r11",
+      "category": "history_lookup",
+      "query": "键盘维修咨询的历史",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m11"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m11",
+          "m06",
+          "m12",
+          "m13"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1519,
+        "injected_memory_ids": [
+          "m11",
+          "m06",
+          "m12",
+          "m13"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m11",
+            "similarity": 0.7849,
+            "score": 0.7777,
+            "source_session": "old-11",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：键盘"
+          },
+          {
+            "id": "m06",
+            "similarity": 0.6426,
+            "score": 0.6537,
+            "source_session": "old-06",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：台灯"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.5897,
+            "score": 0.6393,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m13",
+            "similarity": 0.6294,
+            "score": 0.6142,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 16.29,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r12",
+      "category": "history_lookup",
+      "query": "键盘退款资格查过没有",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m12"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1225
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m12",
+          "m05",
+          "m08",
+          "m02"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1521,
+        "injected_memory_ids": [
+          "m12",
+          "m05",
+          "m08",
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m12",
+            "similarity": 0.752,
+            "score": 0.7772,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.6313,
+            "score": 0.6708,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.6298,
+            "score": 0.6555,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6314,
+            "score": 0.6329,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 10.39,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r13",
+      "category": "history_lookup",
+      "query": "手机维修政策之前查过吗",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m13"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1226
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m13",
+          "m11",
+          "m14",
+          "m01"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1521,
+        "injected_memory_ids": [
+          "m13",
+          "m11",
+          "m14",
+          "m01"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m13",
+            "similarity": 0.7402,
+            "score": 0.7083,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          },
+          {
+            "id": "m11",
+            "similarity": 0.6138,
+            "score": 0.6322,
+            "source_session": "old-11",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：键盘"
+          },
+          {
+            "id": "m14",
+            "similarity": 0.568,
+            "score": 0.6295,
+            "source_session": "old-14",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：手机"
+          },
+          {
+            "id": "m01",
+            "similarity": 0.6449,
+            "score": 0.621,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 13.57,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r14",
+      "category": "history_lookup",
+      "query": "手机售后工单之前建过吗",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m14"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1226
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m14",
+          "m03",
+          "m07",
+          "m10"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1522,
+        "injected_memory_ids": [
+          "m14",
+          "m03",
+          "m07",
+          "m10"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m14",
+            "similarity": 0.7469,
+            "score": 0.7815,
+            "source_session": "old-14",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：手机"
+          },
+          {
+            "id": "m03",
+            "similarity": 0.6721,
+            "score": 0.6982,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          },
+          {
+            "id": "m07",
+            "similarity": 0.6496,
+            "score": 0.6941,
+            "source_session": "old-07",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：台灯"
+          },
+          {
+            "id": "m10",
+            "similarity": 0.6111,
+            "score": 0.6637,
+            "source_session": "old-10",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：吸尘器"
+          }
+        ]
+      },
+      "elapsed_ms": 10.61,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r15",
+      "category": "similar_event",
+      "query": "耳机那次是维修咨询不是退款",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m01"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1229
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m02",
+          "m01",
+          "m05",
+          "m12"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 0.5
+        },
+        "profile": "text",
+        "context_tokens": 1394,
+        "injected_memory_ids": [
+          "m02",
+          "m01"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m02",
+            "similarity": 0.7467,
+            "score": 0.7309,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m01",
+            "similarity": 0.7407,
+            "score": 0.7024,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.6284,
+            "score": 0.6684,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.6135,
+            "score": 0.6595,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          }
+        ]
+      },
+      "elapsed_ms": 12.47,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r16",
+      "category": "similar_event",
+      "query": "耳机的退款核验，不是维修咨询",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m02"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1230
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m02",
+          "m12",
+          "m05",
+          "m08"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1330,
+        "injected_memory_ids": [
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m02",
+            "similarity": 0.8251,
+            "score": 0.7975,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.7057,
+            "score": 0.7378,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.7061,
+            "score": 0.7344,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.7013,
+            "score": 0.7162,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          }
+        ]
+      },
+      "elapsed_ms": 14.26,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r17",
+      "category": "similar_event",
+      "query": "咖啡机不要退款，只看之前的维修讨论",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m04"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1234
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m05",
+          "m04",
+          "m12",
+          "m02"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 0.5
+        },
+        "profile": "text",
+        "context_tokens": 1401,
+        "injected_memory_ids": [
+          "m05",
+          "m04"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m05",
+            "similarity": 0.7599,
+            "score": 0.7802,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m04",
+            "similarity": 0.74,
+            "score": 0.6607,
+            "source_session": "old-04",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：咖啡机"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.6041,
+            "score": 0.6515,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6296,
+            "score": 0.6313,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 17.99,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r18",
+      "category": "similar_event",
+      "query": "台灯那次是工单，不是维修政策",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m07"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1230
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m07",
+          "m06",
+          "m11"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1460,
+        "injected_memory_ids": [
+          "m07",
+          "m06",
+          "m11"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m07",
+            "similarity": 0.6937,
+            "score": 0.7316,
+            "source_session": "old-07",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：台灯"
+          },
+          {
+            "id": "m06",
+            "similarity": 0.7106,
+            "score": 0.7115,
+            "source_session": "old-06",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：台灯"
+          },
+          {
+            "id": "m11",
+            "similarity": 0.5583,
+            "score": 0.5851,
+            "source_session": "old-11",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：键盘"
+          }
+        ]
+      },
+      "elapsed_ms": 16.38,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r19",
+      "category": "similar_event",
+      "query": "吸尘器的维修记录，别找工单",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m09"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1229
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m10",
+          "m09",
+          "m13"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 0.5
+        },
+        "profile": "text",
+        "context_tokens": 1461,
+        "injected_memory_ids": [
+          "m10",
+          "m09",
+          "m13"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m10",
+            "similarity": 0.7357,
+            "score": 0.7696,
+            "source_session": "old-10",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：吸尘器"
+          },
+          {
+            "id": "m09",
+            "similarity": 0.7448,
+            "score": 0.6883,
+            "source_session": "old-09",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：吸尘器"
+          },
+          {
+            "id": "m13",
+            "similarity": 0.5501,
+            "score": 0.5468,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 14.68,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "r20",
+      "category": "similar_event",
+      "query": "键盘退款，不是保修",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m12"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m12",
+          "m11",
+          "m05",
+          "m08"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1520,
+        "injected_memory_ids": [
+          "m12",
+          "m11",
+          "m05",
+          "m08"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m12",
+            "similarity": 0.7218,
+            "score": 0.7516,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m11",
+            "similarity": 0.6922,
+            "score": 0.6989,
+            "source_session": "old-11",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：键盘"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.6127,
+            "score": 0.655,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.59,
+            "score": 0.6216,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          }
+        ]
+      },
+      "elapsed_ms": 17.49,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "c21",
+      "category": "cross_session",
+      "query": "新会话接着看耳机的维修咨询",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m01"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1229
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m01",
+          "m03",
+          "m02",
+          "m13"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1459,
+        "injected_memory_ids": [
+          "m01",
+          "m03",
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m01",
+            "similarity": 0.7473,
+            "score": 0.7081,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m03",
+            "similarity": 0.6316,
+            "score": 0.6639,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6146,
+            "score": 0.6186,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m13",
+            "similarity": 0.6112,
+            "score": 0.5987,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 15.23,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "c22",
+      "category": "cross_session",
+      "query": "上次咖啡机申请退款资格的咨询",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m05"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1230
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m05",
+          "m12",
+          "m08",
+          "m02"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1526,
+        "injected_memory_ids": [
+          "m05",
+          "m12",
+          "m08",
+          "m02"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m05",
+            "similarity": 0.7907,
+            "score": 0.8063,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.6296,
+            "score": 0.6731,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.6276,
+            "score": 0.6536,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6551,
+            "score": 0.653,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 16.43,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "c23",
+      "category": "cross_session",
+      "query": "另开一段对话看台灯工单",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m07"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1226
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m07",
+          "m06"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1261,
+        "injected_memory_ids": [],
+        "retrieval_hits": [
+          {
+            "id": "m07",
+            "similarity": 0.6838,
+            "score": 0.7231,
+            "source_session": "old-07",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：台灯"
+          },
+          {
+            "id": "m06",
+            "similarity": 0.5984,
+            "score": 0.6161,
+            "source_session": "old-06",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：台灯"
+          }
+        ]
+      },
+      "elapsed_ms": 17.0,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "c24",
+      "category": "cross_session",
+      "query": "我之前的咖啡机退款咨询",
+      "customer_id": "C002",
+      "ground_truth_memory_ids": [
+        "m16"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1226
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m16",
+          "m15"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "phone",
+        "context_tokens": 1327,
+        "injected_memory_ids": [
+          "m16"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m16",
+            "similarity": 0.7723,
+            "score": 0.8048,
+            "source_session": "other-16",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m15",
+            "similarity": 0.5787,
+            "score": 0.6394,
+            "source_session": "other-15",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 15.27,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "p25",
+      "category": "profile",
+      "query": "下次客服怎么联系我",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": "text",
+        "context_tokens": 1259,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 12.36,
+      "isolation_ok": true,
+      "profile_ok": true
+    },
+    {
+      "id": "p26",
+      "category": "profile",
+      "query": "我的联系偏好是什么",
+      "customer_id": "C002",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": "phone",
+        "context_tokens": 1259,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 12.27,
+      "isolation_ok": true,
+      "profile_ok": true
+    },
+    {
+      "id": "p27",
+      "category": "profile",
+      "query": "耳机售后请遵循我的沟通偏好",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m01"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1229
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m03",
+          "m01",
+          "m02",
+          "m14"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 0.5
+        },
+        "profile": "text",
+        "context_tokens": 1524,
+        "injected_memory_ids": [
+          "m03",
+          "m01",
+          "m02",
+          "m14"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m03",
+            "similarity": 0.7386,
+            "score": 0.7548,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          },
+          {
+            "id": "m01",
+            "similarity": 0.7825,
+            "score": 0.738,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6865,
+            "score": 0.6797,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m14",
+            "similarity": 0.586,
+            "score": 0.6448,
+            "source_session": "old-14",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 14.78,
+      "isolation_ok": true,
+      "profile_ok": true
+    },
+    {
+      "id": "p28",
+      "category": "profile",
+      "query": "咖啡机售后沿用我的沟通方式",
+      "customer_id": "C002",
+      "ground_truth_memory_ids": [
+        "m16"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1229
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m16",
+          "m15"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.25,
+          "mrr": 1.0
+        },
+        "profile": "phone",
+        "context_tokens": 1330,
+        "injected_memory_ids": [
+          "m16"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m16",
+            "similarity": 0.6772,
+            "score": 0.7239,
+            "source_session": "other-16",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m15",
+            "similarity": 0.6165,
+            "score": 0.6715,
+            "source_session": "other-15",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 19.6,
+      "isolation_ok": true,
+      "profile_ok": true
+    },
+    {
+      "id": "i29",
+      "category": "isolation",
+      "query": "其他客户的耳机维修记录",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1226
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m01",
+          "m03",
+          "m02",
+          "m11"
+        ],
+        "retrieval": null,
+        "profile": "text",
+        "context_tokens": 1261,
+        "injected_memory_ids": [],
+        "retrieval_hits": [
+          {
+            "id": "m01",
+            "similarity": 0.7568,
+            "score": 0.7162,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m03",
+            "similarity": 0.6866,
+            "score": 0.7106,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6684,
+            "score": 0.6643,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m11",
+            "similarity": 0.5901,
+            "score": 0.6121,
+            "source_session": "old-11",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：键盘"
+          }
+        ]
+      },
+      "elapsed_ms": 16.59,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "i30",
+      "category": "isolation",
+      "query": "其他人的台灯工单",
+      "customer_id": "C002",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1222
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": "phone",
+        "context_tokens": 1257,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 17.55,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "i31",
+      "category": "unverified",
+      "query": "耳机维修历史是什么",
+      "customer_id": null,
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1224,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 0.05,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "i32",
+      "category": "unverified",
+      "query": "我上次的偏好和工单",
+      "customer_id": null,
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1224,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 0.04,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "x33",
+      "category": "recency",
+      "query": "台灯的工单和维修记录，先看最近一次",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m07",
+        "m06"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1234
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m07",
+          "m06",
+          "m14",
+          "m10"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.5,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1399,
+        "injected_memory_ids": [
+          "m07",
+          "m06"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m07",
+            "similarity": 0.7515,
+            "score": 0.7807,
+            "source_session": "old-07",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：台灯"
+          },
+          {
+            "id": "m06",
+            "similarity": 0.7443,
+            "score": 0.7401,
+            "source_session": "old-06",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：台灯"
+          },
+          {
+            "id": "m14",
+            "similarity": 0.5867,
+            "score": 0.6454,
+            "source_session": "old-14",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：手机"
+          },
+          {
+            "id": "m10",
+            "similarity": 0.5855,
+            "score": 0.6419,
+            "source_session": "old-10",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：吸尘器"
+          }
+        ]
+      },
+      "elapsed_ms": 11.77,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "x34",
+      "category": "recency",
+      "query": "咖啡机的退款和维修历史，先看最近一次",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m05",
+        "m04"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1235
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m05",
+          "m12",
+          "m04",
+          "m08"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.5,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1532,
+        "injected_memory_ids": [
+          "m05",
+          "m12",
+          "m04",
+          "m08"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m05",
+            "similarity": 0.8022,
+            "score": 0.8161,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m12",
+            "similarity": 0.6444,
+            "score": 0.6858,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m04",
+            "similarity": 0.7648,
+            "score": 0.6817,
+            "source_session": "old-04",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：咖啡机"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.6385,
+            "score": 0.6628,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          }
+        ]
+      },
+      "elapsed_ms": 13.22,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "l35",
+      "category": "long_context",
+      "query": "继续耳机退款与维修的长任务",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m01",
+        "m02"
+      ],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1229
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m02",
+          "m01",
+          "m05",
+          "m03"
+        ],
+        "retrieval": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.5,
+          "mrr": 1.0
+        },
+        "profile": "text",
+        "context_tokens": 1525,
+        "injected_memory_ids": [
+          "m02",
+          "m01",
+          "m05",
+          "m03"
+        ],
+        "retrieval_hits": [
+          {
+            "id": "m02",
+            "similarity": 0.7261,
+            "score": 0.7133,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m01",
+            "similarity": 0.7002,
+            "score": 0.668,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m05",
+            "similarity": 0.6216,
+            "score": 0.6626,
+            "source_session": "old-05",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：咖啡机"
+          },
+          {
+            "id": "m03",
+            "similarity": 0.627,
+            "score": 0.6599,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 15.51,
+      "isolation_ok": true,
+      "profile_ok": null,
+      "compaction": {
+        "id": "repair-conditional",
+        "raw_estimated_tokens": 560,
+        "dynamic_only_estimated_tokens": 301,
+        "replacement_estimated_tokens": 382,
+        "token_reduction_vs_raw": 0.3179,
+        "token_delta_vs_dynamic_only": 81,
+        "fact_checks": {
+          "raw": {
+            "ORD1001": true,
+            "repair-policy.md#保修与维修": true,
+            "不要直接创建工单": true,
+            "文字客服": true
+          },
+          "dynamic_only": {
+            "ORD1001": false,
+            "repair-policy.md#保修与维修": false,
+            "不要直接创建工单": true,
+            "文字客服": true
+          },
+          "replacement": {
+            "ORD1001": true,
+            "repair-policy.md#保修与维修": true,
+            "不要直接创建工单": true,
+            "文字客服": true
+          }
+        },
+        "candidate_metrics": {
+          "cursor_valid": true,
+          "summary_injected": true,
+          "covered_messages": 8,
+          "summary_facts_available": 10,
+          "summary_facts_selected": 6,
+          "source_duplicate_facts": 4,
+          "post_assembly_duplicate_facts": 0,
+          "recent_turns_preserved": true,
+          "estimated_tokens": 382,
+          "budget_overrun": false,
+          "reason": "ok"
+        },
+        "current_request_preserved": true,
+        "system_rules_preserved": true,
+        "context_budget_exceeded": false
+      },
+      "fact_checks": {
+        "A": {
+          "ORD1001": false,
+          "repair-policy.md#保修与维修": false,
+          "不要直接创建工单": false,
+          "文字客服": false
+        },
+        "B": {
+          "ORD1001": true,
+          "repair-policy.md#保修与维修": true,
+          "不要直接创建工单": true,
+          "文字客服": true
+        }
+      }
+    },
+    {
+      "id": "l36",
+      "category": "long_context",
+      "query": "继续破损件退款与工单的长任务",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1230
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m12",
+          "m08"
+        ],
+        "retrieval": null,
+        "profile": "text",
+        "context_tokens": 1265,
+        "injected_memory_ids": [],
+        "retrieval_hits": [
+          {
+            "id": "m12",
+            "similarity": 0.5601,
+            "score": 0.6141,
+            "source_session": "old-12",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：键盘"
+          },
+          {
+            "id": "m08",
+            "similarity": 0.5675,
+            "score": 0.6025,
+            "source_session": "old-08",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：衣服"
+          }
+        ]
+      },
+      "elapsed_ms": 14.45,
+      "isolation_ok": true,
+      "profile_ok": null,
+      "compaction": {
+        "id": "refund-and-ticket",
+        "raw_estimated_tokens": 478,
+        "dynamic_only_estimated_tokens": 317,
+        "replacement_estimated_tokens": 321,
+        "token_reduction_vs_raw": 0.3285,
+        "token_delta_vs_dynamic_only": 4,
+        "fact_checks": {
+          "raw": {
+            "ORD2002": true,
+            "不能退款才考虑售后工单": true,
+            "不希望未经确认": true,
+            "get_order_status": true
+          },
+          "dynamic_only": {
+            "ORD2002": false,
+            "不能退款才考虑售后工单": false,
+            "不希望未经确认": true,
+            "get_order_status": false
+          },
+          "replacement": {
+            "ORD2002": true,
+            "不能退款才考虑售后工单": true,
+            "不希望未经确认": true,
+            "get_order_status": true
+          }
+        },
+        "candidate_metrics": {
+          "cursor_valid": true,
+          "summary_injected": true,
+          "covered_messages": 8,
+          "summary_facts_available": 7,
+          "summary_facts_selected": 4,
+          "source_duplicate_facts": 3,
+          "post_assembly_duplicate_facts": 0,
+          "recent_turns_preserved": true,
+          "estimated_tokens": 321,
+          "budget_overrun": false,
+          "reason": "ok"
+        },
+        "current_request_preserved": true,
+        "system_rules_preserved": true,
+        "context_budget_exceeded": false
+      },
+      "fact_checks": {
+        "A": {
+          "ORD2002": false,
+          "不能退款才考虑售后工单": false,
+          "不希望未经确认": false,
+          "get_order_status": false
+        },
+        "B": {
+          "ORD2002": true,
+          "不能退款才考虑售后工单": true,
+          "不希望未经确认": true,
+          "get_order_status": true
+        }
+      }
+    },
+    {
+      "id": "f37",
+      "category": "retrieval_failure",
+      "query": "耳机维修历史",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [
+        "m01"
+      ],
+      "status": "chroma_failed_closed",
+      "failure_recovered": true,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1220
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0
+        },
+        "profile": null,
+        "context_tokens": 1220,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 9.4,
+      "isolation_ok": true,
+      "profile_ok": null
+    },
+    {
+      "id": "f38",
+      "category": "retrieval_failure",
+      "query": "我的偏好是什么",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [],
+      "status": "redis_failed_closed",
+      "failure_recovered": true,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1221
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1221,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 3.23,
+      "isolation_ok": true,
+      "profile_ok": false
+    },
+    {
+      "id": "s39",
+      "category": "same_session",
+      "query": "这个订单下一步怎么办",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1225
+      },
+      "B": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": "text",
+        "context_tokens": 1432,
+        "injected_memory_ids": [],
+        "retrieval_hits": []
+      },
+      "elapsed_ms": 14.96,
+      "isolation_ok": true,
+      "profile_ok": null,
+      "fact_checks": {
+        "A": {
+          "ORD1001": false,
+          "get_order_status": false
+        },
+        "B": {
+          "ORD1001": true,
+          "get_order_status": true
+        }
+      }
+    },
+    {
+      "id": "s40",
+      "category": "same_session",
+      "query": "继续之前的耳机售后",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1224
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m03",
+          "m01",
+          "m02",
+          "m14"
+        ],
+        "retrieval": null,
+        "profile": "text",
+        "context_tokens": 1429,
+        "injected_memory_ids": [],
+        "retrieval_hits": [
+          {
+            "id": "m03",
+            "similarity": 0.7283,
+            "score": 0.746,
+            "source_session": "old-03",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：耳机"
+          },
+          {
+            "id": "m01",
+            "similarity": 0.7438,
+            "score": 0.7051,
+            "source_session": "old-01",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          },
+          {
+            "id": "m02",
+            "similarity": 0.6539,
+            "score": 0.652,
+            "source_session": "old-02",
+            "summary": "售后事件：退款资格核验；已完成步骤：核验退款资格；商品：耳机"
+          },
+          {
+            "id": "m14",
+            "similarity": 0.5858,
+            "score": 0.6447,
+            "source_session": "old-14",
+            "summary": "售后事件：售后工单创建；已完成步骤：创建售后工单；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 14.5,
+      "isolation_ok": true,
+      "profile_ok": null,
+      "fact_checks": {
+        "A": {
+          "repair_query": false,
+          "search_policy": false
+        },
+        "B": {
+          "repair_query": true,
+          "search_policy": true
+        }
+      }
+    },
+    {
+      "id": "u41",
+      "category": "profile_conflict",
+      "query": "我以后改用电话客服联系，旧的文字偏好应被更新",
+      "customer_id": "C001",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1240
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m13"
+        ],
+        "retrieval": null,
+        "profile": "phone",
+        "context_tokens": 1275,
+        "injected_memory_ids": [],
+        "retrieval_hits": [
+          {
+            "id": "m13",
+            "similarity": 0.5778,
+            "score": 0.5703,
+            "source_session": "old-13",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：手机"
+          }
+        ]
+      },
+      "elapsed_ms": 25.26,
+      "isolation_ok": true,
+      "profile_ok": true
+    },
+    {
+      "id": "u42",
+      "category": "profile_conflict",
+      "query": "今后请改成文字客服，之前的电话偏好不要沿用",
+      "customer_id": "C002",
+      "ground_truth_memory_ids": [],
+      "status": "ok",
+      "failure_recovered": false,
+      "A": {
+        "ranked_memory_ids": [],
+        "retrieval": null,
+        "profile": null,
+        "context_tokens": 1239
+      },
+      "B": {
+        "ranked_memory_ids": [
+          "m15"
+        ],
+        "retrieval": null,
+        "profile": "text",
+        "context_tokens": 1274,
+        "injected_memory_ids": [],
+        "retrieval_hits": [
+          {
+            "id": "m15",
+            "similarity": 0.5514,
+            "score": 0.6162,
+            "source_session": "other-15",
+            "summary": "售后事件：维修政策咨询；已完成步骤：查询售后政策；商品：耳机"
+          }
+        ]
+      },
+      "elapsed_ms": 36.1,
+      "isolation_ok": true,
+      "profile_ok": true
+    }
+  ],
+  "limitations": [
+    "Synthetic author-labelled events, no independent manual review or real customer data",
+    "A has no Memory; same-session Checkpoint history is intentionally excluded",
+    "No real model was called; task completion rate is null, not inferred from fact checks",
+    "Long-dialogue compaction reuses two prior short synthetic cases with forced trigger",
+    "Offline Redis adapter is not a real Redis throughput or outage benchmark"
+  ]
+}
