@@ -26,3 +26,12 @@
 | `warranty.md` | `05bb303c5bb0280731606ea2382a47984b1ffe53b28ac4bb48de074581ac582d` |
 
 改动任何 v2 政策文件后，必须重新审核标注并发布新的数据集版本；现有数据集的 SHA256 校验会拒绝继续评测。
+
+## v3（36 篇政策与 rewrite 口语表达基准）
+
+- 目录：`data/policies/v3/`。包含规范化后的 6 份 v2 政策和 30 份细分补充政策，覆盖订单变更、退换货、物流、支付、商品质量、保修维修、发票、促销、工单投诉及账户隐私等知识域。
+- 已清除逐篇重复免责声明、导航性适用范围和通用边界模板；独立细则保留可回答问题的规则及处理步骤。规则均为模拟政策，不代表真实商家承诺。
+- 36 个文件按文件名排序计算目录哈希：`2ce5dec6945d06301e8484c65b0feef54e6b76c857b57316fcd5d528a7e2e2a9`；按 220 字符、40 重叠切分为 71 个 chunk，无不足 40 字的 chunk。
+- `data/evaluation/rag/dataset-v3.json` 包含 20 组、40 题：每组 Formal/Colloquial 共用答案和 Gold Chunk；16 组可答、4 组无答案。dev/test 各 10 组。可答题证据覆盖 16 份新增细分政策。
+- 构建入口：`scripts/build_rag_v3.py`，可重复生成当前 v3 政策与数据集。修改政策后须同步重审引用、Chunk 映射、无答案标签与目录哈希；历史实验产物不覆盖。
+- 三方案评测默认使用 v3：`scripts/evaluate_three_way_rag.py`；DeepSeek rewrite 仍要求显式 `--allow-paid-api`。

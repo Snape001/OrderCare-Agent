@@ -30,6 +30,7 @@ from agents.lazy_agent import LazyLoadingAgent
 from core import settings
 from core.llm import get_model
 from customer_support.errors import CustomerSupportModelError
+from customer_support.intent_cache import get_intent_cache
 from customer_support.mcp_client import load_business_mcp_tools
 from customer_support.prompts import SYSTEM_PROMPT
 from customer_support.routing import (
@@ -242,11 +243,22 @@ def routing_middleware(model: BaseChatModel):
             return None  # Checkpoint resume; do not call the router again.
         query = str(messages[-1].content)
         history = [m for m in messages if isinstance(m, HumanMessage)][-4:]
-        try:
+        cache = get_intent_cache()
+        cache_status = "disabled"
+
+        async def load_route() -> Route:
             routed = await model.with_structured_output(Route, method="function_calling").ainvoke(
                 [SystemMessage(content=ROUTER_PROMPT), *history]
             )
-            route = validated_route(Route.model_validate(routed), history)
+            return validated_route(Route.model_validate(routed), history)
+
+        try:
+            if cache is not None:
+                route, cache_status = await cache.get_or_load(cache.key(query), load_route)
+                if cache_status == "hit":
+                    route = validated_route(route, history)
+            else:
+                route = await load_route()
             if (
                 route.conditional
                 and Intent.REFUND in route.intents
@@ -255,7 +267,12 @@ def routing_middleware(model: BaseChatModel):
                 route.intents.insert(0, Intent.ORDER)
             missing = missing_fields(route)
             if missing:
-                trace_event("router", result=safe_route(route), missing_fields=missing)
+                trace_event(
+                    "router",
+                    result=safe_route(route),
+                    missing_fields=missing,
+                    cache=cache_status,
+                )
                 return {
                     "route": route.model_dump(mode="json"),
                     "plan": {},
@@ -297,7 +314,12 @@ def routing_middleware(model: BaseChatModel):
                     if permitted <= {"search_policy", "get_order_status"} and len(permitted) == 1:
                         plan = simple_plan(route)
                     else:
-                        trace_event("router", result=safe_route(route), missing_fields=[])
+                        trace_event(
+                            "router",
+                            result=safe_route(route),
+                            missing_fields=[],
+                            cache=cache_status,
+                        )
                         return {
                             "route": route.model_dump(mode="json"),
                             "plan": {},
@@ -314,7 +336,7 @@ def routing_middleware(model: BaseChatModel):
         except Exception as exc:
             logger.exception("Customer support routing failed error_type=%s", type(exc).__name__)
             raise CustomerSupportModelError() from exc
-        trace_event("router", result=safe_route(route), missing_fields=[])
+        trace_event("router", result=safe_route(route), missing_fields=[], cache=cache_status)
         trace_event(
             "planner",
             steps=plan.model_dump(mode="json")["steps"],

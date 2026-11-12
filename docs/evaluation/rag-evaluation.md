@@ -6,18 +6,30 @@
 
 ## 当前真实架构
 
-1. `load_policy_sections` 按Markdown二级标题解析单一政策文件；当前16章节，按220字符、40字符重叠切片，当前实际16个chunk。
+1. `load_policy_sections` 按 Markdown 二级标题解析政策文件；按 220 字符、40 字符重叠切片。默认线上单文件仍为 16 个章节；v3 独立语料为 36 文件、71 个 Chunk。
 2. FastEmbed使用 `BAAI/bge-small-zh-v1.5`，文档调用`passage_embed`，问题调用`query_embed`，ONNX执行、默认2线程；Chroma使用cosine空间。
-3. dense召回候选数量为 `min(max(3*K,5), chunk_count)`；K=2时最多6条。向量相似度仅表示相关，不证明上下文可以完整回答。
-4. lexical在全部切片上比较中文二元字组与ASCII词/数字token；分数为问题token与“标题+正文”token交集数 / 问题token数。这不是BM25。中文字符在清洗后拼接，跨标点也可能形成二元组。
-5. dense贡献 `1/(10+rank)`；hybrid词法贡献 `w * min(1, 2*lexical_score)/(10+rank)`，默认w=1。仅lexical时不按分数缩放排名贡献。这是自定义排名融合，不是标准BM25+RRF。
-6. dense/hybrid保留 `dense_relevance >= 0.50 OR lexical_score >= 0.30` 的候选，再截取Top-K；纯lexical没有此过滤，仅过滤零重合。默认search K=3，业务`search_policy`显式K=2，本框架默认K=2。
+3. Dense 与词法各取最多 5 个候选；向量相似度仅表示相关，不证明上下文可以完整回答。
+4. 词法路对标题、正文与问题做 Jieba 分词，使用内存 BM25L 原始分数排序；零分结果不参与融合。
+5. Dense 贡献 `1/(10+rank)`；Hybrid 词法贡献 `w/(10+rank)`，默认 `w=1`。两路原始分数不直接混合。
+6. Dense/Hybrid 保留 `dense_relevance >= 0.50 OR BM25分数 > 0` 的候选，再截取 Top-K。线上默认 K=3；三方案历史对比脚本固定 K=2。
 7. 索引指纹包含政策文本、chunk ID、Embedding类和模型名；指纹与条数均相同时复用Chroma。进程内缓存KB对象，但每次search仍检查文件与条数。模型名相同而权重更新不必然触发原有索引重建，实验记录权重哈希，换权重时须使用独立索引或`--rebuild`。
 8. `search_policy`返回最佳片段与完整references；没有命中时返回转人工提示。Agent根据工具证据生成回答并被要求标来源。检索引用和模型最终引用支持是不同层面的事实。
 
-新增的`lexical_weight`与`lexical_threshold`构造参数默认值保持旧行为。术语扩展仅存在`evaluation/experiments.py`，不是线上自动改写。尚未实现Cross-Encoder、Query Rewrite LLM、Adaptive Retrieval或证据充分性模型。
+词法融合权重为 `lexical_weight`；旧二元字组的 0.30 阈值已移除。术语扩展仅存在 `evaluation/experiments.py`，线上未启用自动改写、Cross-Encoder 或证据充分性模型。
 
 ## 数据集及Ground Truth
+
+### v3：扩展售后语料与口语 Query Rewrite 基准
+
+`data/policies/v3/` 包含 36 篇模拟政策文档，按 220 字符、40 重叠切分为 71 个 chunk；重复免责声明、导航性适用范围和通用边界模板已清理，不足 40 字的 chunk 已逐项合并。每个 chunk 带 `doc_type`、`section_type`、`source`、`is_retrievable` 元数据；免责声明及导航章节不进入 Dense/BM25 索引。`dataset-v3.json` 有 20 组 Formal/Colloquial 配对题，共 40 题；每种风格 16 道可答、4 道无答案，dev/test 各 10 组。可答题 Gold Evidence 覆盖 16 份新增细分政策。配对题共用答案、事实和精确 Gold Chunk，并由加载器验证原文、Chunk ID 和语料哈希。
+
+用 `uv run --frozen python scripts/build_rag_v3.py` 可从 v2 政策基础文本及脚本中的细分规则和配对题重复生成当前 v3。三方案评测脚本默认读取 v3 政策和数据集：
+
+```powershell
+uv run --frozen python scripts/evaluate_three_way_rag.py --allow-paid-api
+```
+
+Rewrite 仍由 DeepSeek 执行，需显式允许付费 API；Direct 和 Hybrid 使用本地 BGE/Chroma。重新生成 v3 时须重审 Gold、更新语料哈希，不覆盖既有实验结果。
 
 [data/evaluation/rag/dataset-v1.json](../../data/evaluation/rag/dataset-v1.json) 包含40题：30可答、10无答案，覆盖退货、特殊商品、质量售后、退款、物流、维修、发票、支付、优惠券、多条件与业务无关问题。
 
@@ -34,6 +46,7 @@
 | 指标 | 定义与分母 |
 | --- | --- |
 | Recall@K | Top-K去重章节中相关章节数 / 该题所有标注相关章节数；仅可答题宏平均 |
+| Precision@K | 原始 Top-K 位置中命中的不同 Gold 章节数 / K；重复 Chunk 占位但不重复计分；无答案题为 `null`，仅可答题宏平均 |
 | MRR@K | 首个相关章节的倒数排名，K内无相关为0；仅可答题宏平均，不冒充全库无截断MRR |
 | nDCG@K | gain=`2^grade-1`，折扣=`log2(rank+1)`，用该题理想排序归一化；仅可答题 |
 | Context Relevance（标注版） | 返回章节相关等级/3的均值；空上下文=0，汇总覆盖全部题。这是基于人工标签的上下文相关度，不是LLM评分 |

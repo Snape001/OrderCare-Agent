@@ -103,6 +103,11 @@ def test_policy_api_lists_real_documents_and_searches_both_methods(monkeypatch) 
                      "chunk_id": "chunk", "score": .8, "dense_relevance": .7,
                      "lexical_score": .4}][:top_k]
 
+        def search_reranked_hybrid(self, query, top_k):
+            return [{"title": "hybrid_rerank", "source": "policy.md", "content": query,
+                     "chunk_id": "chunk", "score": .8, "dense_relevance": .7,
+                     "lexical_score": .4}][:top_k]
+
     monkeypatch.setattr(workbench, "get_policy_knowledge_base", FakeKnowledgeBase)
     client = TestClient(app, headers={"X-Session-Token": "a" * 64})
     policies = client.get("/workbench/policies")
@@ -110,7 +115,7 @@ def test_policy_api_lists_real_documents_and_searches_both_methods(monkeypatch) 
     assert any(item["collection"] == "online" for item in policies.json()["documents"])
     response = client.post("/workbench/search", json={"query": "保修政策", "top_k": 2})
     assert response.status_code == 200
-    assert [run["method"] for run in response.json()["runs"]] == ["dense", "hybrid"]
+    assert [run["method"] for run in response.json()["runs"]] == ["dense", "hybrid_rerank"]
     assert response.json()["runs"][0]["hits"][0]["content"] == "保修政策"
     assert response.json()["rewrite"] is None
 

@@ -4,20 +4,27 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
 
+import jieba  # type: ignore[import-untyped]
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
+from rank_bm25 import BM25L  # type: ignore[import-untyped]
 
 from customer_support.policy import POLICY_PATH, PolicySection, load_policy_sections, policy_files
 
 DEFAULT_MODEL = "BAAI/bge-small-zh-v1.5"
 DEFAULT_CHROMA_PATH = Path("data/chroma")
+DEFAULT_SERVING_POLICY_PATH = Path("data/policies/v3")
 COLLECTION_NAME = "customer_service_policy"
+RETRIEVAL_CANDIDATES = 3
+MAX_RESULTS = 3
+LEXICAL_INDEX_VERSION = "jieba-bm25l-v1"
 
 
 class FastEmbedChineseEmbeddings(Embeddings):
@@ -93,6 +100,9 @@ def split_section(
                     "title": section.title,
                     "source": section.source,
                     "chunk_index": chunk_index,
+                    "doc_type": section.doc_type,
+                    "section_type": section.section_type,
+                    "is_retrievable": section.is_retrievable,
                 },
             )
         )
@@ -110,22 +120,18 @@ def load_policy_chunks(path: Path = POLICY_PATH) -> list[Document]:
     ]
 
 
-def _search_units(text: str) -> set[str]:
-    """Create Chinese character n-grams and ASCII tokens for lexical recall."""
-    normalized = re.sub(r"\s+", "", text.lower())
-    chinese = "".join(re.findall(r"[\u4e00-\u9fff]", normalized))
-    units = {chinese[index : index + 2] for index in range(max(0, len(chinese) - 1))}
-    units.update(re.findall(r"[a-z0-9]+", normalized))
-    return {unit for unit in units if unit}
-
-
-def _lexical_score(query: str, document: Document) -> float:
-    query_units = _search_units(query)
-    if not query_units:
-        return 0.0
-    document_units = _search_units(f"{document.metadata.get('title', '')}{document.page_content}")
-    overlap = query_units & document_units
-    return len(overlap) / len(query_units)
+def _lexical_tokens(text: str) -> list[str]:
+    """Segment Chinese text while preserving ASCII words, numbers and identifiers."""
+    tokens = [
+        token.lower()
+        for segment in jieba.lcut(text)
+        for token in re.findall(r"[\u4e00-\u9fff]+|[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*", segment)
+    ]
+    tokens.extend(
+        identifier.lower()
+        for identifier in re.findall(r"[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)+", text)
+    )
+    return tokens
 
 
 class PolicyKnowledgeBase:
@@ -138,20 +144,20 @@ class PolicyKnowledgeBase:
         embedding: Embeddings | None = None,
         relevance_threshold: float = 0.50,
         lexical_weight: float = 1.0,
-        lexical_threshold: float = 0.30,
     ) -> None:
-        if not 0 <= relevance_threshold <= 1 or not 0 <= lexical_threshold <= 1:
-            raise ValueError("Relevance thresholds must be in [0, 1]")
+        if not 0 <= relevance_threshold <= 1:
+            raise ValueError("relevance_threshold must be in [0, 1]")
         if not 0 <= lexical_weight <= 1:
             raise ValueError("lexical_weight must be in [0, 1]")
         self.lexical_weight = lexical_weight
-        self.lexical_threshold = lexical_threshold
         self.policy_path = policy_path
         self.persist_directory = persist_directory
         self.embedding = embedding or FastEmbedChineseEmbeddings()
         self.relevance_threshold = relevance_threshold
         self._store: Chroma | None = None
         self._chunks: list[Document] | None = None
+        self._bm25: BM25L | None = None
+        self._lexical_fingerprint: str | None = None
 
     @property
     def manifest_path(self) -> Path:
@@ -167,6 +173,7 @@ class PolicyKnowledgeBase:
             "chunks": [document.metadata["chunk_id"] for document in chunks],
             "embedding": type(self.embedding).__name__,
             "model": getattr(self.embedding, "model_name", "injected"),
+            "lexical_index": LEXICAL_INDEX_VERSION,
         }
         encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True).encode()
         return hashlib.sha256(encoded).hexdigest()
@@ -182,7 +189,10 @@ class PolicyKnowledgeBase:
 
     def ensure_index(self, force_rebuild: bool = False) -> int:
         """Build the vector index only when the source/configuration changed."""
-        chunks = load_policy_chunks(self.policy_path)
+        chunks = [
+            chunk for chunk in load_policy_chunks(self.policy_path)
+            if chunk.metadata["is_retrievable"]
+        ]
         fingerprint = self._source_fingerprint(chunks)
         manifest: dict[str, Any] = {}
         if self.manifest_path.exists():
@@ -211,6 +221,13 @@ class PolicyKnowledgeBase:
                 encoding="utf-8",
             )
         self._chunks = chunks
+        if self._bm25 is None or self._lexical_fingerprint != fingerprint:
+            corpus = [
+                _lexical_tokens(f"{document.metadata.get('title', '')} {document.page_content}")
+                for document in chunks
+            ]
+            self._bm25 = BM25L(corpus)
+            self._lexical_fingerprint = fingerprint
         return len(chunks)
 
     def _dense_ranking(self, query: str, limit: int) -> list[tuple[Document, float]]:
@@ -218,11 +235,74 @@ class PolicyKnowledgeBase:
             raise RuntimeError("ensure_index must run before search")
         return self._store.similarity_search_with_relevance_scores(query, k=limit)
 
-    def _lexical_ranking(self, query: str) -> list[tuple[Document, float]]:
-        if self._chunks is None:
+    def _lexical_ranking(self, query: str, limit: int) -> list[tuple[Document, float]]:
+        if self._chunks is None or self._bm25 is None:
             raise RuntimeError("ensure_index must run before search")
-        scored = [(document, _lexical_score(query, document)) for document in self._chunks]
-        return sorted(scored, key=lambda item: item[1], reverse=True)
+        scores = self._bm25.get_scores(_lexical_tokens(query))
+        scored = [
+            (document, float(score))
+            for document, score in zip(self._chunks, scores)
+            if score > 0
+        ]
+        return sorted(scored, key=lambda item: item[1], reverse=True)[:limit]
+
+    def search_reranked_hybrid(
+        self, query: str, top_k: int = 3, reranker: Any | None = None
+    ) -> list[dict[str, Any]]:
+        """Rerank the union of Dense Top-3 and positive BM25 Top-3."""
+        if not 1 <= top_k <= MAX_RESULTS:
+            raise ValueError("top_k must be between 1 and 3")
+        if not query.strip():
+            return []
+        self.ensure_index()
+        fetch_k = min(RETRIEVAL_CANDIDATES, len(self._chunks or []))
+        candidates: dict[str, dict[str, Any]] = {}
+        for rank, (document, relevance) in enumerate(self._dense_ranking(query, fetch_k), 1):
+            if relevance < self.relevance_threshold:
+                continue
+            chunk_id = str(document.metadata["chunk_id"])
+            candidates[chunk_id] = {
+                "chunk_id": chunk_id,
+                "source": str(document.metadata["source"]),
+                "title": str(document.metadata["title"]),
+                "content": document.page_content,
+                "dense_rank": rank,
+                "dense_relevance": float(relevance),
+                "lexical_rank": None,
+                "lexical_score": None,
+            }
+        for rank, (document, lexical_score) in enumerate(self._lexical_ranking(query, fetch_k), 1):
+            if lexical_score <= 0:
+                continue
+            chunk_id = str(document.metadata["chunk_id"])
+            if chunk_id in candidates:
+                candidates[chunk_id]["lexical_rank"] = rank
+                candidates[chunk_id]["lexical_score"] = float(lexical_score)
+            else:
+                candidates[chunk_id] = {
+                    "chunk_id": chunk_id,
+                    "source": str(document.metadata["source"]),
+                    "title": str(document.metadata["title"]),
+                    "content": document.page_content,
+                    "dense_rank": None,
+                    "dense_relevance": None,
+                    "lexical_rank": rank,
+                    "lexical_score": float(lexical_score),
+                }
+        ordered = list(candidates.values())
+        if not ordered:
+            return []
+        if reranker is None:
+            from evaluation.rerank import get_reranker
+
+            reranker = get_reranker()
+        scores = reranker.score(query, [f"{row['title']}\n{row['content']}" for row in ordered])
+        if len(scores) != len(ordered):
+            raise ValueError("Reranker returned an unexpected number of scores")
+        for row, score in zip(ordered, scores, strict=True):
+            row["score"] = float(score)
+        ordered.sort(key=lambda row: (-row["score"], row["chunk_id"]))
+        return ordered[:top_k]
 
     def search(
         self,
@@ -234,14 +314,16 @@ class PolicyKnowledgeBase:
         """Retrieve chunks, fuse rankings, and reject insufficiently relevant results."""
         if top_k < 1:
             raise ValueError("top_k must be positive")
+        if top_k > MAX_RESULTS:
+            raise ValueError("top_k must not exceed 3")
         if method not in ("dense", "lexical", "hybrid"):
             raise ValueError("Unknown retrieval method")
         if not query.strip():
             return []
         self.ensure_index()
-        fetch_k = min(max(top_k * 3, 5), len(self._chunks or []))
+        fetch_k = min(RETRIEVAL_CANDIDATES, len(self._chunks or []))
         dense = self._dense_ranking(query, fetch_k) if method in ("dense", "hybrid") else []
-        lexical = self._lexical_ranking(query) if method in ("lexical", "hybrid") else []
+        lexical = self._lexical_ranking(query, fetch_k) if method in ("lexical", "hybrid") else []
 
         scores: dict[str, float] = {}
         documents: dict[str, Document] = {}
@@ -266,13 +348,7 @@ class PolicyKnowledgeBase:
                 documents[chunk_id] = document
                 lexical_ranks[chunk_id] = rank
                 lexical_scores[chunk_id] = lexical_score
-                # A single accidental bigram (for example "处理") should not
-                # override a strong semantic match from the dense retriever.
-                lexical_weight = (
-                    1.0
-                    if method == "lexical"
-                    else self.lexical_weight * min(1.0, lexical_score * 2)
-                )
+                lexical_weight = 1.0 if method == "lexical" else self.lexical_weight
                 scores[chunk_id] = scores.get(chunk_id, 0.0) + lexical_weight / (10 + rank)
 
         ordered_ids = sorted(scores, key=lambda chunk_id: scores[chunk_id], reverse=True)
@@ -281,7 +357,7 @@ class PolicyKnowledgeBase:
                 chunk_id
                 for chunk_id in ordered_ids
                 if dense_relevance.get(chunk_id, float("-inf")) >= self.relevance_threshold
-                or lexical_scores.get(chunk_id, 0.0) >= self.lexical_threshold
+                or lexical_scores.get(chunk_id, 0.0) > 0
             ]
         ordered_ids = ordered_ids[:top_k]
         return [
@@ -307,4 +383,12 @@ class PolicyKnowledgeBase:
 @lru_cache(maxsize=1)
 def get_policy_knowledge_base() -> PolicyKnowledgeBase:
     """Reuse one model and Chroma client for all requests in this process."""
-    return PolicyKnowledgeBase()
+    policy_override = os.getenv("ORDERCARE_EVAL_POLICY_PATH")
+    index_override = os.getenv("ORDERCARE_EVAL_CHROMA_PATH")
+    if bool(policy_override) != bool(index_override):
+        raise ValueError("Evaluation policy and Chroma paths must be set together")
+    if policy_override and index_override:
+        return PolicyKnowledgeBase(
+            policy_path=Path(policy_override), persist_directory=Path(index_override)
+        )
+    return PolicyKnowledgeBase(policy_path=DEFAULT_SERVING_POLICY_PATH)

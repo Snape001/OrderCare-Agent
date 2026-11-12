@@ -1,7 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 from types import SimpleNamespace
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from fastapi import FastAPI
@@ -56,6 +56,42 @@ async def test_default_memory_starts_with_service_and_checks_dependencies(monkey
     memory.setup.assert_awaited_once()
     memory.close.assert_awaited_once()
     assert get_compactor() is None
+
+
+@pytest.mark.asyncio
+async def test_lifespan_configures_intent_cache_after_memory_setup(monkeypatch) -> None:
+    from service import service
+
+    @asynccontextmanager
+    async def component():
+        yield object()
+
+    redis = object()
+    memory = SimpleNamespace(setup=AsyncMock(), close=AsyncMock(), redis=redis)
+    configure = Mock()
+    reset = Mock()
+
+    monkeypatch.setattr(service.settings, "MEMORY_ENABLED", True)
+    monkeypatch.setattr(service.settings, "EPISODIC_MEMORY_ENABLED", False)
+    monkeypatch.setattr(service.settings, "INTENT_CACHE_ENABLED", True)
+    monkeypatch.setattr(service.settings, "REDIS_URL", "redis://127.0.0.1:6379/15")
+    monkeypatch.setattr(service, "initialize_database", component)
+    monkeypatch.setattr(service, "initialize_store", component)
+    monkeypatch.setattr(service, "get_all_agent_info", lambda: [])
+    monkeypatch.setattr(service, "LayeredMemory", lambda *args: memory)
+    monkeypatch.setattr(service, "configure_intent_cache", configure)
+    monkeypatch.setattr(service, "reset_intent_cache", reset)
+
+    async with service.lifespan(FastAPI()):
+        pass
+
+    configure.assert_called_once_with(
+        redis,
+        ttl=service.settings.INTENT_CACHE_TTL_SECONDS,
+        timeout=service.settings.INTENT_CACHE_TIMEOUT_SECONDS,
+    )
+    assert reset.call_count >= 1
+    memory.close.assert_awaited_once()
 
 
 @pytest.mark.asyncio

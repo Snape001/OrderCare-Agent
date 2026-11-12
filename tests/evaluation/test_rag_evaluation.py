@@ -40,6 +40,7 @@ def case(abstain=False):
 def test_known_graded_metrics():
     m = retrieval_metrics(case(), [hit("X"), hit("B")], 2)
     assert m["recall"] == 0.5
+    assert m["precision"] == 0.5
     assert m["mrr"] == 0.5
     assert m["ndcg"] == pytest.approx((3 / math.log2(3)) / (7 + 3 / math.log2(3)))
     assert m["context_relevance"] == pytest.approx(1 / 3)
@@ -48,6 +49,7 @@ def test_known_graded_metrics():
 def test_perfect_ranking_and_duplicate_chunks():
     assert retrieval_metrics(case(), [hit("A"), hit("B")], 2)["ndcg"] == 1
     assert retrieval_metrics(case(), [hit("A"), hit("A"), hit("B")], 2)["recall"] == 0.5
+    assert retrieval_metrics(case(), [hit("A"), hit("A"), hit("B")], 2)["precision"] == 0.5
     assert retrieval_metrics(case(), [dict(hit("A"), source="wrong.md")], 1)["recall"] == 0
 
 
@@ -57,6 +59,7 @@ def test_empty_answerable_and_unanswerable_results():
     assert positive["retrieval_abstention_correct"] is False
     negative = retrieval_metrics(case(True), [], 2)
     assert negative["recall"] is None
+    assert negative["precision"] is None
     assert negative["retrieval_abstention_correct"] is True
     assert negative["context_relevance"] == 0
     assert retrieval_metrics(case(True), [hit("A")], 2)["retrieval_abstention_correct"] is False

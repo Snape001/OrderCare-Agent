@@ -58,7 +58,35 @@
 
 - **卡点**：早期真实 HTTP 接入曾在模型和工具已成功后仍返回 500；工单审批提示也曾被普通回复覆盖。
 - **根因与解决**：LangGraph 事件含 `updates`、`values`、`messages` 与 `__interrupt__`，不能只取最后一项并假定为最终 State。服务端优先识别审批中断，再读取有效最终值；前端过滤内部工具/思考内容，等待首个可见输出时保留计时与取消处理。
-- **验证与边界**：原始现象、修复及 HTTP 回归记录见[Bug 002](bug-002-qwen-agent-event-handling.md)；该历史案例不代表所有 Provider 的 SSE 都逐 Token 流式输出，当前 Ollama 客服路径可能只发最终可见消息。
+- **验证与边界**：原始现象、修复及 HTTP 回归记录见[Bug 002](bug-002-qwen-agent-event-handling.md)；该历史案例不代表所有 Provider 的 SSE 都逐 Token 流式输出。当前 Ollama 客服路径可能只发最终可见消息，DeepSeek 客服路径先校验完整回答，再发送可见文本。
+
+## 10. 本地初始化误触发冻结 RAG 评测
+
+- 现象：`setup_demo.cmd` 在构建 RAG 索引时调用 `evaluate_rag.py`，现行政策文件与冻结评测数据集的 SHA256 不一致，导致初始化失败。
+- 根因：索引构建与离线评测共用启动路径；冻结数据集的 Hash 校验本应只约束对应版本的评测。
+- 解决：启动初始化改为调用独立的索引构建入口；RAG 评测保留独立命令。政策正文、Ground Truth 和 SHA256 校验均未改动。
+- 验证：`tests/customer_support/test_build_rag_index.py` 覆盖索引构建入口与初始化流程。该修复仅解除启动流程对离线评测的强制依赖，不表示冻结数据集可直接用于现行政策版本。
+
+## 11. 假设性物流咨询被规划为未授权业务动作
+
+- 现象：输入“如果这个订单物流延迟，我应该怎么办？”时，Planner 增加了 Router 未授权的动作，`validate_plan` 抛出 `ValueError: Plan adds an unrequested business action`，普通咨询随之失败。
+- 根因：假设性“怎么办”与实际“检查是否延迟”在意图和动作边界上混淆；无效计划的安全校验正确拦截了动作，但异常没有转化为可用的客服回复。
+- 解决：在 `src/customer_support/routing.py` 区分政策咨询与实际物流查询；Planner 的允许动作来自 Router 结果；保留动作白名单、参数校验和 `validate_plan`。无效计划仅在安全的单意图只读场景回退，复杂或敏感操作继续要求澄清。
+- 验证：`tests/customer_support/test_routing.py` 覆盖假设性咨询、实际查询、多意图和越权动作。该回归测试使用受控模型输出，不等同于真实模型在所有措辞下都能正确分类。
+
+## 12. 主动记录售后事件误入工单工具，跨会话无法召回
+
+- 现象：身份验证后输入“我的耳机左耳没有声音的问题，请帮我记录这次售后情况”，模型调用 `create_support_ticket`；Chroma 没有可证实的新记录，新会话也无法回忆此事件。
+- 根因：`src/memory/intent.py` 早期主要匹配句首记忆指令，漏掉句尾“请帮我记录”；请求因而进入 Agent 工具选择。此前写入后缺少 read-back 证据，而且新会话检索与上下文注入仍可能因过滤规则丢失事件。
+- 解决：在 Agent 调度前识别明确的记忆请求，并与创建工单的明确意图区分。只有已有订单身份验证绑定的 `customer_id` 才可写入；通过现有 `EpisodicMemory` 接口将脱敏的用户自述事件写入独立 Chroma Collection，按同一 ID 立即读回，成功后才回复已记录。普通订单或政策咨询不自动写入。新会话重新验证身份后检索同一 Collection，并让相关事件进入 Context Manager，仍受相似度和 Token Budget 限制。明确创建工单的请求继续沿原审批链执行。
+- 验证：`tests/service/test_memory_active_recall.py` 覆盖真实 Chroma 新增记录、去重、重新打开持久化 Collection、跨会话召回及进入模型上下文；该组测试使用确定性测试 Embedding，不调用 BGE 或 DeepSeek。用户自述的历史事件作为用户报告保存，不被当作实时订单状态，后者仍以业务数据库为准。
+
+## 13. DeepSeek 工具协议文本泄漏到客服聊天框
+
+- 现象：Streamlit 消息中出现 DSML、原始工具参数等内部调用内容。
+- 根因：DeepSeek 的内部 LangGraph 更新或模型文本片段可经 SSE 作为普通 `message` 发送；展示层先前只过滤少数工具调用格式，不能覆盖 DSML 等协议标记。
+- 解决：`src/service/service.py` 对 DeepSeek 客服路径采用安全可见输出分支；`src/schema/presentation.py` 集中判定公开回答，拒绝工具协议、工具参数和内部推理标记；Streamlit 仍使用同一公开文本规则。工具执行状态可以友好呈现，但不展示原始协议。
+- 验证：`tests/service/test_customer_presentation.py` 检查 DeepSeek SSE 仅包含安全回答，`tests/app/test_streamlit_app.py` 检查 DSML 不进入聊天框。该过滤要求完整回答先通过公开性检查，因此这一路径的可见文字可能在安全校验后再发出，不能据此宣称逐 Token 实时显示。
 
 ## 当前仍需验证
 

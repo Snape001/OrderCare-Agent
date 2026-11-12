@@ -83,11 +83,16 @@ async def test_stdio_discovery_and_order_refund_calls(isolated_db: Path) -> None
 
 
 @pytest.mark.asyncio
-async def test_stdio_policy_search_uses_real_rag() -> None:
+async def test_stdio_policy_search_uses_real_rag(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "")
     tools = {tool.name: tool for tool in await load_business_mcp_tools()}
     result = await tools["search_policy"].ainvoke({"query": "七天无理由退货政策"})
     assert result["ok"] is True
     assert result["references"]
+    assert all(
+        reference["source"].replace("\\", "/").startswith("data/policies/v3/")
+        for reference in result["references"]
+    )
 
 
 @pytest.mark.asyncio

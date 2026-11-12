@@ -11,13 +11,11 @@ from time import perf_counter
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.runnables import RunnableConfig
 from pydantic import BaseModel, Field
 
 from agents import DEFAULT_AGENT, get_agent
 from core import settings
-from core.llm import get_model
 from customer_support.mcp_client import discovered_tool_names
 from customer_support.policy import POLICY_PATH, load_policy_sections, policy_files
 from customer_support.rag import (
@@ -27,9 +25,7 @@ from customer_support.rag import (
     load_policy_chunks,
 )
 from customer_support.trace import safe_plan, safe_route, safe_task_trace, safe_text
-from evaluation.llm import parse_json
-from evaluation.three_way import REWRITE_PROMPT, Rewrite, validate_rewrite
-from schema.models import DeepseekModelName
+from customer_support.query_rewrite import rewrite_policy_query
 from service.access import checkpoint_thread, session_identity
 from service.trace_store import get_trace, list_traces
 
@@ -38,7 +34,7 @@ router = APIRouter(prefix="/workbench", tags=["workbench"])
 
 class SearchDebugInput(BaseModel):
     query: str = Field(min_length=1, max_length=300)
-    top_k: int = Field(default=2, ge=1, le=10)
+    top_k: int = Field(default=3, ge=1, le=3)
     rewrite: bool = False
 
 
@@ -123,29 +119,27 @@ async def search_debug(
 ) -> dict[str, Any]:
     kb: PolicyKnowledgeBase = get_policy_knowledge_base()
     runs: list[dict[str, Any]] = []
-    for method in ("dense", "hybrid"):
+    for method in ("dense",):
         started = perf_counter()
         hits = await asyncio.to_thread(kb.search, request.query, request.top_k, method)
         runs.append({"method": method, "query": safe_text(request.query, 300), "latency_ms": round((perf_counter() - started) * 1000, 1), "hits": hits})
+    started = perf_counter()
+    hits = await asyncio.to_thread(kb.search_reranked_hybrid, request.query, request.top_k)
+    runs.append({"method": "hybrid_rerank", "query": safe_text(request.query, 300), "latency_ms": round((perf_counter() - started) * 1000, 1), "hits": hits})
     rewrite_info: dict[str, Any] | None = None
     if request.rewrite:
-        if not settings.DEEPSEEK_API_KEY:
-            raise HTTPException(status_code=409, detail="DeepSeek rewrite is not configured")
-        model = get_model(DeepseekModelName.DEEPSEEK_CHAT)
         started = perf_counter()
-        try:
-            response = await model.ainvoke([
-                SystemMessage(content=REWRITE_PROMPT), HumanMessage(content=request.query)
-            ])
-            proposed = Rewrite.model_validate(parse_json(response.content)).query
-        except Exception as exc:
-            raise HTTPException(status_code=502, detail="Query rewrite failed") from exc
-        issues = validate_rewrite(request.query, proposed)
-        effective = request.query if issues else proposed
-        rewrite_info = {"proposed": safe_text(proposed, 300), "effective": safe_text(effective, 300), "validation_issues": issues, "latency_ms": round((perf_counter() - started) * 1000, 1)}
+        effective = await asyncio.to_thread(rewrite_policy_query, request.query)
+        rewrite_info = {
+            "original": safe_text(request.query, 300),
+            "effective": safe_text(effective, 300),
+            "rewritten": effective != request.query,
+            "fallback": effective == request.query,
+            "latency_ms": round((perf_counter() - started) * 1000, 1),
+        }
         started = perf_counter()
-        hits = await asyncio.to_thread(kb.search, effective, request.top_k, "hybrid")
-        runs.append({"method": "rewrite_hybrid", "query": safe_text(effective, 300), "latency_ms": round((perf_counter() - started) * 1000, 1), "hits": hits})
+        hits = await asyncio.to_thread(kb.search_reranked_hybrid, effective, request.top_k)
+        runs.append({"method": "rewrite_hybrid_rerank", "query": safe_text(effective, 300), "latency_ms": round((perf_counter() - started) * 1000, 1), "hits": hits})
     return {"collection": "online", "top_k": request.top_k, "runs": runs, "rewrite": rewrite_info}
 
 

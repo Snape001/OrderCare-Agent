@@ -29,8 +29,7 @@ GENERATION_METRICS = (
 def digest(path: Path) -> str:
     if path.is_dir():
         payload = b"".join(
-            p.name.encode("utf-8") + b"\0" + p.read_bytes() + b"\0"
-            for p in policy_files(path)
+            p.name.encode("utf-8") + b"\0" + p.read_bytes() + b"\0" for p in policy_files(path)
         )
         return hashlib.sha256(payload).hexdigest()
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -38,6 +37,132 @@ def digest(path: Path) -> str:
 
 def document_id(hit: dict[str, Any]) -> str:
     return f"{hit['source']}#{hit.get('section', hit.get('title'))}"
+
+
+def validate_v3_case_splits(cases: list[dict[str, Any]]) -> None:
+    """Check the fixed size, style balance, and scenario-isolated v3 split."""
+    if len(cases) != 40 or sum(case["should_abstain"] for case in cases) != 8:
+        raise ValueError("v3 dataset must contain 40 cases and 8 no-answer cases")
+    styles = Counter(case["query_style"] for case in cases)
+    if styles != Counter({"formal": 20, "colloquial": 20}):
+        raise ValueError("v3 dataset must contain 20 formal and 20 colloquial queries")
+    splits = Counter(case["split"] for case in cases)
+    if splits != Counter({"dev": 20, "test": 20}):
+        raise ValueError("v3 dataset must contain 20 dev and 20 test cases")
+    group_splits: dict[str, str] = {}
+    for case in cases:
+        group = case["scenario_group"]
+        if group in group_splits and group_splits[group] != case["split"]:
+            raise ValueError("Scenario group appears in both dev and test")
+        group_splits[group] = case["split"]
+    if Counter(case["split"] for case in cases if case["should_abstain"]) != Counter(
+        {"dev": 4, "test": 4}
+    ):
+        raise ValueError("v3 dataset must contain 4 no-answer cases per split")
+    pairs: dict[str, list[dict[str, Any]]] = {}
+    for case in cases:
+        if not case.get("pair_id"):
+            raise ValueError("v3 case missing pair_id")
+        pairs.setdefault(case["pair_id"], []).append(case)
+    if len(pairs) != 20:
+        raise ValueError("v3 dataset must contain 20 pairs")
+    for pair in pairs.values():
+        if len(pair) != 2 or {case["query_style"] for case in pair} != {
+            "formal", "colloquial"
+        }:
+            raise ValueError("Each pair requires formal and colloquial queries")
+        first, second = pair
+        for key in (
+            "split", "should_abstain", "expected_answer", "expected_facts",
+            "relevant_documents", "relevance_scores", "relevant_chunks", "evidence_requirements",
+        ):
+            if first[key] != second[key]:
+                raise ValueError(f"Paired queries disagree on {key}")
+    for split in ("dev", "test"):
+        in_split = [pair for pair in pairs.values() if pair[0]["split"] == split]
+        if len(in_split) != 10 or sum(pair[0]["should_abstain"] for pair in in_split) != 2:
+            raise ValueError("Each split requires 8 answerable and 2 no-answer pairs")
+
+
+def validate_v4_case_splits(cases: list[dict[str, Any]]) -> None:
+    """Validate the 40-question, answerable v4 challenge set."""
+    if len(cases) != 40 or any(case["should_abstain"] for case in cases):
+        raise ValueError("v4 requires 40 answerable cases")
+    pairs: dict[str, list[dict[str, Any]]] = {}
+    for case in cases:
+        pairs.setdefault(case.get("pair_id", ""), []).append(case)
+    if "" in pairs or len(pairs) != 20:
+        raise ValueError("v4 requires 20 named pairs")
+    if Counter(case["split"] for case in cases) != Counter({"dev": 20, "test": 20}):
+        raise ValueError("v4 requires 20 questions per split")
+    for pair in pairs.values():
+        if len(pair) != 2 or {case.get("query_style") for case in pair} != {
+            "formal", "colloquial"
+        }:
+            raise ValueError("v4 pairs require both query styles")
+        first, second = pair
+        for key in (
+            "split", "should_abstain", "expected_answer", "expected_facts",
+            "relevant_documents", "relevance_scores", "relevant_chunks", "evidence_requirements",
+        ):
+            if first[key] != second[key]:
+                raise ValueError(f"v4 pair disagrees on {key}")
+    if Counter(pair[0]["split"] for pair in pairs.values()) != Counter(
+        {"dev": 10, "test": 10}
+    ):
+        raise ValueError("v4 requires ten pairs per split")
+    sources = {doc["source"] for case in cases for doc in case["relevant_documents"]}
+    if len(sources) < 12:
+        raise ValueError("v4 requires Gold evidence from at least 12 policy files")
+    required_categories = {
+        "order", "return", "logistics", "payment", "refund", "warranty", "repair",
+        "invoice", "promotion", "ticket", "privacy",
+    }
+    if not required_categories <= {case["category"] for case in cases}:
+        raise ValueError("v4 is missing a required policy domain")
+    if len({case["query"] for case in cases}) != len(cases):
+        raise ValueError("v4 query texts must be unique")
+
+
+def validate_v5_case_splits(cases: list[dict[str, Any]]) -> None:
+    """Validate the 25 paired, answerable cases in the v5 challenge set."""
+    if len(cases) != 50 or any(case["should_abstain"] for case in cases):
+        raise ValueError("v5 requires 50 answerable cases")
+    if len({case["query"] for case in cases}) != 50:
+        raise ValueError("v5 queries must be unique")
+    pairs: dict[str, list[dict[str, Any]]] = {}
+    for case in cases:
+        pairs.setdefault(case.get("pair_id", ""), []).append(case)
+        if case.get("scenario_group") != case.get("pair_id"):
+            raise ValueError("v5 scenario group must match pair ID")
+    if set(pairs) != {f"pair-{index:02d}" for index in range(1, 26)}:
+        raise ValueError("v5 requires pair-01 through pair-25")
+    if Counter(case["query_style"] for case in cases) != Counter(
+        {"formal": 25, "colloquial": 25}
+    ):
+        raise ValueError("v5 requires 25 queries per style")
+    for pair_id, pair in pairs.items():
+        if len(pair) != 2 or {case["query_style"] for case in pair} != {
+            "formal", "colloquial"
+        } or {case["id"] for case in pair} != {
+            f"{pair_id}-formal", f"{pair_id}-colloquial"
+        }:
+            raise ValueError("v5 pairs require formal and colloquial queries")
+        first, second = pair
+        for key in (
+            "split", "should_abstain", "expected_answer", "expected_facts",
+            "relevant_documents", "relevance_scores", "relevant_chunks", "evidence_requirements",
+        ):
+            if first[key] != second[key]:
+                raise ValueError(f"v5 pair disagrees on {key}")
+        expected_split = "dev" if int(pair_id[-2:]) <= 23 else "test"
+        if pair_id in {f"pair-{i:02d}" for i in range(21, 26)}:
+            if first["split"] != expected_split or any(
+                case.get("subset") != "rewrite_challenge" for case in pair
+            ):
+                raise ValueError("v5 new pairs require the declared split and challenge marker")
+    if Counter(case["split"] for case in cases) != Counter({"dev": 26, "test": 24}):
+        raise ValueError("v5 requires 26 dev and 24 test questions")
 
 
 def load_dataset(
@@ -51,7 +176,7 @@ def load_dataset(
         f"{s.source if policy_path.is_dir() else source}#{s.title}": s.content
         for s in load_policy_sections(policy_path)
     }
-    chunk_lookup: dict[str, tuple[str, str, str]] = {}
+    chunk_lookup: dict[str, tuple[str, str, str, bool]] = {}
     if any("relevant_chunks" in case for case in dataset.get("cases", [])):
         from customer_support.rag import load_policy_chunks
 
@@ -60,6 +185,7 @@ def load_dataset(
                 str(chunk.metadata["source"]),
                 str(chunk.metadata["title"]),
                 chunk.page_content,
+                bool(chunk.metadata["is_retrievable"]),
             )
     cases = dataset.get("cases")
     if not isinstance(cases, list) or not cases or not dataset.get("version"):
@@ -102,8 +228,19 @@ def load_dataset(
                 raise ValueError("Unknown source section or missing evidence quote")
             if doc["evidence_quote"] not in sections[key]:
                 raise ValueError("Evidence quote not found in source")
+        if (
+            dataset.get("version", "").startswith(("ordercare-rag-v3", "ordercare-rag-v4", "ordercare-rag-v5"))
+            and not {
+                "relevant_chunks",
+                "evidence_requirements",
+            }
+            <= case.keys()
+        ):
+            raise ValueError("v3 cases require relevant_chunks and evidence_requirements")
         if "relevant_chunks" in case:
             labelled = case["relevant_chunks"]
+            if len(labelled) != len({item["chunk_id"] for item in labelled}):
+                raise ValueError("Relevant chunk labels must not contain duplicates")
             if {item["chunk_id"] for item in labelled} != set(
                 case.get("evidence_requirements", {}).get("required_chunk_ids", [])
             ):
@@ -112,8 +249,30 @@ def load_dataset(
                 raise ValueError("Relevant chunks and documents disagree")
             for item in labelled:
                 found_chunk = chunk_lookup.get(item["chunk_id"])
-                if found_chunk is None or found_chunk[:2] != (item["source"], item["section"]):
+                if (found_chunk is None or found_chunk[:2] != (item["source"], item["section"])
+                    or not found_chunk[3]):
                     raise ValueError("Unknown or misplaced relevant chunk")
+                quote = next(doc["evidence_quote"] for doc in docs if document_id(doc) ==
+                             f"{item['source']}#{item['section']}")
+                if quote not in found_chunk[2]:
+                    raise ValueError("Gold evidence quote is absent from labelled chunk")
+        if dataset.get("version", "").startswith("ordercare-rag-v3"):
+            if case.get("query_style") not in {"colloquial", "formal"}:
+                raise ValueError("v3 cases require a valid query_style")
+            if not case.get("scenario_group"):
+                raise ValueError("v3 cases require a scenario_group")
+    if dataset.get("version", "").startswith("ordercare-rag-v3"):
+        validate_v3_case_splits(cases)
+    if dataset.get("version", "").startswith("ordercare-rag-v4"):
+        validate_v4_case_splits(cases)
+    if dataset.get("version", "").startswith("ordercare-rag-v5"):
+        validate_v5_case_splits(cases)
+        base_path = path.with_name("dataset-v4.json")
+        if not base_path.exists() or dataset.get("base_dataset_sha256") != digest(base_path):
+            raise ValueError("v5 base dataset checksum changed")
+        base_cases = json.loads(base_path.read_text(encoding="utf-8"))["cases"]
+        if cases[:40] != base_cases:
+            raise ValueError("v5 must preserve all v4 cases and their order")
     return dataset
 
 
@@ -137,9 +296,10 @@ def retrieval_metrics(case: dict[str, Any], hits: list[dict[str, Any]], k: int) 
     grades = case["relevance_scores"]
     gains = [grades.get(document_id(hit), 0) for hit in ranked]
     if case["should_abstain"]:
-        recall = mrr = ndcg = None
+        recall = precision = mrr = ndcg = None
     else:
         recall = sum(g > 0 for g in gains) / len(grades)
+        precision = sum(g > 0 for g in gains) / k
         mrr = next((1 / i for i, g in enumerate(gains, 1) if g > 0), 0.0)
         dcg = sum((2**g - 1) / math.log2(i + 1) for i, g in enumerate(gains, 1))
         ideal = sorted(grades.values(), reverse=True)[:k]
@@ -147,6 +307,7 @@ def retrieval_metrics(case: dict[str, Any], hits: list[dict[str, Any]], k: int) 
         ndcg = dcg / idcg
     return {
         "recall": recall,
+        "precision": precision,
         "mrr": mrr,
         "ndcg": ndcg,
         "context_relevance": statistics.mean(g / 3 for g in gains) if gains else 0.0,
@@ -192,7 +353,7 @@ def summarize(rows: list[dict[str, Any]], k: int) -> dict[str, Any]:
                     if r["retrieval"][label][metric] is not None
                 ]
             )
-            for metric in ("recall", "mrr", "ndcg", "context_relevance")
+            for metric in ("recall", "precision", "mrr", "ndcg", "context_relevance")
         }
     summary["retrieval_abstention_accuracy"] = mean(
         [float(r["retrieval"][str(k)]["retrieval_abstention_correct"]) for r in good]
@@ -244,7 +405,16 @@ def evaluate(
     for case in cases:
         row: dict[str, Any] = {
             key: case[key]
-            for key in ("id", "query", "category", "split", "should_abstain", "expected_answer")
+            for key in (
+                "id",
+                "query",
+                "query_style",
+                "category",
+                "split",
+                "should_abstain",
+                "expected_answer",
+            )
+            if key in case
         }
         row.update(
             status="ok",
@@ -285,7 +455,7 @@ def evaluate(
             row["error_type"] = type(exc).__name__
             row["failures"] = ["retrieval_or_evaluation_error"]
         rows.append(row)
-    return {
+    result = {
         "method": method,
         "summary": summarize(rows, top_k),
         "splits": {
@@ -294,17 +464,29 @@ def evaluate(
         },
         "cases": rows,
     }
+    styles = sorted({str(case["query_style"]) for case in cases if case.get("query_style")})
+    if styles:
+        result["query_styles"] = {
+            style: summarize([row for row in rows if row.get("query_style") == style], top_k)
+            for style in styles
+        }
+    return result
 
 
 def metadata(dataset_path: Path, configuration: dict[str, Any]) -> dict[str, Any]:
+    configured_policy = configuration.get("policy")
+    policy_path = Path(configured_policy) if isinstance(configured_policy, str) else POLICY_PATH
     files = [
         dataset_path,
-        POLICY_PATH,
+        policy_path,
         Path("uv.lock"),
         Path("src/customer_support/rag.py"),
         Path("src/evaluation/rag.py"),
         Path("src/evaluation/llm.py"),
+        Path("src/evaluation/three_way.py"),
         Path("scripts/evaluate_rag.py"),
+        Path("scripts/evaluate_three_way_rag.py"),
+        Path("scripts/build_rag_v3.py"),
         Path("src/evaluation/experiments.py"),
     ]
     model_files = sorted(Path("data/models").rglob("*.onnx"))
@@ -334,9 +516,9 @@ def markdown(report: dict[str, Any]) -> str:
         f"Dataset: `{report['dataset_version']}`; K={k}.",
         "",
         "Retrieval metrics use source + section labels; generation metrics are separate.",
-        "Empty-context relevance is 0; no-answer queries are excluded from Recall/MRR/nDCG.",
+        "Empty-context relevance is 0; no-answer queries are excluded from Recall/Precision/MRR/nDCG.",
         "",
-        "| Method / split | Recall | MRR | nDCG | Context relevance | No-answer rejection | P95 ms | Errors |",
+        "| Method / split | Recall | Precision | MRR | nDCG | Context relevance | No-answer rejection | P95 ms | Errors |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
 
@@ -348,6 +530,7 @@ def markdown(report: dict[str, Any]) -> str:
             m = s[f"at_{k}"]
             values = [
                 m["recall"],
+                m["precision"],
                 m["mrr"],
                 m["ndcg"],
                 m["context_relevance"],

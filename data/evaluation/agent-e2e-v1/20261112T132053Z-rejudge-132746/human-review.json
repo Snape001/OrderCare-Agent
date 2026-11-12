@@ -1,0 +1,44 @@
+{
+  "reviewer": "开发助手人工复核；非外部独立标注员",
+  "method": "逐题查看用户输入、最终答复、工具结果、确认中断和数据库状态，并与用例事实核对",
+  "cases": [
+    {
+      "id": "agent-e2e-001",
+      "category": "policy_qa",
+      "judge_agreement": true,
+      "finding": "答复覆盖七天起算、拆封条件及申请不等于审核通过；检索只命中两处标注章节中的一处，回答仍有足够政策依据。"
+    },
+    {
+      "id": "agent-e2e-005",
+      "category": "order_lookup",
+      "judge_agreement": true,
+      "finding": "订单工具核验尾号后返回运输中、无线耳机和未签收；答复未编造实时轨迹。"
+    },
+    {
+      "id": "agent-e2e-009",
+      "category": "refund_eligibility",
+      "judge_agreement": true,
+      "finding": "资格工具返回可退及订单条件；答复区分资格核验与实际退款，数据库未发生写入。"
+    },
+    {
+      "id": "agent-e2e-014",
+      "category": "multi_step",
+      "judge_agreement": true,
+      "finding": "按订单、资格、条件政策的顺序调用；答复区分无理由期限与质量售后核验。"
+    },
+    {
+      "id": "agent-e2e-017",
+      "category": "ticket_approval",
+      "judge_agreement": true,
+      "finding": "确认前工单数为零、模拟批准后恰好新增一张；最终答复遗漏用例要求的12小时响应目标，判失败。"
+    },
+    {
+      "id": "agent-e2e-018",
+      "category": "ticket_approval",
+      "judge_agreement": true,
+      "finding": "确认请求展示工单类别和摘要，批准后新增一张质量售后工单；答复保留故障仍待核验的边界。"
+    }
+  ],
+  "disagreements": [],
+  "limitations": "复核者可看到同一用例标准，且未由外部人员盲审；同模型 DeepSeek Judge 的系统性偏差仍不能排除。"
+}

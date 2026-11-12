@@ -1,0 +1,56 @@
+{
+  "dataset_sha256": "7ed665537c9373f64a0ce2753facfc9e08688810771f2728f80ac6120a395d34",
+  "policy_sha256": "2ce5dec6945d06301e8484c65b0feef54e6b76c857b57316fcd5d528a7e2e2a9",
+  "agent_model": "deepseek-flash",
+  "judge_model": "deepseek-flash",
+  "same_model_judge": true,
+  "case_count": 20,
+  "passed": 18,
+  "judge_valid": 20,
+  "tool_flow_passed": 19,
+  "exact_tool_sequence": 14,
+  "retrieval_cases": 8,
+  "retrieval_answerable": 7,
+  "retrieval_tool_called": 8,
+  "policy_recall_at_3": 0.5714285714285714,
+  "judge_passed": 19,
+  "agent_tokens": 66237,
+  "judge_tokens": 22199,
+  "mean_agent_latency_ms": 8940.95,
+  "mean_judge_latency_ms": 1201.8899999999999,
+  "by_category": {
+    "multi_step": {
+      "total": 4,
+      "passed": 3,
+      "judge_valid": 4
+    },
+    "order_lookup": {
+      "total": 4,
+      "passed": 4,
+      "judge_valid": 4
+    },
+    "policy_qa": {
+      "total": 4,
+      "passed": 4,
+      "judge_valid": 4
+    },
+    "refund_eligibility": {
+      "total": 4,
+      "passed": 4,
+      "judge_valid": 4
+    },
+    "ticket_approval": {
+      "total": 4,
+      "passed": 3,
+      "judge_valid": 4
+    }
+  },
+  "failed_ids": [
+    "agent-e2e-015",
+    "agent-e2e-017"
+  ],
+  "source_run": "data\\evaluation\\agent-e2e-v1\\20261112T132053Z",
+  "declared_policy_sha256": "2dc2ad925f512830024680772ae5cfc9116504276036e28f7d27ad6d5d39a95f",
+  "corpus_drift_accepted": true,
+  "completed_at": "2026-11-12T13:28:11.609199+00:00"
+}

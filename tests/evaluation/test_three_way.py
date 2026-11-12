@@ -3,9 +3,13 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
+
+sys.path.insert(0, str(Path("scripts").resolve()))
+from evaluate_three_way_rag import latency_summary, rewrite_summary  # noqa: E402
 
 from customer_support.policy import POLICY_PATH
 from evaluation.three_way import (
@@ -62,3 +66,20 @@ def test_cache_save_retries_temporary_windows_lock(tmp_path: Path, monkeypatch: 
     save_json(path, {"version": 2})
     assert attempts == 3
     assert json.loads(path.read_text(encoding="utf-8")) == {"version": 2}
+
+
+def test_rewrite_usage_and_latency_accounting_preserves_missing_usage() -> None:
+    summary = rewrite_summary([
+        {"case_id": "one", "status": "ok", "validation_issues": [],
+         "usage": {"input_tokens": 10, "output_tokens": 3}, "latency_ms": 100},
+        {"case_id": "two", "status": "error", "validation_issues": [],
+         "usage": None, "latency_ms": 250},
+    ])
+    assert summary["requests"] == 2
+    assert summary["successful_requests"] == 1
+    assert summary["api_errors"] == 1
+    assert summary["input_tokens"] is None
+    assert summary["output_tokens"] is None
+    assert summary["usage_missing_cases"] == ["two"]
+    assert summary["latency"] == {"total_ms": 350, "mean_ms": 175, "p95_ms": 250}
+    assert latency_summary([100, 250])["total_ms"] == 350

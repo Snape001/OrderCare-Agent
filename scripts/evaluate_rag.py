@@ -28,11 +28,10 @@ def main() -> int:
         choices=["lexical", "dense", "hybrid"],
         default=["lexical", "dense", "hybrid"],
     )
-    parser.add_argument("--top-k", type=int, default=2)
+    parser.add_argument("--top-k", type=int, default=3)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--threshold", type=float, default=0.50)
     parser.add_argument("--lexical-weight", type=float, default=1.0)
-    parser.add_argument("--lexical-threshold", type=float, default=0.30)
     parser.add_argument("--expand-query", action="store_true")
     parser.add_argument("--split", choices=["all", "dev", "test"], default="all")
     parser.add_argument("--rebuild", action="store_true")
@@ -48,8 +47,8 @@ def main() -> int:
         parser.error(
             "Legacy combined evaluation requires --judge; use evaluate_rag_generation.py for generation-only"
         )
-    if args.top_k < 1 or args.repeats < 1 or not 0 <= args.threshold <= 1:
-        parser.error("Positive top-k/repeats and threshold in [0,1] required")
+    if not 1 <= args.top_k <= 3 or args.repeats < 1 or not 0 <= args.threshold <= 1:
+        parser.error("Top-k in [1,3], positive repeats and threshold in [0,1] required")
     dataset = load_dataset(args.cases)
     cases = [c for c in dataset["cases"] if args.split == "all" or c["split"] == args.split]
     if not cases:
@@ -64,7 +63,6 @@ def main() -> int:
         persist_directory=args.index,
         relevance_threshold=args.threshold,
         lexical_weight=args.lexical_weight,
-        lexical_threshold=args.lexical_threshold,
     )
     started = time.perf_counter()
     count = kb.ensure_index(force_rebuild=args.rebuild)
@@ -92,7 +90,6 @@ def main() -> int:
         "top_k": args.top_k,
         "repeats": args.repeats,
         "threshold": args.threshold,
-        "lexical_threshold": args.lexical_threshold,
         "lexical_weight": args.lexical_weight,
         "query_expansion": EXPANSION_VERSION if args.expand_query else None,
         "methods": args.methods,
@@ -101,7 +98,7 @@ def main() -> int:
         "embedding_threads": 2,
         "chunk_size": 220,
         "chunk_overlap": 40,
-        "fusion": "dense 1/(10+r); lexical min(1,2*s)/(10+r)",
+        "fusion": "dense 1/(10+r); BM25 lexical_weight/(10+r)",
         "index": args.index.as_posix(),
         "chunk_count": count,
         "index_init_ms": build_ms,

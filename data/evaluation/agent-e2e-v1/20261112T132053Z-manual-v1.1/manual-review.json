@@ -1,0 +1,24 @@
+{
+  "method": "开发助手人工复核原用户目标、工具结果、确认中断、最终答复与数据库状态；只修正过严的用例预期，不重跑 Agent 或 Judge",
+  "source_dataset": "data/evaluation/agent-e2e-cases-v1.json",
+  "revised_dataset": "data/evaluation/agent-e2e-cases-v1.1.json",
+  "source_result": "data/evaluation/agent-e2e-v1/20261112T132053Z-rejudge-132746",
+  "changes": [
+    {
+      "id": "agent-e2e-015",
+      "old_result": "fail",
+      "new_result": "pass",
+      "reason": "用户只要求核验退货资格及银行卡退款时效，未要求单独查询订单状态。check_refund_eligibility 的真实返回已包含 ORD1002 状态、签收天数和商品状况；再次调用 get_order_status 是冗余步骤。原 Judge 对全部四项答复事实均判正确，且无退款写入。",
+      "rubric_change": "预期工具顺序删除 get_order_status，保留 check_refund_eligibility 后接 search_policy。"
+    },
+    {
+      "id": "agent-e2e-017",
+      "old_result": "fail",
+      "new_result": "pass",
+      "reason": "用户要求创建物流异常工单，未询问响应时效。真实轨迹显示身份核验成功、确认前无写入、模拟批准后只创建一张工单并返回编号；答复未声称包裹已找到。原 Judge 的前三项事实均判正确，仅第4项额外的12小时目标为 false。",
+      "rubric_change": "删除未被用户请求的12小时响应目标必答事实，以及仅针对该目标的禁止行为。"
+    }
+  ],
+  "corpus_revision": "用例声明哈希从旧值更新为本次实际检索的 v3 语料哈希；36篇政策与全部引用章节未改动。",
+  "interpretation": "20/20 是对同一次 Agent 运行按 v1.1 用例标准的事后复核结果，原 v1 自动评分 18/20 保留；不应描述为模型优化带来的提升。"
+}

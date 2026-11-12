@@ -36,6 +36,7 @@ from agents import DEFAULT_AGENT, AgentGraph, get_agent, get_all_agent_info, loa
 from core import settings
 from customer_support.confirmation import is_explicit_approval
 from customer_support.errors import CustomerSupportModelError
+from customer_support.intent_cache import configure_intent_cache, reset_intent_cache
 from customer_support.trace import TraceCollector, safe_args, safe_text, trace_scope
 from memory import initialize_database, initialize_store
 from memory.compaction import AutomaticCompactor, set_compactor
@@ -203,6 +204,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Configurable lifespan that initializes the appropriate database checkpointer, store,
     and agents with async loading - for example for starting up MCP clients.
     """
+    reset_intent_cache()
     try:
         # Initialize both checkpointer (for short-term memory) and store (for long-term memory)
         async with initialize_database() as saver, initialize_store() as store:
@@ -248,6 +250,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                     await memory.close()
                     raise
                 app.state.layered_memory = memory
+                if settings.INTENT_CACHE_ENABLED:
+                    configure_intent_cache(
+                        getattr(memory, "redis", None),
+                        ttl=settings.INTENT_CACHE_TTL_SECONDS,
+                        timeout=settings.INTENT_CACHE_TIMEOUT_SECONDS,
+                    )
                 set_compactor(
                     AutomaticCompactor(
                         memory,
@@ -282,6 +290,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                 yield
             finally:
                 set_compactor(None)
+                reset_intent_cache()
                 if app.state.layered_memory is not None:
                     await app.state.layered_memory.close()
     except Exception:

@@ -137,7 +137,7 @@ def _timestamp(value: str | None) -> str:
 
 
 def render_knowledge(client: AgentClient) -> None:
-    heading("知识库管理", "查看售后政策文档，并独立测试知识检索效果。")
+    heading("知识库管理", "查看售后政策，并对比 Dense、混合重排及查询重写后的检索结果。")
     data = _get(client, "policies")
     if not data:
         return
@@ -151,7 +151,7 @@ def render_knowledge(client: AgentClient) -> None:
     metrics[3].metric("线上向量索引", "已建立" if index else "未建立")
 
     st.subheader("政策文档")
-    st.caption("线上政策与实验语料分开展示；下方检索使用线上政策。")
+    st.caption("下方调试使用线上政策。默认策略为 Query 重写 + Dense/BM25 候选合并 + 本地重排，最终返回 Top-3。")
     for document in documents:
         source = str(document.get("source", ""))
         with st.container(border=True):
@@ -183,8 +183,8 @@ def render_knowledge(client: AgentClient) -> None:
     st.subheader("RAG 检索调试")
     with st.form("rag_debug"):
         query = st.text_input("检索问题", placeholder="例如：七天无理由退货需要满足什么条件？")
-        top_k = st.slider("返回结果数 Top-K", 1, 10, 2)
-        rewrite = st.checkbox("同时运行 Rewrite + Hybrid（调用 DeepSeek）")
+        top_k = st.slider("最终返回数量 Top-K", 1, 3, 3)
+        rewrite = st.checkbox("同时运行线上默认方案：Rewrite + Hybrid 重排（可能调用 DeepSeek）")
         submitted = st.form_submit_button("运行检索", type="primary", icon=":material/search:")
     if submitted:
         if not query.strip():
@@ -200,16 +200,27 @@ def render_knowledge(client: AgentClient) -> None:
     if isinstance(result, dict):
         rewrite_info = result.get("rewrite")
         if rewrite_info:
-            st.caption(f"改写查询：{rewrite_info.get('effective', '')}")
-            if rewrite_info.get("validation_issues"):
-                st.warning("改写未通过约束校验，已使用原始 Query。")
+            st.caption(
+                f"原问题：{rewrite_info.get('original', '')} · "
+                f"有效 Query：{rewrite_info.get('effective', '')} · "
+                f"改写耗时 {rewrite_info.get('latency_ms', 0)} ms"
+            )
+            if rewrite_info.get("fallback"):
+                st.info("本次使用原问题继续检索（改写未生效或发生回退）。")
         runs = result.get("runs", [])
         if runs:
-            labels = {"dense": "Direct", "hybrid": "Hybrid", "rewrite_hybrid": "Rewrite + Hybrid"}
+            labels = {
+                "dense": "Dense 基线",
+                "hybrid_rerank": "Hybrid 重排",
+                "rewrite_hybrid_rerank": "Rewrite + Hybrid 重排",
+            }
             tabs = st.tabs([labels.get(run.get("method"), "检索") for run in runs])
             for tab, run in zip(tabs, runs, strict=True):
                 with tab:
-                    st.caption(f"Query：{run.get('query', '')} · 检索耗时 {run.get('latency_ms', 0)} ms")
+                    st.caption(
+                        f"Query：{run.get('query', '')} · 检索与重排耗时 "
+                        f"{run.get('latency_ms', 0)} ms"
+                    )
                     if not run.get("hits"):
                         st.info("未找到足够相关的政策内容。")
                     for rank, hit in enumerate(run.get("hits", []), 1):

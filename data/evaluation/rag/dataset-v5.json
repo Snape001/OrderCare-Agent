@@ -1,0 +1,1919 @@
+{
+  "version": "ordercare-rag-v5.0",
+  "policy_sha256": "2ce5dec6945d06301e8484c65b0feef54e6b76c857b57316fcd5d528a7e2e2a9",
+  "base_dataset_sha256": "66abba3a25db3356cce77a6c8ba8e526f10a2f57aef26a23df7cfd6fce282c47",
+  "annotation_method": "Evidence-first paired challenge set; new query variants screened against retrieval results.",
+  "split_rule": "v4 first 40 frozen; three new pairs in dev, two in test. New pairs are performance-screened, not an unbiased holdout.",
+  "cases": [
+    {
+      "id": "pair-01-formal",
+      "pair_id": "pair-01",
+      "query": "申请保修时缺少购买凭证，应如何处理？",
+      "query_style": "formal",
+      "scenario_group": "pair-01",
+      "split": "dev",
+      "category": "warranty",
+      "should_abstain": false,
+      "expected_answer": "缺少凭证时先核对订单，不直接承诺免费维修。",
+      "expected_facts": [
+        "缺少凭证时先核对订单，不直接承诺免费维修。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/warranty.md",
+          "section": "保修起算与凭证",
+          "evidence_quote": "缺少凭证时先核对订单，不直接承诺免费维修。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/warranty.md#保修起算与凭证": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/warranty.md",
+          "section": "保修起算与凭证",
+          "chunk_id": "a26cbd9c8072499e"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "a26cbd9c8072499e"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-01-colloquial",
+      "pair_id": "pair-01",
+      "query": "保修缺少凭证怎么处理？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-01",
+      "split": "dev",
+      "category": "warranty",
+      "should_abstain": false,
+      "expected_answer": "缺少凭证时先核对订单，不直接承诺免费维修。",
+      "expected_facts": [
+        "缺少凭证时先核对订单，不直接承诺免费维修。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/warranty.md",
+          "section": "保修起算与凭证",
+          "evidence_quote": "缺少凭证时先核对订单，不直接承诺免费维修。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/warranty.md#保修起算与凭证": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/warranty.md",
+          "section": "保修起算与凭证",
+          "chunk_id": "a26cbd9c8072499e"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "a26cbd9c8072499e"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-02-formal",
+      "pair_id": "pair-02",
+      "query": "电子发票发送失败时，应如何核对状态并获取发票？",
+      "query_style": "formal",
+      "scenario_group": "pair-02",
+      "split": "dev",
+      "category": "invoice",
+      "should_abstain": false,
+      "expected_answer": "分别核对申请、开具和发送状态，电子发票按订单页入口获取。",
+      "expected_facts": [
+        "分别核对申请、开具和发送状态，电子发票按订单页入口获取。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/invoice-status.md",
+          "section": "核心规则",
+          "evidence_quote": "订单页显示的申请状态、开具状态和发送状态分别核对；电子发票按页面提供的入口获取。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/invoice-status.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/invoice-status.md",
+          "section": "核心规则",
+          "chunk_id": "8a95ff3d212c6a8e"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "8a95ff3d212c6a8e"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-02-colloquial",
+      "pair_id": "pair-02",
+      "query": "电子发票没发到，页面上去哪儿拿？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-02",
+      "split": "dev",
+      "category": "invoice",
+      "should_abstain": false,
+      "expected_answer": "分别核对申请、开具和发送状态，电子发票按订单页入口获取。",
+      "expected_facts": [
+        "分别核对申请、开具和发送状态，电子发票按订单页入口获取。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/invoice-status.md",
+          "section": "核心规则",
+          "evidence_quote": "订单页显示的申请状态、开具状态和发送状态分别核对；电子发票按页面提供的入口获取。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/invoice-status.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/invoice-status.md",
+          "section": "核心规则",
+          "chunk_id": "8a95ff3d212c6a8e"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "8a95ff3d212c6a8e"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-03-formal",
+      "pair_id": "pair-03",
+      "query": "同一工单请求重复提交时，会创建新工单吗？",
+      "query_style": "formal",
+      "scenario_group": "pair-03",
+      "split": "dev",
+      "category": "ticket",
+      "should_abstain": false,
+      "expected_answer": "同一个幂等键只创建一张工单，重复请求返回原编号。",
+      "expected_facts": [
+        "同一个幂等键只创建一张工单，重复请求返回原编号。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/tickets.md",
+          "section": "重复提交与幂等",
+          "evidence_quote": "同一个幂等键只能创建一张工单，重复请求返回原工单编号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/tickets.md#重复提交与幂等": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/tickets.md",
+          "section": "重复提交与幂等",
+          "chunk_id": "4ef559eb4f929a2c"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "4ef559eb4f929a2c"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-03-colloquial",
+      "pair_id": "pair-03",
+      "query": "同一个工单点了两次提交怎么办？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-03",
+      "split": "dev",
+      "category": "ticket",
+      "should_abstain": false,
+      "expected_answer": "同一个幂等键只创建一张工单，重复请求返回原编号。",
+      "expected_facts": [
+        "同一个幂等键只创建一张工单，重复请求返回原编号。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/tickets.md",
+          "section": "重复提交与幂等",
+          "evidence_quote": "同一个幂等键只能创建一张工单，重复请求返回原工单编号。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/tickets.md#重复提交与幂等": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/tickets.md",
+          "section": "重复提交与幂等",
+          "chunk_id": "4ef559eb4f929a2c"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "4ef559eb4f929a2c"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-04-formal",
+      "pair_id": "pair-04",
+      "query": "订单尚未拣货时，如何申请修改商品数量？",
+      "query_style": "formal",
+      "scenario_group": "pair-04",
+      "split": "dev",
+      "category": "order",
+      "should_abstain": false,
+      "expected_answer": "拣货前可提交修改申请；已拣货或发货时不能保证成功。",
+      "expected_facts": [
+        "拣货前可提交修改申请；已拣货或发货时不能保证成功。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/order-edit.md",
+          "section": "核心规则",
+          "evidence_quote": "订单进入拣货前可提交修改申请；系统显示已拣货或已发货时不能保证修改成功。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/order-edit.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/order-edit.md",
+          "section": "核心规则",
+          "chunk_id": "ff43a17e023563af"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "ff43a17e023563af"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-04-colloquial",
+      "pair_id": "pair-04",
+      "query": "还没拣货，件数想改咋办？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-04",
+      "split": "dev",
+      "category": "order",
+      "should_abstain": false,
+      "expected_answer": "拣货前可提交修改申请；已拣货或发货时不能保证成功。",
+      "expected_facts": [
+        "拣货前可提交修改申请；已拣货或发货时不能保证成功。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/order-edit.md",
+          "section": "核心规则",
+          "evidence_quote": "订单进入拣货前可提交修改申请；系统显示已拣货或已发货时不能保证修改成功。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/order-edit.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/order-edit.md",
+          "section": "核心规则",
+          "chunk_id": "ff43a17e023563af"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "ff43a17e023563af"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-05-formal",
+      "pair_id": "pair-05",
+      "query": "已支付订单进入拣货后，取消请求是否一定成功？",
+      "query_style": "formal",
+      "scenario_group": "pair-05",
+      "split": "dev",
+      "category": "order",
+      "should_abstain": false,
+      "expected_answer": "进入拣货或发货流程后，取消请求可能无法拦截。",
+      "expected_facts": [
+        "进入拣货或发货流程后，取消请求可能无法拦截。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/order-cancel.md",
+          "section": "核心规则",
+          "evidence_quote": "进入拣货或发货流程后，取消请求可能无法拦截。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/order-cancel.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/order-cancel.md",
+          "section": "核心规则",
+          "chunk_id": "29a0b0cda1edbf26"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "29a0b0cda1edbf26"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-05-colloquial",
+      "pair_id": "pair-05",
+      "query": "钱付了也开始拣货了，还能撤单吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-05",
+      "split": "dev",
+      "category": "order",
+      "should_abstain": false,
+      "expected_answer": "进入拣货或发货流程后，取消请求可能无法拦截。",
+      "expected_facts": [
+        "进入拣货或发货流程后，取消请求可能无法拦截。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/order-cancel.md",
+          "section": "核心规则",
+          "evidence_quote": "进入拣货或发货流程后，取消请求可能无法拦截。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/order-cancel.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/order-cancel.md",
+          "section": "核心规则",
+          "chunk_id": "29a0b0cda1edbf26"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "29a0b0cda1edbf26"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-06-formal",
+      "pair_id": "pair-06",
+      "query": "包裹交运后，平台能否保证收货地址更正成功？",
+      "query_style": "formal",
+      "scenario_group": "pair-06",
+      "split": "dev",
+      "category": "order",
+      "should_abstain": false,
+      "expected_answer": "已交运后平台不能保证改址成功。",
+      "expected_facts": [
+        "已交运后平台不能保证改址成功。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/address-change.md",
+          "section": "核心规则",
+          "evidence_quote": "已交运包裹由承运商配送，平台不能保证改址成功；不得承诺一定可以转寄。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/address-change.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/address-change.md",
+          "section": "核心规则",
+          "chunk_id": "198be6d96ea46952"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "198be6d96ea46952"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-06-colloquial",
+      "pair_id": "pair-06",
+      "query": "包裹上路了地址填错，还能保证改成吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-06",
+      "split": "dev",
+      "category": "order",
+      "should_abstain": false,
+      "expected_answer": "已交运后平台不能保证改址成功。",
+      "expected_facts": [
+        "已交运后平台不能保证改址成功。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/address-change.md",
+          "section": "核心规则",
+          "evidence_quote": "已交运包裹由承运商配送，平台不能保证改址成功；不得承诺一定可以转寄。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/address-change.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/address-change.md",
+          "section": "核心规则",
+          "chunk_id": "198be6d96ea46952"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "198be6d96ea46952"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-07-formal",
+      "pair_id": "pair-07",
+      "query": "多个包裹中仅一个显示签收，是否需逐件核对？",
+      "query_style": "formal",
+      "scenario_group": "pair-07",
+      "split": "dev",
+      "category": "logistics",
+      "should_abstain": false,
+      "expected_answer": "多包裹订单须逐件确认签收情况。",
+      "expected_facts": [
+        "多包裹订单须逐件确认签收情况。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/delivery-proof.md",
+          "section": "核心规则",
+          "evidence_quote": "多包裹订单须逐件确认。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/delivery-proof.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/delivery-proof.md",
+          "section": "核心规则",
+          "chunk_id": "f898b0a6c64d8746"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "f898b0a6c64d8746"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-07-colloquial",
+      "pair_id": "pair-07",
+      "query": "好几个包裹只一个显示签收，咋核？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-07",
+      "split": "dev",
+      "category": "logistics",
+      "should_abstain": false,
+      "expected_answer": "多包裹订单须逐件确认签收情况。",
+      "expected_facts": [
+        "多包裹订单须逐件确认签收情况。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/delivery-proof.md",
+          "section": "核心规则",
+          "evidence_quote": "多包裹订单须逐件确认。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/delivery-proof.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/delivery-proof.md",
+          "section": "核心规则",
+          "chunk_id": "f898b0a6c64d8746"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "f898b0a6c64d8746"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-08-formal",
+      "pair_id": "pair-08",
+      "query": "物流轨迹多日未更新，能否提交异常工单？",
+      "query_style": "formal",
+      "scenario_group": "pair-08",
+      "split": "dev",
+      "category": "logistics",
+      "should_abstain": false,
+      "expected_answer": "超过无轨迹或预计送达节点可提交物流异常工单，是否丢件须由承运商核实。",
+      "expected_facts": [
+        "超过无轨迹或预计送达节点可提交物流异常工单，是否丢件须由承运商核实。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/shipping-exception.md",
+          "section": "核心规则",
+          "evidence_quote": "超过政策规定的无轨迹或预计送达节点时，可提交物流异常工单；是否丢件须由承运商核实。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/shipping-exception.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/shipping-exception.md",
+          "section": "核心规则",
+          "chunk_id": "8df5cb5200185ba2"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "8df5cb5200185ba2"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-08-colloquial",
+      "pair_id": "pair-08",
+      "query": "快递好多天没有新轨迹，能报物流异常吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-08",
+      "split": "dev",
+      "category": "logistics",
+      "should_abstain": false,
+      "expected_answer": "超过无轨迹或预计送达节点可提交物流异常工单，是否丢件须由承运商核实。",
+      "expected_facts": [
+        "超过无轨迹或预计送达节点可提交物流异常工单，是否丢件须由承运商核实。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/shipping-exception.md",
+          "section": "核心规则",
+          "evidence_quote": "超过政策规定的无轨迹或预计送达节点时，可提交物流异常工单；是否丢件须由承运商核实。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/shipping-exception.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/shipping-exception.md",
+          "section": "核心规则",
+          "chunk_id": "8df5cb5200185ba2"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "8df5cb5200185ba2"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-09-formal",
+      "pair_id": "pair-09",
+      "query": "同一订单出现两笔扣款，对账前能否认定重复收费？",
+      "query_style": "formal",
+      "scenario_group": "pair-09",
+      "split": "dev",
+      "category": "payment",
+      "should_abstain": false,
+      "expected_answer": "同一订单有多笔扣款时先核对流水和订单状态，对账前不认定重复收费。",
+      "expected_facts": [
+        "同一订单有多笔扣款时先核对流水和订单状态，对账前不认定重复收费。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/duplicate-charge.md",
+          "section": "核心规则",
+          "evidence_quote": "系统对账结果未出前不认定重复收费。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/duplicate-charge.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/duplicate-charge.md",
+          "section": "核心规则",
+          "chunk_id": "81a40d4d0d4f4802"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "81a40d4d0d4f4802"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-09-colloquial",
+      "pair_id": "pair-09",
+      "query": "一单扣了两回钱，能直接算重复收费吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-09",
+      "split": "dev",
+      "category": "payment",
+      "should_abstain": false,
+      "expected_answer": "同一订单有多笔扣款时先核对流水和订单状态，对账前不认定重复收费。",
+      "expected_facts": [
+        "同一订单有多笔扣款时先核对流水和订单状态，对账前不认定重复收费。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/duplicate-charge.md",
+          "section": "核心规则",
+          "evidence_quote": "系统对账结果未出前不认定重复收费。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/duplicate-charge.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/duplicate-charge.md",
+          "section": "核心规则",
+          "chunk_id": "81a40d4d0d4f4802"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "81a40d4d0d4f4802"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-10-formal",
+      "pair_id": "pair-10",
+      "query": "订单显示未支付但账户已扣款，是否应再次支付？",
+      "query_style": "formal",
+      "scenario_group": "pair-10",
+      "split": "dev",
+      "category": "payment",
+      "should_abstain": false,
+      "expected_answer": "页面显示未支付但账户扣款时先核对订单与渠道流水，不引导重复支付。",
+      "expected_facts": [
+        "页面显示未支付但账户扣款时先核对订单与渠道流水，不引导重复支付。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/payment-status.md",
+          "section": "核心规则",
+          "evidence_quote": "状态未确认前不得引导用户重复支付。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/payment-status.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/payment-status.md",
+          "section": "核心规则",
+          "chunk_id": "ad103b9a3d7791e4"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "ad103b9a3d7791e4"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-10-colloquial",
+      "pair_id": "pair-10",
+      "query": "钱扣了单子还写没付，要不要再付一次？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-10",
+      "split": "dev",
+      "category": "payment",
+      "should_abstain": false,
+      "expected_answer": "页面显示未支付但账户扣款时先核对订单与渠道流水，不引导重复支付。",
+      "expected_facts": [
+        "页面显示未支付但账户扣款时先核对订单与渠道流水，不引导重复支付。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/payment-status.md",
+          "section": "核心规则",
+          "evidence_quote": "状态未确认前不得引导用户重复支付。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/payment-status.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/payment-status.md",
+          "section": "核心规则",
+          "chunk_id": "ad103b9a3d7791e4"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "ad103b9a3d7791e4"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-11-formal",
+      "pair_id": "pair-11",
+      "query": "仅凭退货物流显示寄回，能判断退款已到账吗？",
+      "query_style": "formal",
+      "scenario_group": "pair-11",
+      "split": "test",
+      "category": "refund",
+      "should_abstain": false,
+      "expected_answer": "仅凭寄回物流不能判断退款到账，应核对订单和售后状态。",
+      "expected_facts": [
+        "仅凭寄回物流不能判断退款到账，应核对订单和售后状态。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/refund-status.md",
+          "section": "核心规则",
+          "evidence_quote": "仅凭寄回物流或审核申请不能判断退款已经到账；不同支付渠道进度可能不同。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/refund-status.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/refund-status.md",
+          "section": "核心规则",
+          "chunk_id": "69af2a6aa8e65e77"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "69af2a6aa8e65e77"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-11-colloquial",
+      "pair_id": "pair-11",
+      "query": "东西寄回去了，钱就算到了吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-11",
+      "split": "test",
+      "category": "refund",
+      "should_abstain": false,
+      "expected_answer": "仅凭寄回物流不能判断退款到账，应核对订单和售后状态。",
+      "expected_facts": [
+        "仅凭寄回物流不能判断退款到账，应核对订单和售后状态。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/refund-status.md",
+          "section": "核心规则",
+          "evidence_quote": "仅凭寄回物流或审核申请不能判断退款已经到账；不同支付渠道进度可能不同。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/refund-status.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/refund-status.md",
+          "section": "核心规则",
+          "chunk_id": "69af2a6aa8e65e77"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "69af2a6aa8e65e77"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-12-formal",
+      "pair_id": "pair-12",
+      "query": "部分退款后不再满足活动门槛，优惠如何核算？",
+      "query_style": "formal",
+      "scenario_group": "pair-12",
+      "split": "test",
+      "category": "promotion",
+      "should_abstain": false,
+      "expected_answer": "部分退款后若不再满足活动门槛，可能重新分摊优惠，金额以审批明细为准。",
+      "expected_facts": [
+        "部分退款后若不再满足活动门槛，可能重新分摊优惠，金额以审批明细为准。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/promotion-refund.md",
+          "section": "核心规则",
+          "evidence_quote": "退货后不再满足门槛的订单可能重新分摊优惠。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/promotion-refund.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/promotion-refund.md",
+          "section": "核心规则",
+          "chunk_id": "6d2a49bf81231460"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6d2a49bf81231460"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-12-colloquial",
+      "pair_id": "pair-12",
+      "query": "退一件后凑不够满减了，钱咋算？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-12",
+      "split": "test",
+      "category": "promotion",
+      "should_abstain": false,
+      "expected_answer": "部分退款后若不再满足活动门槛，可能重新分摊优惠，金额以审批明细为准。",
+      "expected_facts": [
+        "部分退款后若不再满足活动门槛，可能重新分摊优惠，金额以审批明细为准。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/promotion-refund.md",
+          "section": "核心规则",
+          "evidence_quote": "退货后不再满足门槛的订单可能重新分摊优惠。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/promotion-refund.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/promotion-refund.md",
+          "section": "核心规则",
+          "chunk_id": "6d2a49bf81231460"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6d2a49bf81231460"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-13-formal",
+      "pair_id": "pair-13",
+      "query": "优惠券在结算时不可用，应核对哪些限制？",
+      "query_style": "formal",
+      "scenario_group": "pair-13",
+      "split": "test",
+      "category": "promotion",
+      "should_abstain": false,
+      "expected_answer": "核对有效期、门槛、适用商品和可用范围。",
+      "expected_facts": [
+        "核对有效期、门槛、适用商品和可用范围。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/coupon-eligibility.md",
+          "section": "核心规则",
+          "evidence_quote": "结算时以优惠券页面显示的有效期、门槛、适用商品和可用范围为准；优惠不可用时核对具体限制。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/coupon-eligibility.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/coupon-eligibility.md",
+          "section": "核心规则",
+          "chunk_id": "e7a901f381f8199b"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "e7a901f381f8199b"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-13-colloquial",
+      "pair_id": "pair-13",
+      "query": "券到结账页用不了，要看啥条件？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-13",
+      "split": "test",
+      "category": "promotion",
+      "should_abstain": false,
+      "expected_answer": "核对有效期、门槛、适用商品和可用范围。",
+      "expected_facts": [
+        "核对有效期、门槛、适用商品和可用范围。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/coupon-eligibility.md",
+          "section": "核心规则",
+          "evidence_quote": "结算时以优惠券页面显示的有效期、门槛、适用商品和可用范围为准；优惠不可用时核对具体限制。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/coupon-eligibility.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/coupon-eligibility.md",
+          "section": "核心规则",
+          "chunk_id": "e7a901f381f8199b"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "e7a901f381f8199b"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-14-formal",
+      "pair_id": "pair-14",
+      "query": "发票已开具但信息错误，可否自行修改？",
+      "query_style": "formal",
+      "scenario_group": "pair-14",
+      "split": "test",
+      "category": "invoice",
+      "should_abstain": false,
+      "expected_answer": "已开具发票不得自行修改，先核对状态并申请作废或更正。",
+      "expected_facts": [
+        "已开具发票不得自行修改，先核对状态并申请作废或更正。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/invoice-change.md",
+          "section": "核心规则",
+          "evidence_quote": "不得自行修改已开具发票；是否可更正取决于票据状态及适用规则。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/invoice-change.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/invoice-change.md",
+          "section": "核心规则",
+          "chunk_id": "6efa7d5c110cf93e"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6efa7d5c110cf93e"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-14-colloquial",
+      "pair_id": "pair-14",
+      "query": "票开出来信息错了，我能自己改吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-14",
+      "split": "test",
+      "category": "invoice",
+      "should_abstain": false,
+      "expected_answer": "已开具发票不得自行修改，先核对状态并申请作废或更正。",
+      "expected_facts": [
+        "已开具发票不得自行修改，先核对状态并申请作废或更正。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/invoice-change.md",
+          "section": "核心规则",
+          "evidence_quote": "不得自行修改已开具发票；是否可更正取决于票据状态及适用规则。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/invoice-change.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/invoice-change.md",
+          "section": "核心规则",
+          "chunk_id": "6efa7d5c110cf93e"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "6efa7d5c110cf93e"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-15-formal",
+      "pair_id": "pair-15",
+      "query": "退回包裹物流已签收，是否表示仓库验收通过？",
+      "query_style": "formal",
+      "scenario_group": "pair-15",
+      "split": "test",
+      "category": "return",
+      "should_abstain": false,
+      "expected_answer": "退回包裹须由仓库核对商品、配件等；物流签收不等于验收通过。",
+      "expected_facts": [
+        "退回包裹须由仓库核对商品、配件等；物流签收不等于验收通过。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/return-inspection.md",
+          "section": "核心规则",
+          "evidence_quote": "不能仅凭物流显示签收认定验收通过。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/return-inspection.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/return-inspection.md",
+          "section": "核心规则",
+          "chunk_id": "fa64521d00bf116f"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa64521d00bf116f"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-15-colloquial",
+      "pair_id": "pair-15",
+      "query": "退货快递显示签收，是不是仓库已经验过？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-15",
+      "split": "test",
+      "category": "return",
+      "should_abstain": false,
+      "expected_answer": "退回包裹须由仓库核对商品、配件等；物流签收不等于验收通过。",
+      "expected_facts": [
+        "退回包裹须由仓库核对商品、配件等；物流签收不等于验收通过。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/return-inspection.md",
+          "section": "核心规则",
+          "evidence_quote": "不能仅凭物流显示签收认定验收通过。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/return-inspection.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/return-inspection.md",
+          "section": "核心规则",
+          "chunk_id": "fa64521d00bf116f"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "fa64521d00bf116f"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-16-formal",
+      "pair_id": "pair-16",
+      "query": "退货审核通过后，应寄回哪些物品？",
+      "query_style": "formal",
+      "scenario_group": "pair-16",
+      "split": "test",
+      "category": "return",
+      "should_abstain": false,
+      "expected_answer": "按审核要求寄回商品、配件和应退赠品，保留寄件凭证与物流单号。",
+      "expected_facts": [
+        "按审核要求寄回商品、配件和应退赠品，保留寄件凭证与物流单号。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/return-packing.md",
+          "section": "核心规则",
+          "evidence_quote": "按审核页面提供的地址和要求寄回商品、配件及应退赠品；寄出前建议拍摄商品状态、配件和包裹照片。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/return-packing.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/return-packing.md",
+          "section": "核心规则",
+          "chunk_id": "a3224ff25a90fbba"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "a3224ff25a90fbba"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-16-colloquial",
+      "pair_id": "pair-16",
+      "query": "退货过审了，配件赠品也要寄吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-16",
+      "split": "test",
+      "category": "return",
+      "should_abstain": false,
+      "expected_answer": "按审核要求寄回商品、配件和应退赠品，保留寄件凭证与物流单号。",
+      "expected_facts": [
+        "按审核要求寄回商品、配件和应退赠品，保留寄件凭证与物流单号。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/return-packing.md",
+          "section": "核心规则",
+          "evidence_quote": "按审核页面提供的地址和要求寄回商品、配件及应退赠品；寄出前建议拍摄商品状态、配件和包裹照片。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/return-packing.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/return-packing.md",
+          "section": "核心规则",
+          "chunk_id": "a3224ff25a90fbba"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "a3224ff25a90fbba"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-17-formal",
+      "pair_id": "pair-17",
+      "query": "缺件尚未核验时，能否直接承诺补发？",
+      "query_style": "formal",
+      "scenario_group": "pair-17",
+      "split": "test",
+      "category": "return",
+      "should_abstain": false,
+      "expected_answer": "缺件未核验前不能直接承诺补发，应先核对订单与包裹。",
+      "expected_facts": [
+        "缺件未核验前不能直接承诺补发，应先核对订单与包裹。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/missing-items.md",
+          "section": "核心规则",
+          "evidence_quote": "缺件或错发尚未核验时不直接承诺补发；已完成退款的问题不重复获得同一补偿。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/missing-items.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/missing-items.md",
+          "section": "核心规则",
+          "chunk_id": "39cabf418af54b04"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "39cabf418af54b04"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-17-colloquial",
+      "pair_id": "pair-17",
+      "query": "箱里少一件，还没查清就能给补吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-17",
+      "split": "test",
+      "category": "return",
+      "should_abstain": false,
+      "expected_answer": "缺件未核验前不能直接承诺补发，应先核对订单与包裹。",
+      "expected_facts": [
+        "缺件未核验前不能直接承诺补发，应先核对订单与包裹。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/missing-items.md",
+          "section": "核心规则",
+          "evidence_quote": "缺件或错发尚未核验时不直接承诺补发；已完成退款的问题不重复获得同一补偿。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/missing-items.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/missing-items.md",
+          "section": "核心规则",
+          "chunk_id": "39cabf418af54b04"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "39cabf418af54b04"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-18-formal",
+      "pair_id": "pair-18",
+      "query": "申请寄修时，需要提供哪些商品和故障资料？",
+      "query_style": "formal",
+      "scenario_group": "pair-18",
+      "split": "test",
+      "category": "repair",
+      "should_abstain": false,
+      "expected_answer": "受理维修需记录订单或凭证、商品型号、故障现象和联系方式。",
+      "expected_facts": [
+        "受理维修需记录订单或凭证、商品型号、故障现象和联系方式。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/repair-intake.md",
+          "section": "核心规则",
+          "evidence_quote": "受理时记录订单或购买凭证、商品型号、故障现象和联系方式；涉及寄修时按页面指引准备商品。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/repair-intake.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/repair-intake.md",
+          "section": "核心规则",
+          "chunk_id": "5302dc0cbde697d9"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "5302dc0cbde697d9"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-18-colloquial",
+      "pair_id": "pair-18",
+      "query": "东西坏了要寄修，先提供哪些商品和故障信息？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-18",
+      "split": "test",
+      "category": "repair",
+      "should_abstain": false,
+      "expected_answer": "受理维修需记录订单或凭证、商品型号、故障现象和联系方式。",
+      "expected_facts": [
+        "受理维修需记录订单或凭证、商品型号、故障现象和联系方式。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/repair-intake.md",
+          "section": "核心规则",
+          "evidence_quote": "受理时记录订单或购买凭证、商品型号、故障现象和联系方式；涉及寄修时按页面指引准备商品。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/repair-intake.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/repair-intake.md",
+          "section": "核心规则",
+          "chunk_id": "5302dc0cbde697d9"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "5302dc0cbde697d9"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-19-formal",
+      "pair_id": "pair-19",
+      "query": "对投诉处理结果有异议，如何申请升级？",
+      "query_style": "formal",
+      "scenario_group": "pair-19",
+      "split": "test",
+      "category": "ticket",
+      "should_abstain": false,
+      "expected_answer": "对处理结果有异议，可补充事实和证据申请升级。",
+      "expected_facts": [
+        "对处理结果有异议，可补充事实和证据申请升级。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/complaint-escalation.md",
+          "section": "核心规则",
+          "evidence_quote": "对处理结果有异议可补充事实和证据申请升级；涉及人身安全或紧急风险时转人工优先处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/complaint-escalation.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/complaint-escalation.md",
+          "section": "核心规则",
+          "chunk_id": "46722ca836a2c3f9"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "46722ca836a2c3f9"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-19-colloquial",
+      "pair_id": "pair-19",
+      "query": "投诉处理我不服，咋往上提？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-19",
+      "split": "test",
+      "category": "ticket",
+      "should_abstain": false,
+      "expected_answer": "对处理结果有异议，可补充事实和证据申请升级。",
+      "expected_facts": [
+        "对处理结果有异议，可补充事实和证据申请升级。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/complaint-escalation.md",
+          "section": "核心规则",
+          "evidence_quote": "对处理结果有异议可补充事实和证据申请升级；涉及人身安全或紧急风险时转人工优先处理。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/complaint-escalation.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/complaint-escalation.md",
+          "section": "核心规则",
+          "chunk_id": "46722ca836a2c3f9"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "46722ca836a2c3f9"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-20-formal",
+      "pair_id": "pair-20",
+      "query": "存在未完成售后时，删除个人信息申请会立即完成吗？",
+      "query_style": "formal",
+      "scenario_group": "pair-20",
+      "split": "test",
+      "category": "privacy",
+      "should_abstain": false,
+      "expected_answer": "存在未完成售后时，删除申请可能暂缓或受限，不等于立即删除。",
+      "expected_facts": [
+        "存在未完成售后时，删除申请可能暂缓或受限，不等于立即删除。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/privacy-deletion.md",
+          "section": "核心规则",
+          "evidence_quote": "存在未完成订单、售后或依法需保留记录时，申请可能暂缓或受限。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/privacy-deletion.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/privacy-deletion.md",
+          "section": "核心规则",
+          "chunk_id": "d500ea3e5b3798e2"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "d500ea3e5b3798e2"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-20-colloquial",
+      "pair_id": "pair-20",
+      "query": "售后还没完，申请删账号资料能立马没吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-20",
+      "split": "test",
+      "category": "privacy",
+      "should_abstain": false,
+      "expected_answer": "存在未完成售后时，删除申请可能暂缓或受限，不等于立即删除。",
+      "expected_facts": [
+        "存在未完成售后时，删除申请可能暂缓或受限，不等于立即删除。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/privacy-deletion.md",
+          "section": "核心规则",
+          "evidence_quote": "存在未完成订单、售后或依法需保留记录时，申请可能暂缓或受限。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/privacy-deletion.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/privacy-deletion.md",
+          "section": "核心规则",
+          "chunk_id": "d500ea3e5b3798e2"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "d500ea3e5b3798e2"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-21-formal",
+      "pair_id": "pair-21",
+      "query": "账户疑似被他人登录，应先采取什么措施？",
+      "query_style": "formal",
+      "scenario_group": "pair-21",
+      "split": "dev",
+      "category": "privacy",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "发现异常登录后，应通过官方账户入口修改凭证并检查订单。",
+      "expected_facts": [
+        "发现异常登录后，应通过官方账户入口修改凭证并检查订单。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/account-security.md",
+          "section": "核心规则",
+          "evidence_quote": "发现异常登录应尽快通过官方账户入口修改凭证并检查订单；客服不会索要密码、支付验证码或完整银行卡信息。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/account-security.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/account-security.md",
+          "section": "核心规则",
+          "chunk_id": "a786d265705ad203"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "a786d265705ad203"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-21-colloquial",
+      "pair_id": "pair-21",
+      "query": "有人偷偷上我号，咋办？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-21",
+      "split": "dev",
+      "category": "privacy",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "发现异常登录后，应通过官方账户入口修改凭证并检查订单。",
+      "expected_facts": [
+        "发现异常登录后，应通过官方账户入口修改凭证并检查订单。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/account-security.md",
+          "section": "核心规则",
+          "evidence_quote": "发现异常登录应尽快通过官方账户入口修改凭证并检查订单；客服不会索要密码、支付验证码或完整银行卡信息。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/account-security.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/account-security.md",
+          "section": "核心规则",
+          "chunk_id": "a786d265705ad203"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "a786d265705ad203"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-22-formal",
+      "pair_id": "pair-22",
+      "query": "维修产生费用前是否需要用户同意？",
+      "query_style": "formal",
+      "scenario_group": "pair-22",
+      "split": "dev",
+      "category": "repair",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "维修收费项目须在用户确认后才继续执行。",
+      "expected_facts": [
+        "维修收费项目须在用户确认后才继续执行。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/repair-review.md",
+          "section": "核心规则",
+          "evidence_quote": "收费项目须在用户确认后继续执行。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/repair-review.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/repair-review.md",
+          "section": "核心规则",
+          "chunk_id": "01c4c5e3a3d9b553"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "01c4c5e3a3d9b553"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-22-colloquial",
+      "pair_id": "pair-22",
+      "query": "修东西要加钱，得先问我吗？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-22",
+      "split": "dev",
+      "category": "repair",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "维修收费项目须在用户确认后才继续执行。",
+      "expected_facts": [
+        "维修收费项目须在用户确认后才继续执行。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/repair-review.md",
+          "section": "核心规则",
+          "evidence_quote": "收费项目须在用户确认后继续执行。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/repair-review.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/repair-review.md",
+          "section": "核心规则",
+          "chunk_id": "01c4c5e3a3d9b553"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "01c4c5e3a3d9b553"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-23-formal",
+      "pair_id": "pair-23",
+      "query": "账户本人信息有误时，如何申请更正？",
+      "query_style": "formal",
+      "scenario_group": "pair-23",
+      "split": "dev",
+      "category": "privacy",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "完成账户身份核验后，可以申请更正本人信息。",
+      "expected_facts": [
+        "完成账户身份核验后，可以申请更正本人信息。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/privacy-access.md",
+          "section": "核心规则",
+          "evidence_quote": "用户完成账户身份核验后可申请查询或更正本人信息；客服仅收集完成该事项所需的资料。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/privacy-access.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/privacy-access.md",
+          "section": "核心规则",
+          "chunk_id": "68789a61f5fbbc74"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "68789a61f5fbbc74"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-23-colloquial",
+      "pair_id": "pair-23",
+      "query": "账号资料填错，咋改？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-23",
+      "split": "dev",
+      "category": "privacy",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "完成账户身份核验后，可以申请更正本人信息。",
+      "expected_facts": [
+        "完成账户身份核验后，可以申请更正本人信息。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/privacy-access.md",
+          "section": "核心规则",
+          "evidence_quote": "用户完成账户身份核验后可申请查询或更正本人信息；客服仅收集完成该事项所需的资料。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/privacy-access.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/privacy-access.md",
+          "section": "核心规则",
+          "chunk_id": "68789a61f5fbbc74"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "68789a61f5fbbc74"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-24-formal",
+      "pair_id": "pair-24",
+      "query": "商品破损申请售后，须提交哪些材料？",
+      "query_style": "formal",
+      "scenario_group": "pair-24",
+      "split": "test",
+      "category": "return",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "按问题类型提交商品、包装或故障的照片或视频。",
+      "expected_facts": [
+        "按问题类型提交商品、包装或故障的照片或视频。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/damage-evidence.md",
+          "section": "核心规则",
+          "evidence_quote": "按问题类型提交商品、包装或故障照片视频。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/damage-evidence.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/damage-evidence.md",
+          "section": "核心规则",
+          "chunk_id": "f4a4d4df15843e38"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "f4a4d4df15843e38"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-24-colloquial",
+      "pair_id": "pair-24",
+      "query": "东西碎了，拍啥？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-24",
+      "split": "test",
+      "category": "return",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "按问题类型提交商品、包装或故障的照片或视频。",
+      "expected_facts": [
+        "按问题类型提交商品、包装或故障的照片或视频。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/damage-evidence.md",
+          "section": "核心规则",
+          "evidence_quote": "按问题类型提交商品、包装或故障照片视频。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/damage-evidence.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/damage-evidence.md",
+          "section": "核心规则",
+          "chunk_id": "f4a4d4df15843e38"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "f4a4d4df15843e38"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-25-formal",
+      "pair_id": "pair-25",
+      "query": "已受理工单新增照片时，应如何补充材料？",
+      "query_style": "formal",
+      "scenario_group": "pair-25",
+      "split": "test",
+      "category": "ticket",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "可在原工单补充照片，客服会关联到同一问题记录。",
+      "expected_facts": [
+        "可在原工单补充照片，客服会关联到同一问题记录。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/ticket-followup.md",
+          "section": "核心规则",
+          "evidence_quote": "用户可在原工单补充照片、物流信息或说明；客服将材料关联至同一问题记录。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/ticket-followup.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/ticket-followup.md",
+          "section": "核心规则",
+          "chunk_id": "022c458bfd961318"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "022c458bfd961318"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    },
+    {
+      "id": "pair-25-colloquial",
+      "pair_id": "pair-25",
+      "query": "原单补图怎么弄？",
+      "query_style": "colloquial",
+      "scenario_group": "pair-25",
+      "split": "test",
+      "category": "ticket",
+      "subset": "rewrite_challenge",
+      "should_abstain": false,
+      "expected_answer": "可在原工单补充照片，客服会关联到同一问题记录。",
+      "expected_facts": [
+        "可在原工单补充照片，客服会关联到同一问题记录。"
+      ],
+      "relevant_documents": [
+        {
+          "source": "data/policies/v3/ticket-followup.md",
+          "section": "核心规则",
+          "evidence_quote": "用户可在原工单补充照片、物流信息或说明；客服将材料关联至同一问题记录。"
+        }
+      ],
+      "relevance_scores": {
+        "data/policies/v3/ticket-followup.md#核心规则": 3
+      },
+      "relevant_chunks": [
+        {
+          "source": "data/policies/v3/ticket-followup.md",
+          "section": "核心规则",
+          "chunk_id": "022c458bfd961318"
+        }
+      ],
+      "evidence_requirements": {
+        "all_expected_facts_required": true,
+        "required_chunk_ids": [
+          "022c458bfd961318"
+        ],
+        "missing_information_requires_abstention": false
+      }
+    }
+  ]
+}

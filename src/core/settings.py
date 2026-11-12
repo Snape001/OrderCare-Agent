@@ -83,6 +83,21 @@ class Settings(BaseSettings):
     MEMORY_ENABLED: bool = True
     REDIS_URL: str | None = "redis://127.0.0.1:6379/0"
     MEMORY_TTL_SECONDS: int = 86400
+    INTENT_CACHE_ENABLED: bool = True
+    INTENT_CACHE_TTL_SECONDS: int = Field(default=300, ge=30, le=3600)
+    INTENT_CACHE_TIMEOUT_SECONDS: float = Field(default=0.2, gt=0, le=2)
+    MCP_BUSINESS_CACHE_TTL_SECONDS: int = Field(default=15, ge=1)
+    MCP_READ_CACHE_MAX_ENTRIES: int = Field(default=512, ge=1)
+    MCP_TOOL_TIMEOUT_SECONDS: float = Field(default=30, gt=0)
+    MCP_TICKET_TIMEOUT_SECONDS: float = Field(default=20, gt=0)
+    MCP_CIRCUIT_FAILURE_THRESHOLD: int = Field(default=3, ge=1)
+    MCP_CIRCUIT_RESET_SECONDS: float = Field(default=30, gt=0)
+    POLICY_SEARCH_CACHE_TTL_SECONDS: int = Field(default=600, ge=1)
+    POLICY_SEARCH_CACHE_MAX_ENTRIES: int = Field(default=512, ge=1)
+    POLICY_SEARCH_TIMEOUT_SECONDS: float = Field(default=30, gt=0)
+    POLICY_SEARCH_CIRCUIT_FAILURE_THRESHOLD: int = Field(default=3, ge=1)
+    POLICY_SEARCH_CIRCUIT_RESET_SECONDS: float = Field(default=30, gt=0)
+    POLICY_SEARCH_WORKER_LIMIT: int = Field(default=2, ge=1)
     MEMORY_SQLITE_PATH: str = "data/customer_memories.db"
     CONTEXT_TOKEN_BUDGET: int = 4096
     CONTEXT_SYSTEM_BUDGET: int = 1024

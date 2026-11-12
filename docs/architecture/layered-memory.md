@@ -15,6 +15,8 @@
 
 `LayeredMemory.put/delete/select` 提供长期备注的增改、删除与读取；相同内容按 `(customer_id, kind, value)` 去重。该表自动写入仅记录意图类别及安全的商品名称；沟通偏好使用下述结构化画像表。Redis 故障会抛出异常，服务启动时校验连接，不会把审批状态转移到 Redis。
 
+Router 的结构化 `Route` 也复用同一个 Redis 客户端做 300 秒短缓存（键前缀 `ordercare:intent:`，只按归一化 query 生成键），用于减少高频重复分类调用。缓存只保存 `intents`、`conditional`、`product_name`，不保存订单号、手机号后四位或原始 query；命中后仍按当前对话重新做实体锚定。Redis 读写异常、超时或坏数据按 miss 处理，不影响 Memory 启动语义；`INTENT_CACHE_ENABLED=false` 可单独关闭。
+
 结构化画像由独立 `customer_profiles(customer_id, communication_channel, updated_at)` 表保存，只接受 `text` / `phone` 枚举。服务仅在业务身份已验证、请求完成且用户明确说出“以后/今后/下次/长期”的沟通方式时作确定性更新；不保存原话或电话号码。`LayeredMemory.upsert_profile/get_profile/delete_profile/profile_note` 提供画像 CRUD。读取时结构化画像覆盖旧版自由文本偏好备注，避免新旧偏好同时注入。复杂或含否定的表述保守跳过，需要用户再次明确选择。
 
 当前身份解析识别明确写出的 `ORD` / `OL` 加数字的订单号及“手机号后四位”等格式；其他表述仍由 Agent 正常处理，但本轮不会自动绑定长期记忆。此能力不是账户登录，也不应用于跨真实用户的生产身份认证。

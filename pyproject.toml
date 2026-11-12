@@ -62,6 +62,8 @@ dependencies = [
     "mcp>=1.28,<2",
     "ddgs>=9.14.4",
     "fastembed>=0.8.0",
+    "jieba>=0.42.1",
+    "rank-bm25>=0.2.2",
 ]
 
 [dependency-groups]

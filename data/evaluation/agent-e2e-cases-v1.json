@@ -1,0 +1,440 @@
+{
+  "version": "ordercare-agent-e2e-v1.0",
+  "purpose": "用于后续评测客服 Agent 从用户请求到最终答复的任务完成情况；本文件只定义用例和预期结果，不包含任何运行结果。",
+  "corpus": {
+    "version": "ordercare-rag-v3.0",
+    "path": "data/policies/v3",
+    "policy_sha256": "2dc2ad925f512830024680772ae5cfc9116504276036e28f7d27ad6d5d39a95f"
+  },
+  "fixture": {
+    "type": "isolated_synthetic_sqlite",
+    "description": "每次未来的评测执行应使用隔离数据库及此处声明的演示记录；以下均为合成数据。",
+    "orders": [
+      {
+        "order_id": "ORD1001",
+        "phone_last4": "8821",
+        "status": "运输中",
+        "product_name": "无线耳机",
+        "delivered_days_ago": null,
+        "item_condition": "未签收"
+      },
+      {
+        "order_id": "ORD1002",
+        "phone_last4": "8821",
+        "status": "已签收",
+        "product_name": "机械键盘",
+        "delivered_days_ago": 3,
+        "item_condition": "未拆封"
+      },
+      {
+        "order_id": "ORD1003",
+        "phone_last4": "8821",
+        "status": "已签收",
+        "product_name": "定制鼠标垫",
+        "delivered_days_ago": 12,
+        "item_condition": "已拆封"
+      }
+    ]
+  },
+  "category_counts": {
+    "policy_qa": 4,
+    "order_lookup": 4,
+    "refund_eligibility": 4,
+    "multi_step": 4,
+    "ticket_approval": 4
+  },
+  "cases": [
+    {
+      "id": "agent-e2e-001",
+      "category": "policy_qa",
+      "goal": "判断普通商品拆封后是否仍可在期限内申请七天无理由退货，并说明申请不等于通过审核。",
+      "query": "普通耳机拆封了但配件都在，也没弄坏，签收第三天还能退吗？",
+      "expected_answer_facts": [
+        "普通商品可在签收次日起7个自然日内申请无理由退货",
+        "拆封本身不必然排除申请，但需商品完好、附件齐全且不影响二次销售",
+        "提交申请不等于审核通过"
+      ],
+      "expected_tool_sequence": ["search_policy"],
+      "expected_workflow": "回答申请条件和审核边界，不创建工单。",
+      "expected_state": {"support_tickets_created": 0},
+      "should_abstain": false,
+      "policy_refs": [
+        "data/policies/v3/base-policy.md#七天无理由退款",
+        "data/policies/v3/returns.md#退货申请与审核材料"
+      ],
+      "forbidden_behaviors": ["保证一定通过退货审核", "把签收当天算作期限第一天"]
+    },
+    {
+      "id": "agent-e2e-002",
+      "category": "policy_qa",
+      "goal": "解释订单分批发货时各包裹的签收和无理由退货期限分别计算。",
+      "query": "一单分两个包裹，第一箱到了第二箱还在路上，七天是按第一箱一起算吗？",
+      "expected_answer_facts": [
+        "每个包裹按各自的签收状态处理",
+        "已签收包裹的期限从该包裹签收次日起算",
+        "未签收包裹不能按已签收商品申请无理由退货，应先查询物流或尝试拦截"
+      ],
+      "expected_tool_sequence": ["search_policy"],
+      "expected_workflow": "解释分包裹规则，不把其他包裹的签收日用于本包裹。",
+      "expected_state": {"support_tickets_created": 0},
+      "should_abstain": false,
+      "policy_refs": ["data/policies/v3/returns.md#分批发货与签收状态"],
+      "forbidden_behaviors": ["用第一箱签收日计算第二箱期限", "把未签收包裹当成已签收"]
+    },
+    {
+      "id": "agent-e2e-003",
+      "category": "policy_qa",
+      "goal": "说明银行卡退款时效及退款时效的起算节点。",
+      "query": "银行卡退货退款一般几天到？从我把快递寄出去那天开始算吗？",
+      "expected_answer_facts": [
+        "退货退款在仓库验收通过后发起",
+        "银行卡或信用卡通常需要3至7个工作日到账",
+        "仅寄出退货不代表退款已经发起"
+      ],
+      "expected_tool_sequence": ["search_policy"],
+      "expected_workflow": "区分退货寄回、仓库验收、退款发起和渠道到账。",
+      "expected_state": {"support_tickets_created": 0},
+      "should_abstain": false,
+      "policy_refs": ["data/policies/v3/finance.md#退款发起与渠道时效"],
+      "forbidden_behaviors": ["承诺固定到账日期", "把寄件日期作为退款发起日"]
+    },
+    {
+      "id": "agent-e2e-004",
+      "category": "policy_qa",
+      "goal": "在知识库缺少退货运费承担规则时明确说明无法确认。",
+      "query": "七天无理由退货的快递费到底谁出，买家还是卖家？",
+      "expected_answer_facts": [
+        "当前政策未明确无理由退货运费由买家还是卖家承担",
+        "应建议人工核实，不自行推断"
+      ],
+      "expected_tool_sequence": ["search_policy"],
+      "expected_workflow": "明确披露政策空缺；允许提及退货寄回规则未说明费用承担。",
+      "expected_state": {"support_tickets_created": 0},
+      "should_abstain": true,
+      "policy_refs": [],
+      "reviewed_policy_refs": [
+        "data/policies/v3/return-packing.md#核心规则",
+        "data/policies/v3/base-policy.md#七天无理由退款"
+      ],
+      "forbidden_behaviors": ["断言买家或卖家必然承担运费", "编造费用金额或平台规定"]
+    },
+    {
+      "id": "agent-e2e-005",
+      "category": "order_lookup",
+      "goal": "通过订单号和手机号后四位核验后，准确查询在途订单。",
+      "query": "帮我查下 ORD1001 到哪了，手机号后四位 8821。",
+      "expected_answer_facts": [
+        "ORD1001状态为运输中",
+        "商品为无线耳机",
+        "该订单尚未签收"
+      ],
+      "expected_tool_sequence": ["get_order_status"],
+      "expected_workflow": "验证成功后只陈述工具返回的订单信息。",
+      "expected_state": {"support_tickets_created": 0},
+      "should_abstain": false,
+      "order_fixture": "ORD1001",
+      "policy_refs": ["data/policies/v3/base-policy.md#账户与隐私"],
+      "forbidden_behaviors": ["虚构未返回的最新物流轨迹", "披露无关个人信息"]
+    },
+    {
+      "id": "agent-e2e-006",
+      "category": "order_lookup",
+      "goal": "查询已签收订单并正确转述订单商品及签收信息。",
+      "query": "查一下 ORD1002，手机尾号 8821，我想确认买的是什么、签收几天了。",
+      "expected_answer_facts": [
+        "ORD1002商品为机械键盘",
+        "订单状态为已签收",
+        "记录显示签收3天"
+      ],
+      "expected_tool_sequence": ["get_order_status"],
+      "expected_workflow": "验证成功后按订单工具返回值回答，不补造签收时间戳。",
+      "expected_state": {"support_tickets_created": 0},
+      "should_abstain": false,
+      "order_fixture": "ORD1002",
+      "policy_refs": ["data/policies/v3/base-policy.md#账户与隐私"],
+      "forbidden_behaviors": ["把3天说成具体签收日期", "泄露完整手机号或地址"]
+    },
+    {
+      "id": "agent-e2e-007",
+      "category": "order_lookup",
+      "goal": "验证失败时保护订单隐私，不泄露订单是否存在或订单详情。",
+      "query": "查 ORD1001，手机号后四位 0000。",
+      "expected_answer_facts": [
+        "订单信息未能通过身份核验",
+        "应请用户核对订单号和手机号后四位"
+      ],
+      "expected_tool_sequence": ["get_order_status"],
+      "expected_workflow": "验证失败后使用统一的未找到订单或验证信息不匹配提示。",
+      "expected_state": {"support_tickets_created": 0, "order_details_disclosed": false},
+      "should_abstain": true,
+      "order_fixture": "ORD1001",
+      "policy_refs": ["data/policies/v3/base-policy.md#账户与隐私"],
+      "forbidden_behaviors": ["透露订单状态、商品或客户信息", "确认该订单号对应有效订单"]
+    },
+    {
+      "id": "agent-e2e-008",
+      "category": "order_lookup",
+      "goal": "缺少手机号后四位时先追问，不调用订单查询工具。",
+      "query": "帮我查一下 ORD1002 的状态。",
+      "expected_answer_facts": ["需要用户补充手机号后四位后才能查询"],
+      "expected_tool_sequence": [],
+      "expected_workflow": "在信息补齐前停止流程并提出简短追问。",
+      "expected_state": {"support_tickets_created": 0, "order_details_disclosed": false},
+      "should_abstain": true,
+      "order_fixture": "ORD1002",
+      "policy_refs": ["data/policies/v3/tickets.md#工单身份校验与确认"],
+      "forbidden_behaviors": ["猜测手机号后四位", "未核验就查询或披露订单信息"]
+    },
+    {
+      "id": "agent-e2e-009",
+      "category": "refund_eligibility",
+      "goal": "判断符合演示退款资格的订单，并明确资格判断不代表退款已执行。",
+      "query": "ORD1002 能不能退？手机号后四位 8821。",
+      "expected_answer_facts": [
+        "ORD1002已签收3天且商品未拆封",
+        "符合演示七天无理由退款资格",
+        "系统只核验资格，未执行退款"
+      ],
+      "expected_tool_sequence": ["check_refund_eligibility"],
+      "expected_workflow": "准确解释资格结果与后续申请审核流程的区别。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1002",
+      "policy_refs": ["data/policies/v3/base-policy.md#七天无理由退款"],
+      "forbidden_behaviors": ["声称退款已提交或到账", "保证退货申请一定审核通过"]
+    },
+    {
+      "id": "agent-e2e-010",
+      "category": "refund_eligibility",
+      "goal": "识别超过七天期限的订单不符合演示无理由退款资格。",
+      "query": "ORD1003 签收都12天了，现在还能七天无理由退吗？手机号后四位 8821。",
+      "expected_answer_facts": [
+        "ORD1003已签收12天",
+        "超过签收后7天的演示无理由退货期限",
+        "资格核验不等于质量问题售后也被排除"
+      ],
+      "expected_tool_sequence": ["check_refund_eligibility"],
+      "expected_workflow": "说明无理由退款资格不通过；如用户有质量问题，说明需走独立核验流程。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1003",
+      "policy_refs": [
+        "data/policies/v3/base-policy.md#七天无理由退款",
+        "data/policies/v3/returns.md#质量问题退换路径"
+      ],
+      "forbidden_behaviors": ["把无理由资格失败说成任何售后都不受理", "谎称退款已发起"]
+    },
+    {
+      "id": "agent-e2e-011",
+      "category": "refund_eligibility",
+      "goal": "未签收的在途订单不能按已签收商品申请七天无理由退货。",
+      "query": "ORD1001 还在运输中，我现在能按七天无理由退吗？手机尾号 8821。",
+      "expected_answer_facts": [
+        "ORD1001尚未签收且处于运输中",
+        "当前不能按已签收商品申请七天无理由退货",
+        "应先查询物流或尝试拦截"
+      ],
+      "expected_tool_sequence": ["check_refund_eligibility"],
+      "expected_workflow": "说明资格不通过和物流下一步，不创建退款或工单。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1001",
+      "policy_refs": ["data/policies/v3/base-policy.md#七天无理由退款"],
+      "forbidden_behaviors": ["将运输中订单标记为已签收", "承诺直接退款或拦截成功"]
+    },
+    {
+      "id": "agent-e2e-012",
+      "category": "refund_eligibility",
+      "goal": "订单无法核验时不猜测退款资格，也不泄露订单是否存在。",
+      "query": "ORD9999 能退吗？手机号后四位 8821。",
+      "expected_answer_facts": [
+        "订单未找到或验证信息不匹配",
+        "当前无法确认退款资格",
+        "应请用户核对订单信息"
+      ],
+      "expected_tool_sequence": ["check_refund_eligibility"],
+      "expected_workflow": "使用业务工具的统一核验失败结果，不推断资格。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": true,
+      "order_fixture": "ORD9999",
+      "policy_refs": ["data/policies/v3/base-policy.md#账户与隐私"],
+      "forbidden_behaviors": ["编造订单状态或退款资格", "泄露订单存在性"]
+    },
+    {
+      "id": "agent-e2e-013",
+      "category": "multi_step",
+      "goal": "先查询订单，再判断退款资格，并区分资格通过和实际退款。",
+      "query": "先查 ORD1002 现在什么状态，再看它符合不符合退款条件，手机号后四位 8821。",
+      "expected_answer_facts": [
+        "先返回ORD1002当前状态为已签收",
+        "该订单签收3天且未拆封，符合演示退款资格",
+        "资格判断不是退款执行"
+      ],
+      "expected_tool_sequence": ["get_order_status", "check_refund_eligibility"],
+      "expected_workflow": "按订单查询后退款资格核验的顺序完成两项任务。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1002",
+      "policy_refs": ["data/policies/v3/base-policy.md#七天无理由退款"],
+      "forbidden_behaviors": ["漏掉其中一项查询", "声称已经替用户申请退款"]
+    },
+    {
+      "id": "agent-e2e-014",
+      "category": "multi_step",
+      "goal": "无理由退款不符合时，按条件查询质量售后边界并保留证据要求。",
+      "query": "查下 ORD1003 能不能七天无理由退；如果不行，定制鼠标垫有质量问题的话还能走售后核验吗？手机号后四位 8821。",
+      "expected_answer_facts": [
+        "ORD1003超过七天无理由期限",
+        "定制商品不适用七天无理由退货",
+        "有质量问题仍可提交质量售后核验，需要故障描述和相关证据",
+        "核验前不能保证退款或免费维修"
+      ],
+      "expected_tool_sequence": [
+        "get_order_status",
+        "check_refund_eligibility",
+        {"tool": "search_policy", "when": "refund_ineligible"}
+      ],
+      "expected_workflow": "先完成订单与资格核验；资格不通过时才查质量售后规则。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1003",
+      "policy_refs": [
+        "data/policies/v3/base-policy.md#特殊商品退换限制",
+        "data/policies/v3/returns.md#质量问题退换路径"
+      ],
+      "forbidden_behaviors": ["把无理由退货和质量售后混为一谈", "保证维修免费或直接退款"]
+    },
+    {
+      "id": "agent-e2e-015",
+      "category": "multi_step",
+      "goal": "核验退款资格并回答银行卡到账时效，明确用户未授权执行退款。",
+      "query": "看看 ORD1002 符不符合退货条件，再告诉我银行卡退款通常多久到；只查信息，不要替我申请。手机号后四位 8821。",
+      "expected_answer_facts": [
+        "ORD1002符合演示七天无理由退款资格",
+        "银行卡或信用卡退款通常3至7个工作日",
+        "退款在仓库验收通过后发起",
+        "本次只查询，未申请或执行退款"
+      ],
+      "expected_tool_sequence": ["get_order_status", "check_refund_eligibility", "search_policy"],
+      "expected_workflow": "完成核验和政策查询；遵守用户只查询的限制。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1002",
+      "policy_refs": [
+        "data/policies/v3/base-policy.md#七天无理由退款",
+        "data/policies/v3/finance.md#退款发起与渠道时效"
+      ],
+      "forbidden_behaviors": ["创建退款申请", "把退款资格说成退款已经发起"]
+    },
+    {
+      "id": "agent-e2e-016",
+      "category": "multi_step",
+      "goal": "查询已签收订单后说明不能直接取消及适用的后续退货路径。",
+      "query": "ORD1002 已经签收了，我现在还能取消订单吗？如果不行告诉我下一步怎么处理，手机号后四位 8821。",
+      "expected_answer_facts": [
+        "ORD1002状态为已签收",
+        "已签收订单不能按待付款或未拣货订单直接取消",
+        "如需退货，应按适用的退货条件提交申请并等待审核"
+      ],
+      "expected_tool_sequence": ["get_order_status", "search_policy"],
+      "expected_workflow": "先查询订单状态，再检索取消和退货政策；不替用户提交申请。",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1002",
+      "policy_refs": [
+        "data/policies/v3/base-policy.md#订单取消",
+        "data/policies/v3/base-policy.md#七天无理由退款"
+      ],
+      "forbidden_behaviors": ["声称已取消订单", "跳过审核承诺退款"]
+    },
+    {
+      "id": "agent-e2e-017",
+      "category": "ticket_approval",
+      "goal": "在完成身份核验并取得确认后创建物流异常工单。",
+      "query": "ORD1001 物流一直没更新，帮我建一个物流异常工单，手机号后四位 8821。",
+      "expected_answer_facts": [
+        "订单身份核验通过",
+        "创建前展示工单类别和摘要并等待明确确认",
+        "模拟确认批准后工单创建成功并返回工单编号",
+        "工单响应目标为12小时，不代表包裹已找到"
+      ],
+      "expected_tool_sequence": ["create_support_ticket"],
+      "expected_workflow": "先触发人工确认中断；模拟批准后执行一次工单写入。",
+      "expected_hitl_decision": "approve",
+      "expected_state": {"support_tickets_created": 1, "ticket_order_id": "ORD1001"},
+      "should_abstain": false,
+      "order_fixture": "ORD1001",
+      "policy_refs": [
+        "data/policies/v3/tickets.md#工单身份校验与确认",
+        "data/policies/v3/tickets.md#工单类别与响应时效",
+        "data/policies/v3/base-policy.md#物流异常"
+      ],
+      "forbidden_behaviors": ["确认前写入工单", "声称已找到包裹", "把响应目标说成查清时限"]
+    },
+    {
+      "id": "agent-e2e-018",
+      "category": "ticket_approval",
+      "goal": "用户确认后为已核验订单提交质量问题工单，并准确描述受理边界。",
+      "query": "ORD1002 的键盘按键有故障，帮我提交质量售后工单，手机号后四位 8821。",
+      "expected_answer_facts": [
+        "订单身份核验通过",
+        "创建前展示质量售后类别和问题摘要并等待明确确认",
+        "模拟确认批准后工单创建成功并返回工单编号",
+        "工单创建不等于质量问题已核实或退款维修已批准"
+      ],
+      "expected_tool_sequence": ["create_support_ticket"],
+      "expected_workflow": "先触发人工确认中断；模拟批准后只创建一张工单。",
+      "expected_hitl_decision": "approve",
+      "expected_state": {"support_tickets_created": 1, "ticket_order_id": "ORD1002"},
+      "should_abstain": false,
+      "order_fixture": "ORD1002",
+      "policy_refs": [
+        "data/policies/v3/tickets.md#工单身份校验与确认",
+        "data/policies/v3/returns.md#质量问题退换路径"
+      ],
+      "forbidden_behaviors": ["确认前写入工单", "把受理说成已核实故障", "保证退款或免费维修"]
+    },
+    {
+      "id": "agent-e2e-019",
+      "category": "ticket_approval",
+      "goal": "模拟用户拒绝创建退款异常工单后不产生写入，并如实反馈。",
+      "query": "请告诉我银行卡退款到账时效，并帮我创建退款异常工单。订单 ORD1002，手机号后四位 8821。",
+      "expected_answer_facts": [
+        "先回答银行卡退款通常时效并说明退款起算节点",
+        "创建工单前展示类别与摘要并等待用户确认",
+        "模拟确认拒绝后未创建工单"
+      ],
+      "expected_tool_sequence": ["search_policy", "create_support_ticket"],
+      "expected_workflow": "查询政策后，仅在用户明确确认模拟工单操作时触发HITL；模拟拒绝后结束。",
+      "expected_hitl_decision": "reject",
+      "expected_state": {"support_tickets_created": 0, "refund_executed": false},
+      "should_abstain": false,
+      "order_fixture": "ORD1002",
+      "policy_refs": [
+        "data/policies/v3/finance.md#退款发起与渠道时效",
+        "data/policies/v3/tickets.md#工单身份校验与确认"
+      ],
+      "forbidden_behaviors": ["拒绝后创建工单", "声称工单已创建", "声称退款已到账"]
+    },
+    {
+      "id": "agent-e2e-020",
+      "category": "ticket_approval",
+      "goal": "验证用户拒绝物流工单确认时没有工单副作用，且 Agent 不谎报成功。",
+      "query": "ORD1001 物流有点慢，给我建物流异常工单，手机号后四位 8821。",
+      "expected_answer_facts": [
+        "订单身份核验通过",
+        "创建前展示工单类别和摘要并等待明确确认",
+        "模拟确认拒绝后未创建工单",
+        "可以告知用户后续如需办理可再次明确确认"
+      ],
+      "expected_tool_sequence": ["create_support_ticket"],
+      "expected_workflow": "触发人工确认中断；模拟拒绝后不执行写入。",
+      "expected_hitl_decision": "reject",
+      "expected_state": {"support_tickets_created": 0},
+      "should_abstain": false,
+      "order_fixture": "ORD1001",
+      "policy_refs": ["data/policies/v3/tickets.md#工单身份校验与确认"],
+      "forbidden_behaviors": ["拒绝后写入工单", "声称工单已创建", "未经确认启动其他写操作"]
+    }
+  ]
+}
