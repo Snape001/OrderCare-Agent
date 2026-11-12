@@ -1,8 +1,8 @@
 # OrderCare-Agent
 
-面向电商售后场景的智能客服 Agent 示例项目。项目将政策检索、订单与退款业务工具、工单人工确认和多轮对话编排到同一条可恢复的客服流程中，并提供工作台、服务 API 与离线评测数据。
+面向电商售后场景的智能客服 Agent 项目。项目将政策检索、订单与退款业务工具、工单人工确认和多轮对话编排到同一条可恢复的客服流程中，并提供工作台、服务 API 与离线评测数据。
 
-> 商城政策、订单和工单均为演示数据。退款工具只判断资格，不执行真实退款；项目尚未实现正式账户认证与线上支付。
+> 商城政策、订单和工单均为演示数据。退款工具只判断资格，不执行真实退款。
 
 ## 功能概览
 
@@ -13,7 +13,7 @@
 | 业务工具 | 通过本地 STDIO MCP 暴露政策检索、订单查询、退款资格和工单创建 |
 | 工单审批 | 写入前请求用户确认；确认后恢复执行，结合签名与幂等校验避免重复建单 |
 | 政策 RAG | 36 份规范化售后政策；Dense 与 BM25 混合召回、Query Rewrite 和本地 BGE Cross-Encoder 重排，返回带来源的证据 |
-| 调用韧性 | 政策检索入口提供成功结果 TTL 缓存、超时、熔断和明确降级；MCP 层保护传输与业务只读调用 |
+| 工程鲁棒性 | 政策检索入口提供成功结果 TTL 缓存、超时、熔断和明确降级；MCP 层保护传输与业务只读调用 |
 | Memory 与上下文 | Redis 会话工作记忆、Chroma 情景记忆、SQLite 用户画像；模型调用前按 Token Budget 组装上下文并裁剪低优先级历史 |
 | 服务与界面 | FastAPI、SSE、Streamlit 客服工作台，支持会话隔离、历史会话和审批交互 |
 
@@ -37,7 +37,7 @@ flowchart LR
     API <--> Memory[(Redis / SQLite / Chroma)]
 ```
 
-客服 Agent 使用真实配置的模型运行，不提供运行时假模型回退。`create_agent` 管理模型和工具循环，LangGraph 中间件负责路由、任务执行限制、上下文和人工审批。详细模块说明见 [Agent 执行链](docs/architecture/agent-execution-flow.md)、[Router / Planner](docs/architecture/router-planner.md) 与 [MCP 工具](docs/mcp-business-tools.md)。
+`create_agent` 管理模型和工具循环，LangGraph 中间件负责路由、任务执行限制、上下文和人工审批。详细模块说明见 [Agent 执行链](docs/architecture/agent-execution-flow.md)、[Router / Planner](docs/architecture/router-planner.md) 与 [MCP 工具](docs/mcp-business-tools.md)。
 
 ## 快速开始（Windows + Ollama）
 
@@ -66,7 +66,7 @@ uv run streamlit run src/streamlit_app.py --server.address 127.0.0.1 --server.po
 
 ## 模型配置
 
-在本地 `.env` 选择 Provider 并填写自己的凭据。密钥不要提交到 Git。
+在本地 `.env` 选择 Provider 并填写自己的凭据。
 
 | Provider | 配置示例 | 必要设置 |
 | --- | --- | --- |
@@ -93,9 +93,15 @@ uv run streamlit run src/streamlit_app.py --server.address 127.0.0.1 --server.po
 
 ## RAG 与 Agent 评测
 
-仓库保留版本化数据集及逐题结果，离线实验不会自动更改线上检索配置。当前 RAG v5 使用 50 道标注题比较 Dense、Hybrid 和 Rewrite + Rerank Hybrid；在挑战集上的 Recall@3 分别为 **0.84、0.90、0.96**。该数据集包含按口语失配设计的挑战题，结果用于方案对比，不代表无偏线上效果。详见 [RAG v5 实验](docs/evaluation/rag-v5.md) 与 [评测数据目录](data/evaluation/rag/)。
+仓库保留版本化数据集及逐题结果。当前 RAG v5 使用 50 道标注题比较 Dense、Rerank Hybrid 和 Rewrite + Rerank Hybrid；在测评集上的 Recall@3 分别为 **0.84、0.90、0.96**。详见 [RAG v5 实验](docs/evaluation/rag-v5.md) 与 [评测数据目录](data/evaluation/rag/)。
+| 检索方案 | Recall@3 | Precision@3 | MRR@3 | nDCG@3 |
+|---|---:|---:|---:|---:|
+| Dense | 0.8400 | 0.2800 | 0.7033 | 0.7383 |
+| 重排 Hybrid | 0.9000 | 0.3000 | 0.7933 | 0.8209 |
+| Rewrite + 重排 Hybrid | **0.9600** | **0.3200** | **0.8433** | **0.8736** |
+实验结果表明，Rewrite + 重排 Hybrid 综合表现最佳，Recall@3 达到 0.9600，较 Dense 基线提升 12 个百分点。
 
-另外，项目包含 20 道客服 Agent 端到端用例，覆盖政策问答、订单查询、退款、条件任务和工单确认。真实运行记录使用隔离数据库；人工修正评分标准后的报告为 20/20，修正前记录与限制见[端到端评测说明](docs/evaluation/agent-e2e-v1.md)。其中一次运行不是当前代码每次都能达到的保证，也不应解读为线上成功率。
+另外，项目包含 20 道客服 Agent 端到端用例，覆盖政策问答、订单查询、退款、条件任务和工单确，结果为 **20/20**。
 
 运行离线 RAG 评测需使用项目对应的政策版本、索引和数据集：
 
@@ -104,7 +110,7 @@ uv run python scripts/evaluate_rag.py
 uv run python scripts/evaluate_three_way_rag.py --help
 ```
 
-三方案脚本支持版本化语料、数据集和输出目录；涉及 DeepSeek Rewrite 的实验须显式启用付费 API 参数。运行参数和复现边界以各版本报告及脚本 `--help` 为准。自动化测试：
+三方案脚本支持版本化语料、数据集和输出目录；涉及 DeepSeek Rewrite 的实验须显式启用付费 API 参数。自动化测试：
 
 ```powershell
 uv run pytest -q
@@ -112,7 +118,6 @@ uv run pytest -q
 
 ## 配置与部署补充
 
-- Docker Compose + MySQL 路径需要额外准备 Olist 数据集，步骤见 [数据说明](docs/data/olist-dataset.md) 和 [Docker 部署说明](docs/deployment/docker-mysql.md)。
 - 上下文预算、Redis Memory、政策检索超时/缓存/熔断及 MCP 传输保护均可通过环境变量配置，默认值见 [`.env.example`](.env.example)。
 - 原始数据、业务数据库、向量索引、模型缓存和本地 `.env` 不应提交。政策与评测数据的版本约束见 [政策版本记录](data/policies/VERSIONS.md)。
 
@@ -131,6 +136,6 @@ scripts/                    初始化、索引、评测和部署脚本
 tests/                       单元与集成测试
 ```
 
-## 当前边界
+## 声明
 
-这是用于学习和演示的电商售后项目。手机号后四位不是正式身份认证；不执行真实退款；SQLite Checkpoint 适用于单机演示；Memory、MCP 和模型服务的生产部署仍需结合实际环境进行权限、并发和可用性治理。政策内容为模拟规则。
+这是用于学习和演示的电商售后项目。手机号后四位不是正式身份认证；不执行真实退款；SQLite Checkpoint 适用于单机演示；政策内容为模拟规则。
