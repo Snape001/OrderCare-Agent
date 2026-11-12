@@ -99,6 +99,7 @@ uv run streamlit run src/streamlit_app.py --server.address 127.0.0.1 --server.po
 | Dense | 0.8400 | 0.2800 | 0.7033 | 0.7383 |
 | 重排 Hybrid | 0.9000 | 0.3000 | 0.7933 | 0.8209 |
 | Rewrite + 重排 Hybrid | **0.9600** | **0.3200** | **0.8433** | **0.8736** |
+
 实验结果表明，Rewrite + 重排 Hybrid 综合表现最佳，Recall@3 达到 0.9600，较 Dense 基线提升 12 个百分点。
 
 另外，项目包含 20 道客服 Agent 端到端用例，覆盖政策问答、订单查询、退款、条件任务和工单确，结果为 **20/20**。
