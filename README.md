@@ -75,22 +75,6 @@ uv run streamlit run src/streamlit_app.py --server.address 127.0.0.1 --server.po
 | Qwen | [.env.qwen.example](.env.qwen.example) | DashScope API Key 与模型配置 |
 | 通用兼容模型 | [.env.example](.env.example) | `DEFAULT_MODEL` 与对应 Provider 凭据 |
 
-默认政策 Query Rewrite 需要 `DEEPSEEK_API_KEY`；未配置或改写失败时会回退原始 Query，继续本地检索。改写 API 的调用与费用由所选配置决定。配置说明见 [DeepSeek Provider](docs/deepseek-provider.md) 和 [.env.example](.env.example)。
-
-## 演示对话
-
-本地样例订单可用手机号后四位 `8821`：
-
-```text
-七天无理由退款有什么要求？请标注政策来源。
-查询订单 ORD1001，手机号后四位 8821
-订单 ORD1002 能退款吗？手机号后四位 8821
-为 ORD1001 创建人工客服工单，手机号后四位 8821
-确认
-```
-
-样例数据只用于演示：`ORD1001` 为运输中订单，`ORD1002` 满足配置的演示退款条件。创建工单会先暂停并请求确认。
-
 ## RAG 与 Agent 评测
 
 仓库保留版本化数据集及逐题结果。当前 RAG v5 使用 50 道标注题比较 Dense、Rerank Hybrid 和 Rewrite + Rerank Hybrid；在测评集上的 Recall@3 分别为 **0.84、0.90、0.96**。详见 [RAG v5 实验](docs/evaluation/rag-v5.md) 与 [评测数据目录](data/evaluation/rag/)。
@@ -104,23 +88,6 @@ uv run streamlit run src/streamlit_app.py --server.address 127.0.0.1 --server.po
 
 另外，项目包含 20 道客服 Agent 端到端用例，覆盖政策问答、订单查询、退款、条件任务和工单确，结果为 **20/20**。
 
-运行离线 RAG 评测需使用项目对应的政策版本、索引和数据集：
-
-```powershell
-uv run python scripts/evaluate_rag.py
-uv run python scripts/evaluate_three_way_rag.py --help
-```
-
-三方案脚本支持版本化语料、数据集和输出目录；涉及 DeepSeek Rewrite 的实验须显式启用付费 API 参数。自动化测试：
-
-```powershell
-uv run pytest -q
-```
-
-## 配置与部署补充
-
-- 上下文预算、Redis Memory、政策检索超时/缓存/熔断及 MCP 传输保护均可通过环境变量配置，默认值见 [`.env.example`](.env.example)。
-- 原始数据、业务数据库、向量索引、模型缓存和本地 `.env` 不应提交。政策与评测数据的版本约束见 [政策版本记录](data/policies/VERSIONS.md)。
 
 ## 项目结构
 
