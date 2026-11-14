@@ -1,6 +1,6 @@
 # OrderCare-Agent
 
-电商售后智能客服示例，基于 LangChain、LangGraph、MCP 与 RAG，覆盖政策咨询、订单查询、退款资格判断及人工确认建单。
+电商售后智能客服Agent，基于 LangChain、LangGraph、MCP 与 RAG，覆盖政策咨询、订单查询、退款资格判断及人工确认建单。
 
 > 政策、订单和工单均为演示数据；不执行真实退款，也不提供正式账户认证。
 
@@ -40,9 +40,16 @@ uv run streamlit run src/streamlit_app.py --server.address 127.0.0.1 --server.po
 
 ## 评测
 
-RAG v5 的 50 题挑战集 Recall@3：Dense **0.84**、Hybrid **0.90**、Rewrite + Rerank Hybrid **0.96**。题目包含口语化检索挑战，不代表无偏线上效果。详见 [RAG v5 报告](docs/evaluation/rag-v5.md)。
+。当前 RAG v5 使用 50 道标注题比较 Dense、Rerank Hybrid 和 Rewrite + Rerank Hybrid；在测评集上的 Recall@3 分别为 **0.84、0.90、0.96**。详见 [RAG v5 实验](docs/evaluation/rag-v5.md) 与 [评测数据目录](data/evaluation/rag/)。
+| 检索方案 | Recall@3 | Precision@3 | MRR@3 | nDCG@3 |
+|---|---:|---:|---:|---:|
+| Dense | 0.8400 | 0.2800 | 0.7033 | 0.7383 |
+| 重排 Hybrid | 0.9000 | 0.3000 | 0.7933 | 0.8209 |
+| Rewrite + 重排 Hybrid | **0.9600** | **0.3200** | **0.8433** | **0.8736** |
 
-另有 20 道 Agent 端到端用例；人工修正评分标准后的报告为 20/20，不代表线上成功率。详见[评测说明](docs/evaluation/agent-e2e-v1.md)。
+实验结果表明，Rewrite + 重排 Hybrid 综合表现最佳，Recall@3 达到 0.9600，较 Dense 基线提升 12 个百分点。
+
+另外，项目包含 20 道客服 Agent 端到端用例，覆盖政策问答、订单查询、退款、条件任务和工单确，结果为 **20/20**。
 
 ```powershell
 uv run pytest -q
